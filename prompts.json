@@ -9,10 +9,10 @@
     },
     {
         "act": "比较润色",
-        "propmpt": "Below is a paragraph from an academic paper. Polish the writing to meet the academic style,improve the spelling, grammar, clarity, concision and overall readability. When necessary, rewrite the whole sentence. Furthermore, list all modification and explain the reasons to do so in markdown table. Paragraph：\n"   
+        "prompt": "Below is a paragraph from an academic paper. Polish the writing to meet the academic style,improve the spelling, grammar, clarity, concision and overall readability. When necessary, rewrite the whole sentence. Furthermore, list all modification and explain the reasons to do so in markdown table. Paragraph：\n"   
     },
     {
         "act": "领域润色",
-        "propmpt": "You are now acting as an expert in the field of [lung cancer] From a professional point of view, do you think there is any need to modify the above content? Be careful not to modify the whole text, you need to point out the places that need to be modified one by one, and give revision opinions and recommended revision content.\n"   
+        "prompt": "You are now acting as an expert in the field of [lung cancer] From a professional point of view, do you think there is any need to modify the above content? Be careful not to modify the whole text, you need to point out the places that need to be modified one by one, and give revision opinions and recommended revision content.\n"   
     }
 ]
