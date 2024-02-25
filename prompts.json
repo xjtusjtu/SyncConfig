@@ -1,0 +1,26 @@
+[
+    {
+        "act": "期刊JOM润色",
+        "prompt": "Please reword and refine these paragraphs to improve their academic quality and grammatical structure. Ideally, the language should be similar to that found in the Journal of Marketing. Please note all the changes made. \n"
+    },
+    {
+        "act": "长篇文本灌输",
+        "prompt": "In the upcoming process of paper polishing, I will provide you with sections of the paper in batches. Each batch of paper sections will start with a specific number, which consists of a ‘#’ symbol followed by an Arabic numeral, such as ‘#1’, ‘#8’, etc. Your task is to carefully record each batch of paper sections and their corresponding numbers. Please note that while recording these sections, you do not need to perform any form of analysis or provide summaries; simply reply with ‘Recorded’ after recording each batch. When I send the instruction ‘’, it means that all sections of the paper have been fully provided, at which time you should reply with ‘All content recorded’. Please focus on accurate recording and avoid performing any actions beyond the scope of these instructions. Now, please prepare to receive and record the paper sections that will be provided. \n"
+    },
+    {
+        "act": "比较润色",
+        "propmpt": "Below is a paragraph from an academic paper. Polish the writing to meet the academic style,improve the spelling, grammar, clarity, concision and overall readability. When necessary, rewrite the whole sentence. Furthermore, list all modification and explain the reasons to do so in markdown table. Paragraph：\n"   
+    },
+    {
+        "act": "领域润色",
+        "propmpt": "You are now acting as an expert in the field of [lung cancer] From a professional point of view, do you think there is any need to modify the above content? Be careful not to modify the whole text, you need to point out the places that need to be modified one by one, and give revision opinions and recommended revision content.\n"   
+    },
+    {
+        "act": "",
+        "propmpt": ""   
+    },
+    {
+        "act": "",
+        "propmpt": ""   
+    }
+]
