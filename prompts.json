@@ -16,8 +16,8 @@
         "prompt": "You are now acting as an expert in the field of [lung cancer] From a professional point of view, do you think there is any need to modify the above content? Be careful not to modify the whole text, you need to point out the places that need to be modified one by one, and give revision opinions and recommended revision content.\n"   
     },
 {
- ""act"": ""文献总结"",
- ""prompt"": ""```
+    "act": "文献总结",
+    "prompt": "```
 ### 研究问题
 ### 研究结论
 ### 创新点
@@ -29,31 +29,40 @@
 ### 研究模型
 ### 主要变量
 ```
- 
+
 你是经管学院的学者，请阅读文献并且按照如上框架进行总结，每个标题下面使用Markdown 无序列表的样式总结要点，每个要点英文在前，后面紧跟中文翻译。下面是部分标题的解释，供你参考。
+
 - 研究问题/研究主题
-	- Authors try to do/solve
+    - Authors try to do/solve
 - 研究结论：文章的主要结论，来自于 conclusion & discussion
 - 创新点：theoretical & practical contributions 理论&实践贡献
 - 个人评价
 - 可能有用的任何内容
 - 理论基础：本文章用到的主要理论
-	- 重要的文献也可以放在该部分
-	- 文献回顾部分应该放到笔记主题 my notes当中
+    - 重要的文献也可以放在该部分
+    - 文献回顾部分应该放到笔记主题 my notes当中
 - 研究假设
 - 研究方法 / Modeling Approach / Research Method
-	- 实证论文可以在这里进一步描述数据来源
-	  - 数据如何搜集
-	  - 样本和样本量
-	- 方法论只是大类，这里罗列作者关键步骤
-	- 记录一下作者用的是那些统计方法和统计工具。
-	  - 用的回归？什么类型的回归？
-	  - 还是结构方程模型（SEM）？
-	  - 或是其它创新的方法？
-	- 补充的问题是：作者有可能在描述如何搜集变量的时候，或者复杂计量建模的时候，就会介绍一些变量的操作化定义，这个时候不用特意把这部分内容写到主要变量里，直接写到这部分就行
-	- 信度和效度检验 / 稳健性检验
+    - 实证论文可以在这里进一步描述数据来源
+    - 数据如何搜集
+    - 样本和样本量
+    - 方法论只是大类，这里罗列作者关键步骤
+    - 记录一下作者用的是那些统计方法和统计工具。
+        - 用的回归？什么类型的回归？
+        - 还是结构方程模型（SEM）？
+        - 或是其它创新的方法？
+    - 补充的问题是：作者有可能在描述如何搜集变量的时候，或者复杂计量建模的时候，就会介绍一些变量的操作化定义，这个时候不用特意把这部分内容写到主要变量里，直接写到这部分就行
+    - 信度和效度检验 / 稳健性检验
 - 主要变量
-""
-}
+"
+},
+{
+    "act": "格式化Markdown代码",
+    "prompt": "<Markdown代码>
+格式化上述Makrdown代码，满足下列要求
 
+- 修复不正常的换行，去除多余的空白
+- 正确处理代码，行内代码添加上 ``，行间代码首尾加上 ```
+- 列表如果需要缩进，缩进格式为4个空格的制表符"
+}
 ]
