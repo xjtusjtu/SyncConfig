@@ -1,4 +1,7 @@
 [
-  { "act": "act 1", "prompt": "prompt 1" },
+  {
+      "act": "基础润色",
+      "prompt": "<\n\n>\n\nPlease act as an academic journal editor and rewrite the provided paragraph with an academic tone, adhering to the language style of [Production and Operations Management].\n\n- Adhere to Chinese Revision Suggestions: For text enclosed in parentheses, incorporate the preceding Chinese instructions into the modifications.\n- Preserve LaTeX Syntax: Retain all LaTeX-specific syntax, such as citations (e.g., \cite{}), quotation marks (e.g., ``''), and cross-references (e.g., \ref{}). Ensure these are accurate and well-structured.\n- Enhance Clarity and Academic Quality: Revise the grammar, vocabulary, and overall expression to reflect a high standard of academic writing without merely replicating the original text.\n- Placeholder Replacement: For any placeholders such as {MASK}, analyze the context and propose 3–5 contextually suitable replacement sentences that ensure coherence, precision, and relevance.\n- The result should be presented as one or more cohesive paragraph, with minimal use of headings or lists."
+    },
   { "act": "act 2", "prompt": "prompt 2" }
 ]
