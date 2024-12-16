@@ -1,51 +1,6 @@
 [
-
     {
-      "act": "想标题",
-      "prompt": "<\n\n>\n请根据上述内容，为 Table / Figure x 想一个合适的标题（caption），符合管理学期刊论文的风格"
+      "act": "基础润色",
+      "prompt": "<\n\n>\n\nPlease act as an academic journal editor and rewrite the provided paragraph with an academic tone, adhering to the language style of [Production and Operations Management].\n\n- Adhere to Chinese Revision Suggestions: For text enclosed in parentheses, incorporate the preceding Chinese instructions into the modifications.\n- Preserve LaTeX Syntax: Retain all LaTeX-specific syntax, such as citations (e.g., \cite{}), quotation marks (e.g., ``''), and cross-references (e.g., \ref{}). Ensure these are accurate and well-structured.\n- Enhance Clarity and Academic Quality: Revise the grammar, vocabulary, and overall expression to reflect a high standard of academic writing without merely replicating the original text.\n- Placeholder Replacement: For any placeholders such as {MASK}, analyze the context and propose 3–5 contextually suitable replacement sentences that ensure coherence, precision, and relevance.\n- The result should be presented as one or more cohesive paragraph, with minimal use of headings or lists."
     },
-    {
-      "act": "表格文献总结",
-      "prompt": "你是一名经管学院的学生，请按照以往学术经验阅读pdf文献，并从文中内容生成一张表,按照以下框架进行归纳：（作者，年份）|研究问题| 研究方法|理论视角|企业大小|研究结论|案例名称| 案例数量| 数据采集时间|研究空白或者创新点|（用markdown语法优化），如果文章中没有需要的内容，请用“无”填充表格（边界条件）"
-    },
-    {
-      "act": "长篇文本灌输",
-      "prompt": "In the upcoming process of paper polishing, I will provide you with sections of the paper in batches. Each batch of paper sections will start with a specific number, which consists of a ‘#’ symbol followed by an Arabic numeral, such as ‘#1’, ‘#8’, etc. Your task is to carefully record each batch of paper sections and their corresponding numbers. Please note that while recording these sections, you do not need to perform any form of analysis or provide summaries; simply reply with ‘Recorded’ after recording each batch. When I send the instruction ‘Finished’, it means that all sections of the paper have been fully provided, at which time you should reply with ‘All content recorded’. Please focus on accurate recording and avoid performing any actions beyond the scope of these instructions. Now, please prepare to receive and record the paper sections that will be provided. \n"
-    },
-    {
-      "act": "期刊JOM润色",
-      "prompt": "Please reword and refine these paragraphs to improve their academic quality and grammatical structure. Ideally, the language should be similar to that found in the Journal of Marketing. Please note all the changes made. \n"
-    },
-    {
-      "act": "比对润色",
-      "prompt": "Below is a paragraph from an academic paper. Polish the writing to meet the academic style,improve the spelling, grammar, clarity, concision and overall readability. When necessary, rewrite the whole sentence. Furthermore, list all modification and explain the reasons to do so in markdown table. Paragraph：\n"
-    },
-    {
-      "act": "领域专家润色",
-      "prompt": "You are now acting as an expert in the field of [lung cancer] From a professional point of view, do you think there is any need to modify the above content? Be careful not to modify the whole text, you need to point out the places that need to be modified one by one, and give revision opinions and recommended revision content.\n"
-    },
-    {
-      "act": "文献总结",
-      "prompt": "```\n### 研究问题\n### 研究结论\n### 创新点\n### 个人评价\n### 可能有用\n### 理论基础\n### 研究假设\n### 研究方法\n### 研究模型\n### 主要变量\n```\n \n你是经管学院的学者，请阅读文献并且按照如上框架进行总结，每个标题下面使用Markdown 无序列表的样式总结要点，每个要点英文在前，后面紧跟中文翻译。下面是部分标题的解释，供你参考。\n- 研究问题/研究主题\n\t- Authors try to do/solve\n- 研究结论：文章的主要结论，来自于 conclusion & discussion\n- 创新点：theoretical & practical contributions 理论&实践贡献\n- 个人评价\n- 可能有用的任何内容\n- 理论基础：本文章用到的主要理论\n\t- 重要的文献也可以放在该部分\n\t- 文献回顾部分应该放到笔记主题 my notes当中\n- 研究假设\n- 研究方法 / Modeling Approach / Research Method\n\t- 实证论文可以在这里进一步描述数据来源\n\t    - 数据如何搜集\n\t    - 样本和样本量\n\t- 方法论只是大类，这里罗列作者关键步骤\n\t- 记录一下作者用的是那些统计方法和统计工具。\n\t    - 用的回归？什么类型的回归？\n\t    - 还是结构方程模型（SEM）？\n\t    - 或是其它创新的方法？\n\t- 补充的问题是：作者有可能在描述如何搜集变量的时候，或者复杂计量建模的时候，就会介绍一些变量的操作化定义，这个时候不用特意把这部分内容写到主要变量里，直接写到这部分就行\n\t- 信度和效度检验 / 稳健性检验\n- 主要变量\n"
-    },
-    {
-      "act": "重塑回答",
-      "prompt": "\n---\n\n重新返回上述内容，减少非必要的标题，去除加粗，减少不必要的换行"
-    },
-    {
-      "act": "格式化Markdown代码",
-      "prompt": "<\n\n>\n格式化上述Makrdown代码，满足下列要求\n- 修复不正常的换行，去除多余的空白\n- 正确处理代码，行内代码前后添加上 “``”，行间代码首尾加上 “```”\n- 使用正确的列表符号，例如“- ” 或者 “1. ”\n- 列表如果需要缩进，缩进格式为4个空格的制表符；不需要缩进则不需要添加"
-    },
-    {
-      "act": "图片表格识别",
-      "prompt": "图片表格识别，返回markdown源码"
-    },
-    {
-      "act": "PDF阅读",
-      "prompt": "阅读当前PDF，理解并总结每个section及其下面的subsection的内容，以Markdown代码的形式返回给我，注意\n\n- 合理地使用 --- 分割内容，分割后的每段内容需要刚好能呈现在一张PPT上\n- 正确识别表格和公式，行内公式使用 `$...$` 包裹，行间公式使用 `$$...$$`\n- 注意告诉我在哪块内容合适地呈现文章中的哪张图片，不需要真的显示"
-    },
-    {
-      "act": "表格",
-      "prompt": "你正在撰写一篇管理学的学术论文，下面要绘制一个结果变量的表格，请正确翻译下面这些结果变量，并给出正确的简短解释，以便于我填充表格"
-    }
 ]
