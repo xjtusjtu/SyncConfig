@@ -1,12 +1,5 @@
 [
-    {
-      "act": "基础润色",
-      "prompt": "<\n\n>\n\nPlease act as an academic journal editor and rewrite the provided paragraph with an academic tone, adhering to the language style of [Production and Operations Management].\n\n- Adhere to Chinese Revision Suggestions: For text enclosed in parentheses, incorporate the preceding Chinese instructions into the modifications.\n- Preserve LaTeX Syntax: Retain all LaTeX-specific syntax, such as citations (e.g., \cite{}), quotation marks (e.g., ``''), and cross-references (e.g., \ref{}). Ensure these are accurate and well-structured.\n- Enhance Clarity and Academic Quality: Revise the grammar, vocabulary, and overall expression to reflect a high standard of academic writing without merely replicating the original text.\n- Placeholder Replacement: For any placeholders such as {MASK}, analyze the context and propose 3–5 contextually suitable replacement sentences that ensure coherence, precision, and relevance.\n- The result should be presented as one or more cohesive paragraph, with minimal use of headings or lists."
-    },
-    {
-      "act": "摘要/引言润色",
-      "prompt": "<\n\n>\n\nThe text above is a sample introduction/abstract from an article published in [Journal]. Please refine the following introduction/abstract of my paper to align with the style and structure demonstrated in the sample:\n\n"
-    },
+
     {
       "act": "想标题",
       "prompt": "<\n\n>\n请根据上述内容，为 Table / Figure x 想一个合适的标题（caption），符合管理学期刊论文的风格"
@@ -55,4 +48,4 @@
       "act": "表格",
       "prompt": "你正在撰写一篇管理学的学术论文，下面要绘制一个结果变量的表格，请正确翻译下面这些结果变量，并给出正确的简短解释，以便于我填充表格"
     }
-  ]
+]
