@@ -1,6 +1,4 @@
 [
-    {
-      "act": "基础润色",
-      "prompt": "<>"
-    },
+  { "act": "act 1", "prompt": "prompt 1" },
+  { "act": "act 2", "prompt": "prompt 2" }
 ]
