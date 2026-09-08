@@ -1,0 +1,140 @@
+/* ========================================================================== */
+/* 1. 主题色与 Marp 隔离                                                     */
+/* ========================================================================== */
+
+/*
+ * Marp 预览结构为：.markdown-body > #__marp-vscode。
+ * :not(#__marp-vscode) 只能排除当前元素，不能阻止样式继续进入其后代；
+ * 因此这里在 .markdown-body 容器级别排除包含 Marp 的预览。
+ */
+.vscode-light .markdown-body:not(:has(> #__marp-vscode)) {
+    ---heading-h2: #ff6f61;
+    ---heading-h3: #6a5acd;
+    ---heading-h4: #20b2aa;
+    ---heading-h5: #ffa07a;
+    ---heading-h6: #f08080;
+    ---strong: #d45d00;
+    ---em: #32cd32;
+    ---katex: #6495ed;
+    ---katex-block: black;
+    ---marker: #87a3d1;
+}
+
+.vscode-dark .markdown-body:not(:has(> #__marp-vscode)) {
+    ---heading-h2: #ff8a80;
+    ---heading-h3: #a99cff;
+    ---heading-h4: #4dd8cf;
+    ---heading-h5: #ffbc8a;
+    ---heading-h6: #ff9a9a;
+    ---strong: #ffb86b;
+    ---em: #7ee787;
+    ---katex: #9ec5ff;
+    ---katex-block: var(--vscode-editor-foreground);
+    ---marker: #a8c7fa;
+}
+
+/* ========================================================================== */
+/* 2. 标题颜色与层级标记                                                     */
+/* ========================================================================== */
+
+.markdown-body:not(:has(> #__marp-vscode)) h2 {
+    color: var(---heading-h2);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h3 {
+    color: var(---heading-h3);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h4 {
+    color: var(---heading-h4);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h5 {
+    color: var(---heading-h5);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h6 {
+    color: var(---heading-h6);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h2::before,
+.markdown-body:not(:has(> #__marp-vscode)) h3::before,
+.markdown-body:not(:has(> #__marp-vscode)) h4::before,
+.markdown-body:not(:has(> #__marp-vscode)) h5::before,
+.markdown-body:not(:has(> #__marp-vscode)) h6::before {
+    color: var(--vscode-editor-foreground);
+    font-family: Arial, sans-serif;
+    font-size: 0.6rem;
+    font-weight: normal !important;
+    margin-right: 1px;
+    overflow: visible;
+    width: auto;
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h2::before {
+    content: "H2";
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h3::before {
+    content: "H3";
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h4::before {
+    content: "H4";
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h5::before {
+    content: "H5";
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) h6::before {
+    content: "H6";
+}
+
+/* ========================================================================== */
+/* 3. 强调文本与列表                                                         */
+/* ========================================================================== */
+
+.markdown-body:not(:has(> #__marp-vscode)) strong {
+    color: var(---strong);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) em {
+    color: var(---em);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) li::marker {
+    color: var(---marker);
+}
+
+/* ========================================================================== */
+/* 4. 数学公式                                                               */
+/* ========================================================================== */
+
+.markdown-body:not(:has(> #__marp-vscode)) span.katex {
+    color: var(---katex);
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) .katex-display span.katex {
+    color: var(---katex-block);
+}
+
+/* ========================================================================== */
+/* 5. 分隔线、媒体与紧凑排版                                                 */
+/* ========================================================================== */
+
+.markdown-body:not(:has(> #__marp-vscode)) hr {
+    border-bottom: 1px dashed var(--vscode-editor-foreground) !important;
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) div p > img {
+    max-height: 550px !important;
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) pre code {
+    font-size: small !important;
+}
+
+.markdown-body:not(:has(> #__marp-vscode)) table {
+    font-size: small !important;
+}
