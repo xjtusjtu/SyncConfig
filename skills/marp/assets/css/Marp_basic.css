@@ -1,0 +1,1342 @@
+/**
+ * @theme Marp_basic
+ * @auto-scaling math, code
+ */
+
+@import "default";
+@import "https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css";
+
+/* ==========================================================================
+   0. Design tokens (:root)
+   命名参考 am_template.scss；取值为 Marp_basic 当前主题
+   ========================================================================== */
+
+:root {
+  /* 字体族 */
+  --font-family-main: "Times New Roman", Arial, 楷体;
+  --font-family-table: "Times New Roman", "黑体", serif;
+
+  /* 字号（section 根字号 = --font-size-main，供 em/rem 参照） */
+  --font-size-main: 18px;
+  --font-size-1: 45px; /* h1 */
+  --font-size-2-3: 30px; /* h2；h3 见 --font-size-h3 */
+  --font-size-h3: 25px;
+  --font-size-4-5: 23px; /* h4；h5 见 --font-size-h5 */
+  --font-size-h5: 21px;
+  --font-size-subtitle: 20px; /* h6 */
+  --font-size-code: 14px;
+  --font-size-table: 0.8em;
+  --font-size-footnote: 16px;
+  --font-size-page: 12px;
+  --font-size-blockquote-mark: 2em;
+
+  /* am_template 主题色（默认 am_red；Marp_blue 等子主题覆盖） */
+  --font-family-title: "Times New Roman", Arial, 楷体;
+  --foot-size-subtitle: var(--font-size-subtitle);
+  --color-code-bg: #f6eeef;
+  --color-coverbg: #a7535a;
+  --color-few: #53a7a0;
+  --color-footer: #8c8c8c;
+  --color-main: #211112;
+  --color-much: #864248;
+  --color-navbar-bg: #edddde;
+  --color-navbar-font: rgb(108, 95, 91);
+  --color-quote: rgba(254, 176, 98, 0.1);
+  --color-title: rgb(255, 255, 255);
+  --color-trans: #b9757b;
+  --filter-b: brightness(30%) contrast(70%) grayscale(100%);
+  --filter-c: brightness(0%) contrast(60%) grayscale(80%);
+  --filter-e: brightness(0%) contrast(70%) grayscale(100%);
+
+  /* 强调色与装饰色 */
+  --color-strong: #dc143c;
+  --color-em: #20b2aa;
+  --color-underline: #f00;
+  --color-blockquote-bg: var(--color-quote);
+  --color-blockquote-border: #ccc;
+  --color-blockquote-mark: #ccc;
+  --color-table-border: #000;
+}
+
+/* ==========================================================================
+   1. Slide shell — section, header, footer, pagination
+   ========================================================================== */
+
+/* 覆盖 default @auto-scaling 的 section 根字号（约 29px），与正文对齐 */
+section {
+    font-size: var(--font-size-main);
+    --marpit-root-font-size: var(--font-size-main);
+    color: var(--color-main);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+header {
+    position: absolute;
+    left: auto;
+    right: 10px;
+    top: 10px;
+    z-index: 6;
+}
+
+header img {
+    vertical-align: middle;
+}
+
+footer {
+    position: absolute;
+    left: 30px;
+    bottom: 14px;
+    width: 100%;
+    height: 4%;
+    color: var(--color-footer);
+    display: flex;
+    justify-content: space-between;
+    z-index: 6;
+}
+
+footer::after {
+    content: "";
+}
+
+section::after {
+    font-family: "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-weight: 900;
+    font-size: var(--font-size-page);
+    margin-right: -10px;
+    margin-bottom: -14px;
+    content: attr(data-marpit-pagination) "\f101 "
+        attr(data-marpit-pagination-total);
+    letter-spacing: 3px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: 1px solid var(--color-footer);
+    color: var(--color-footer);
+}
+
+/* ==========================================================================
+   2. Typography — headings, body, emphasis
+   ========================================================================== */
+
+p,
+li {
+    font-family: var(--font-family-main);
+}
+
+h1 {
+    font-family: var(--font-family-title);
+    font-size: var(--font-size-1);
+    color: var(--color-title);
+    text-align: center;
+}
+
+h2,
+h3 {
+    font-family: var(--font-family-title);
+    font-size: var(--font-size-2-3);
+    color: var(--color-much);
+}
+
+h4::before {
+    content: "🍀";
+}
+
+h3 {
+    font-size: var(--font-size-h3);
+}
+
+h4,
+h5 {
+    font-family: var(--font-family-title);
+    font-size: var(--font-size-4-5);
+    color: var(--color-much);
+}
+
+h6 {
+    font-family: var(--font-family-title);
+    font-size: var(--font-size-subtitle);
+    color: var(--color-much);
+}
+
+p {
+    font-size: var(--font-size-main);
+}
+
+section ul li,
+section ol li {
+    font-size: var(--font-size-main);
+    text-align: justify;
+}
+
+section ul li::marker,
+section ol li::marker {
+    color: var(--color-much);
+}
+
+pre code {
+    font-size: var(--font-size-code);
+}
+
+strong {
+    color: var(--color-strong);
+    font-weight: bold;
+}
+
+em {
+    color: var(--color-em);
+    font-style: italic;
+}
+
+u {
+    background-color: inherit;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-underline);
+    padding-bottom: 1px;
+}
+
+/* ==========================================================================
+   3. Content elements — blockquote, table, image, form
+   ========================================================================== */
+
+blockquote {
+    background: var(--color-blockquote-bg);
+    border-left: 10px solid var(--color-blockquote-border);
+    border-radius: 0.5em;
+    quotes: "\201C""\201D""\2018""\2019";
+}
+
+blockquote::before {
+    color: var(--color-blockquote-mark);
+    content: open-quote;
+    font-size: var(--font-size-blockquote-mark);
+    line-height: 0.1em;
+    margin-right: 0.25em;
+    vertical-align: -0.4em;
+}
+
+blockquote p {
+    display: inline;
+}
+
+table {
+    border-collapse: collapse;
+    box-sizing: border-box;
+    font-size: var(--font-size-table);
+    font-family: var(--font-family-table);
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    width: 100%;
+    table-layout: fixed;
+}
+
+th {
+    text-align: left;
+}
+
+th,
+td {
+    border: 1px solid var(--color-table-border);
+    padding: 8px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+}
+
+/* alt 以 C 结尾 → 块级居中 */
+img[alt$="C"] {
+    display: block;
+    margin: auto;
+}
+
+/* 正文 img / 内联 svg：限制在幻灯片内（Marp default 仅有 img max-width，无 max-height；
+   普通 svg 默认无限制，超大图会撑破版面）。scrollbox / :active peek 另有覆盖。 */
+section :is(img, svg) {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+}
+
+form {
+    font-size: var(--font-size-main);
+    margin: 0 0 0 37px;
+}
+
+form input {
+    margin: 0 10px 0 0;
+}
+
+/* ==========================================================================
+   4. Section layouts (Marp_basic native)
+   ========================================================================== */
+
+/* --- footnote: 正文 + 脚注区 --- */
+section.footnote {
+    display: grid;
+    gap: 0.7em;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+        "content"
+        "footnote";
+    justify-content: start;
+}
+
+section.footnote footer {
+    font-size: var(--font-size-footnote);
+    margin: 0 10em 0 5em;
+}
+
+section.footnote .tdiv {
+    grid-area: content;
+    justify-content: start;
+}
+
+section.footnote .bdiv {
+    grid-area: footnote;
+    bottom: 5%;
+}
+
+/* ==========================================================================
+   5. Scroll containers — scrollbox / scrollbox-x / scrollbox-y
+   ========================================================================== */
+
+.scrollbox,
+.scrollbox-x,
+.scrollbox-y {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+}
+
+.scrollbox {
+    overflow: auto;
+}
+
+.scrollbox-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.scrollbox-y {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+section > .scrollbox-y,
+section :is(.ldiv, .rdiv) > .scrollbox-y {
+    flex: 1 1 0;
+    min-height: 0;
+}
+
+section > .scrollbox-y {
+    max-height: 100%;
+}
+
+:is(.scrollbox, .scrollbox-x, .scrollbox-y) img {
+    max-width: none;
+    max-height: none;
+    width: auto;
+    height: auto;
+}
+
+:is(.scrollbox, .scrollbox-x) table {
+    width: max-content;
+    max-width: none;
+}
+
+.scrollbox-y table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+}
+
+/* 仅直接子元素，避免破坏 Mermaid SVG 内 foreignObject 的 div */
+:is(.scrollbox, .scrollbox-x, .scrollbox-y) > pre {
+    max-width: none;
+    width: auto;
+    overflow: visible;
+}
+
+:is(.scrollbox, .scrollbox-x, .scrollbox-y) > .mermaid {
+    display: block;
+    max-width: none;
+    overflow: visible;
+}
+
+:is(.scrollbox, .scrollbox-x) > .mermaid {
+    width: max-content;
+    min-width: 100%;
+}
+
+:is(.scrollbox, .scrollbox-x) > .mermaid svg {
+    max-width: none !important;
+    max-height: none !important;
+    width: auto !important;
+    min-width: max-content !important;
+    height: auto !important;
+}
+
+.scrollbox-y > .mermaid svg {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+}
+
+/* ==========================================================================
+   5.1 Hold-to-peek — 左键按住 img / .mermaid > svg 放大至幻灯片约 80%，松开恢复。
+      Marp DOM：svg[data-marpit-svg] > foreignObject > section；勿用 vw/vh 或 fixed
+     （foreignObject + section transform 会使 fixed 坐标系错乱）。
+      absolute + 100% 相对 section（随 size: / foreignObject 变化）；padding:10% → 内容≈80%。
+      白底便于透明 SVG；仅 .mermaid > svg（勿泛选 section svg）。
+      排除：header/footer 装饰图；class as-no-peek。
+   ========================================================================== */
+
+section:has(:is(img, .mermaid > svg):not(.as-no-peek):active) {
+    position: relative;
+    overflow: visible !important;
+}
+
+section:has(:is(img, .mermaid > svg):not(.as-no-peek):active)
+    :is(.scrollbox, .scrollbox-x, .scrollbox-y, .ldiv, .rdiv, .mdiv, .tdiv, .bdiv) {
+    overflow: visible !important;
+}
+
+section :is(img, .mermaid > svg):not(.as-no-peek):not(header img, footer img) {
+    cursor: zoom-in;
+}
+
+section :is(img, .mermaid > svg):not(.as-no-peek):not(header img, footer img):active {
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 1% !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    transform: none !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    z-index: 100 !important;
+    background-color: #fff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    cursor: zoom-out;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+/* ==========================================================================
+   6. Migrated layouts (am_template) — panel helpers
+   ========================================================================== */
+
+section :is(.ldiv, .limg) {
+    grid-area: leftpanel;
+}
+
+section :is(.mdiv, .mimg) {
+    grid-area: middlepanel;
+}
+
+section :is(.rdiv, .rimg) {
+    grid-area: rightpanel;
+}
+
+section :is(.tdiv, .timg) {
+    grid-area: toppanel;
+}
+
+section :is(.bdiv, .bimg) {
+    grid-area: bottompanel;
+}
+
+section :is(.limg, .mimg, .rimg, .timg, .bimg) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ==========================================================================
+   7. Migrated layouts — cols / rows
+   ========================================================================== */
+
+section.cols-2,
+section.cols-3,
+section.cols-2-73,
+section.cols-2-64,
+section.cols-2-37,
+section.cols-2-46,
+section.rows-2,
+section.rows-1-2,
+section.rows-2-1 {
+    overflow: visible;
+    display: grid;
+    align-content: center;
+}
+
+section.cols-2 {
+    gap: 1.5rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+section.cols-3 {
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading slideheading"
+        "leftpanel middlepanel rightpanel";
+}
+
+section.cols-2-73 {
+    gap: 1rem;
+    grid-template-columns: 7fr 3fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+section.cols-2-64 {
+    gap: 1rem;
+    grid-template-columns: 6fr 4fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+section.cols-2-37 {
+    gap: 1rem;
+    grid-template-columns: 3fr 7fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+section.cols-2-46 {
+    gap: 1rem;
+    grid-template-columns: 4fr 6fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+section.rows-2 {
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "slideheading"
+        "toppanel"
+        "bottompanel";
+}
+
+section.rows-1-2 {
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr 1fr;
+    grid-template-areas:
+        "slideheading slideheading"
+        "toppanel toppanel"
+        "leftpanel rightpanel";
+}
+
+section.rows-2-1 {
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr 1fr;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel"
+        "bottompanel bottompanel";
+}
+
+section.cols-2 > :is(h2, h3),
+section.cols-3 > :is(h2, h3),
+section.cols-2-73 > :is(h2, h3),
+section.cols-2-64 > :is(h2, h3),
+section.cols-2-37 > :is(h2, h3),
+section.cols-2-46 > :is(h2, h3),
+section.rows-2 > :is(h2, h3),
+section.rows-1-2 > :is(h2, h3),
+section.rows-2-1 > :is(h2, h3) {
+    grid-area: slideheading;
+}
+
+section.cols-2 :is(.ldiv, .rdiv, .limg, .rimg),
+section.cols-3 :is(.ldiv, .mdiv, .rdiv, .limg, .mimg, .rimg) {
+    margin-top: -5%;
+}
+
+section.cols-2-73 :is(.ldiv, .rdiv, .limg, .rimg),
+section.cols-2-64 :is(.ldiv, .rdiv, .limg, .rimg),
+section.cols-2-37 :is(.ldiv, .rdiv, .limg, .rimg),
+section.cols-2-46 :is(.ldiv, .rdiv, .limg, .rimg) {
+    margin-top: -2%;
+}
+
+/* 防止 grid item 因 min-width: auto 扩张超出轨道宽度，
+   使内部 scrollbox-x 的 overflow-x: auto 能正常触发滚动条 */
+section:is(
+    .cols-2, .cols-3, .cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46,
+    .rows-2, .rows-1-2, .rows-2-1
+) :is(.ldiv, .mdiv, .rdiv, .tdiv, .bdiv, .limg, .mimg, .rimg, .timg, .bimg) {
+    min-width: 0;
+}
+
+/* ==========================================================================
+   8. Migrated layouts — multi-column lists (cols2_*)
+   两列按「先填满左列」分列（1–3 左，4–6 右），不用 grid 行优先。
+   Markdown 有序列表 ol → 大方块序号；无序列表 ul → 小色块。
+   ========================================================================== */
+
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci)
+    > :is(h2, h3) {
+    align-self: flex-start;
+    margin-left: -2%;
+    text-align: left;
+}
+
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) p {
+    padding-bottom: 1%;
+    margin-left: -1.5%;
+}
+
+/* 分列：column-count 使条目纵向先占满第一列 */
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul) {
+    left: 1%;
+    width: 98%;
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 1.5em;
+    list-style-type: none;
+    column-count: 2;
+    column-gap: 3em;
+}
+
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul) > li {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    margin-bottom: 0.7em;
+    line-height: 1.4rem;
+}
+
+/* 有序列表序号块（仅 ol）：_sq 方形，_ol_ci 圆形（对齐 am_template） */
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li::before {
+    margin: 0 20px 0 0;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-family: var(--font-family-title);
+    background-color: var(--color-much);
+    color: white;
+    margin-left: -8%;
+}
+
+section.cols2_ol_sq ol {
+    counter-reset: cols2_ol_sq;
+}
+
+section.cols2_ol_sq ol > li {
+    counter-increment: cols2_ol_sq;
+}
+
+section.cols2_ol_sq ol > li::before {
+    content: counter(cols2_ol_sq);
+    border-radius: 0;
+}
+
+section.cols2_ol_ci ol {
+    counter-reset: cols2_ol_ci;
+}
+
+section.cols2_ol_ci ol > li {
+    counter-increment: cols2_ol_ci;
+}
+
+section.cols2_ol_ci ol > li::before {
+    content: counter(cols2_ol_ci);
+    border-radius: 50%;
+}
+
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li:hover::before {
+    transition: all 0.7s ease-out;
+    transform: rotate(360deg);
+}
+
+/* 无序列表：小色块（仅 ul；_sq / _ol_ci 方形，仅 cols2_ul_ci 为圆点） */
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li {
+    display: block;
+    position: relative;
+}
+
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq) ul > li::before {
+    content: "";
+    display: inline-flex;
+    position: absolute;
+    top: 1.2em;
+    left: -30px;
+    margin-top: -0.9em;
+    background-color: var(--color-much);
+    height: 10px;
+    width: 10px;
+    border-radius: 0;
+}
+
+section.cols2_ul_ci ul > li::before {
+    content: "";
+    display: inline-flex;
+    position: absolute;
+    top: 1.2em;
+    left: -30px;
+    margin-top: -0.9em;
+    background-color: var(--color-much);
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+}
+
+/* ==========================================================================
+   9. Migrated layouts — fixedtitleB
+   ========================================================================== */
+
+section.fixedtitleB {
+    justify-content: start;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+        "slideheading"
+        "content";
+    align-items: start; /* 或 center，看你想要的垂直位置 */
+}
+
+section.fixedtitleB > :is(h2, h3, h4, h5) {
+    grid-area: slideheading;
+    padding: 10px;
+    background-color: var(--color-much);
+    color: var(--color-title);
+    border-radius: 8px;
+    font-size: 1.25rem;
+}
+
+section.fixedtitleB code {
+    color: var(--color-much);
+}
+
+section.fixedtitleB .div {
+    grid-area: content;
+}
+
+/* ==========================================================================
+   10. Cover pages — cover_a … cover_e
+   ========================================================================== */
+
+section.cover_a,
+section.cover_b,
+section.cover_c,
+section.cover_d,
+section.cover_e {
+    width: 100%;
+}
+
+section.cover_a {
+    background: linear-gradient(to bottom, var(--color-coverbg) 60%, white 40%);
+}
+
+section.cover_c {
+    background: linear-gradient(to bottom, white 20%, var(--color-coverbg) 20% 88%, white 88%);
+}
+
+section.cover_d {
+    background-image: linear-gradient(
+        to bottom,
+        white 5%,
+        var(--color-coverbg) 5% 60%,
+        white 60%
+    );
+}
+
+section.cover_e {
+    background: linear-gradient(108deg, white 70%, var(--color-coverbg) 30%);
+}
+
+section.cover_a,
+section.cover_b {
+    text-align: center;
+}
+
+section.cover_c,
+section.cover_d,
+section.cover_e {
+    text-align: left;
+}
+
+section.cover_a :is(h1, h6, p),
+section.cover_b :is(h1, h6, p),
+section.cover_e :is(h1, h6, p) {
+    position: absolute;
+}
+
+/* --- cover_a: 标题 + table 个人信息 --- */
+section.cover_a h1 {
+    top: 28%;
+    width: 88%;
+    left: 6%;
+    background-color: var(--color-coverbg);
+    vertical-align: middle;
+}
+
+section.cover_a h6 {
+    top: 38%;
+    width: 90%;
+    left: 6%;
+    font-family: var(--font-family-title);
+    font-size: var(--foot-size-subtitle);
+    color: var(--color-title);
+}
+
+section.cover_a strong {
+    color: var(--color-main);
+}
+
+section.cover_a a::after {
+    content: "";
+}
+
+section.cover_a p {
+    bottom: 8%;
+    width: 100%;
+    left: 6%;
+}
+
+section.cover_a table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: auto;
+    max-width: 90%;
+    table-layout: auto;
+    background: transparent;
+}
+
+section.cover_a table tr,
+section.cover_a table thead,
+section.cover_a table tbody {
+    background: transparent;
+}
+
+section.cover_a table tr {
+    border: none;
+}
+
+section.cover_a table :is(thead, td) {
+    text-align: justify;
+    text-align-last: justify; /* 最后一行也拉开 */
+}
+
+section.cover_a table :is(th, td) {
+    border: none;
+    background: transparent;
+    font-weight: normal;
+    font-size: var(--font-size-main);
+    font-family: var(--font-family-main);
+    padding: 0.2em 0 0.2em 0;
+    vertical-align: baseline;
+    line-height: 1.5;
+}
+
+/* 左列标签、右列内容：视觉像对齐文本，结构仍是 table */
+section.cover_a table :is(th, td):first-child {
+    text-align: right;
+    padding-right: 0.6em;
+    white-space: nowrap;
+}
+
+section.cover_a table :is(th, td):last-child {
+    text-align: left;
+    padding-left: 0;
+}
+
+/* --- cover_b --- */
+section.cover_b h1 {
+    top: 15%;
+    right: 5%;
+    left: 5%;
+    height: 26%;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--color-coverbg);
+    border-radius: 20px;
+    text-align: center;
+}
+
+section.cover_b h6 {
+    top: 33%;
+    right: 5%;
+    left: 5%;
+    height: 13%;
+    padding-top: 30px;
+    font-family: var(--font-family-title);
+    font-size: var(--foot-size-subtitle);
+    color: var(--color-title);
+    background-color: var(--color-coverbg);
+    text-align: center;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+}
+
+section.cover_b p {
+    bottom: 13%;
+    width: 100%;
+    transform: translateX(-6%);
+    text-align: center;
+}
+
+section.cover_b strong {
+    color: var(--color-main);
+}
+
+section.cover_b a::after {
+    content: "";
+}
+
+/* --- cover_c --- */
+section.cover_c img {
+    background-color: rgba(255, 255, 255, 0);
+    background-blend-mode: lighten;
+    filter: var(--filter-c);
+}
+
+section.cover_c h1 {
+    width: 95%;
+    padding-top: 8%;
+}
+
+section.cover_c h6 {
+    margin-top: 0;
+    width: 95%;
+    font-family: var(--font-family-title);
+    font-size: var(--foot-size-subtitle);
+    color: var(--color-title);
+}
+
+section.cover_c p {
+    margin-top: 5%;
+    color: var(--color-title);
+}
+
+section.cover_c :is(strong, a) {
+    color: var(--color-title);
+}
+
+section.cover_c a::after {
+    content: "";
+}
+
+section.cover_c footer {
+    font-size: larger;
+    left: 68%;
+    bottom: 30px;
+}
+
+section.cover_c header {
+    height: 150px;
+    width: 380px;
+    text-align: left;
+    padding: 2% 4%;
+    background-color: rgba(255, 255, 255, 0);
+    background-blend-mode: lighten;
+}
+
+/* --- cover_d --- */
+section.cover_d h1 {
+    width: 95%;
+    position: relative;
+    bottom: 2%;
+}
+
+section.cover_d h6 {
+    margin-top: 0;
+    width: 95%;
+    position: relative;
+    bottom: 0;
+    font-family: var(--font-family-title);
+    font-size: var(--foot-size-subtitle);
+    color: var(--color-title);
+}
+
+section.cover_d p {
+    position: relative;
+    bottom: -22%;
+}
+
+section.cover_d strong {
+    color: var(--color-main);
+}
+
+section.cover_d a::after {
+    content: "";
+}
+
+section.cover_d footer {
+    font-size: larger;
+    left: 68%;
+    bottom: 30px;
+}
+
+/* --- cover_e --- */
+section.cover_e h1 {
+    top: 28%;
+    width: 70%;
+    left: 1.2%;
+    color: var(--color-much);
+}
+
+section.cover_e h6 {
+    top: 38%;
+    width: 68%;
+    font-family: var(--font-family-title);
+    font-size: var(--foot-size-subtitle);
+    color: var(--color-much);
+}
+
+section.cover_e p {
+    bottom: 15%;
+    left: 5%;
+}
+
+section.cover_e strong {
+    color: var(--color-main);
+}
+
+section.cover_e a::after {
+    content: "";
+}
+
+section.cover_e footer {
+    height: 128px;
+    width: 26%;
+    left: 72%;
+    bottom: 0;
+    padding: 0;
+}
+
+section.cover_e header {
+    height: 100px;
+    width: 100px;
+    top: 0;
+    left: 80px;
+    text-align: center;
+    background-color: var(--color-coverbg);
+    vertical-align: middle;
+}
+
+section.cover_e footer,
+section.cover_e header {
+    /* 保留现有 height / width / position … */
+    display: flex;
+    align-items: center;      /* 关键：取消 stretch */
+    justify-content: center;  /* logo 居中，可按需改 flex-start */
+    overflow: visible;         /* scale(1.2) 溢出时裁切 */
+}
+
+section.cover_e footer > img {
+    transform: scale(1.2);
+    background-color: rgba(255, 255, 255, 0);
+    background-blend-mode: lighten;
+    filter: brightness(2000%) grayscale(60%);
+}
+
+section.cover_e header > img {
+    transform: scale(0.88);
+    background-color: rgba(255, 255, 255, 0);
+    background-blend-mode: lighten;
+    filter: brightness(3000%) grayscale(100%);
+}
+
+section.cover_e footer > img,
+section.cover_e header > img {
+    height: auto;
+    width: auto;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;   /* 等比缩放，不拉伸 */
+    flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   11. TOC pages — toc_a / toc_b
+   ========================================================================== */
+
+section.toc_a ul {
+    list-style-type: none;
+    padding: 30px;
+    margin: 30px;
+    position: relative;
+    border-radius: 0 0 20px 20px;
+    border-top: 8px solid var(--color-navbar-font);
+    background-color: white;
+    box-shadow: 3px 3px 25px rgb(215, 224, 235);
+}
+
+section.toc_a ul li {
+    counter-increment: toc_a;
+}
+
+section.toc_a ul li::before {
+    font-family: var(--font-family-title);
+    color: white;
+    content: counter(toc_a);
+    margin-right: 20px;
+    margin-bottom: 10px;
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-much);
+    border-radius: 50%;
+}
+
+section.toc_a ul li:hover::before {
+    transition: all 0.3s ease-out;
+    transform: rotate(360deg);
+}
+
+section.toc_a header {
+    position: absolute;
+    top: 0;
+    left: -8px;
+    height: 100%;
+    width: 150%;
+    font-weight: bolder;
+    font-size: 1080%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    line-height: 162px;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 0.75px var(--color-navbar-font);
+}
+
+section.toc_b {
+    width: 100%;
+    background: linear-gradient(to right, white 6%, var(--color-coverbg) 6% 30%, white 30%);
+}
+
+section.toc_b > :is(ul, ol) {
+    list-style-type: none;
+    display: table;
+    width: 63%;
+    left: 30%;
+    position: absolute;
+    line-height: 200%;
+}
+
+section.toc_b ul li {
+    counter-increment: toc_b;
+}
+
+section.toc_b ul li::before {
+    content: counter(toc_b);
+    margin: 0 20px 0 0;
+    width: 35px;
+    height: 35px;
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-title);
+    background-color: var(--color-much);
+    border-radius: 50%;
+    color: white;
+}
+
+section.toc_b ul li:hover::before {
+    transition: all 0.3s ease-out;
+    transform: rotate(360deg);
+}
+
+section.toc_b header {
+    width: 20%;
+    left: 8%;
+    top: 25%;
+    text-align: center;
+    position: absolute;
+    font-size: var(--font-size-2-3);
+    color: var(--color-title);
+    font-weight: bolder;
+    line-height: 200%;
+    letter-spacing: 3px;
+}
+
+section.toc_b img {
+    background-color: rgba(255, 255, 255, 0);
+    background-blend-mode: lighten;
+    padding-top: 30px;
+    width: 70%;
+    filter: brightness(1000%) grayscale(100%);
+}
+
+/* ==========================================================================
+   12. Last page & navbar
+   ========================================================================== */
+
+section.lastpage {
+    width: 100%;
+    padding: 0;
+    background: linear-gradient(
+        to bottom,
+        white 20%,
+        var(--color-coverbg) 20% 60%,
+        white 55%
+    );
+    display: grid;
+    grid-template-rows: 1fr auto;
+    grid-template-columns: auto;
+    grid-template-areas:
+        "heading"
+        "icons";
+}
+
+section.lastpage h6 {
+    grid-area: heading;
+    display: grid;
+    width: 100%;
+    height: 100%;
+    align-content: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    text-align: center;
+    font-family: var(--font-family-title);
+    font-size: var(--font-size-1);
+    color: var(--color-title);
+}
+
+section.lastpage a::after,
+section.lastpage::after {
+    position: relative;
+    content: "";
+    border: none;
+    color: white;
+}
+
+section.lastpage .icons {
+    grid-area: icons;
+}
+
+section.lastpage div > ul {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.8fr 1fr 1fr;
+    gap: 5em;
+    align-content: center;
+    list-style: none;
+}
+
+section.lastpage ul > li > ul > li {
+    margin-left: -120px;
+    list-style: none;
+}
+
+section.navbar header {
+    position: absolute;
+    background-color: var(--color-navbar-bg);
+    width: 100%;
+    height: 5%;
+    padding: 6px 0 3px;
+    left: 0;
+    top: 0;
+    right: auto;
+    display: flex;
+    justify-content: space-between;
+    color: var(--color-navbar-font);
+    white-space: pre;
+}
+
+section.navbar header > em,
+section.navbar header > strong,
+section.navbar header > em > strong {
+    font-style: normal;
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: var(--color-navbar-font);
+}
+
+section.navbar header > strong {
+    border: 1px solid white;
+    border-radius: 12px;
+    padding: 0 15px 5px;
+    background-color: white;
+}
+
+section.navbar header > em > strong {
+    display: block;
+    width: 400px;
+    text-align: left;
+    margin-left: -20px;
+}
+
+section.navbar header::before,
+section.navbar header::after {
+    content: "";
+}
+
+section.navbar
+    > :is(h1, h2, h3, h4, h5, h6, p, ul, ol, table, blockquote, pre, div):not(
+        header
+    ):not(footer) {
+    margin-top: 36px;
+}
+
+/* ==========================================================================
+   13. fglass & trans (am_template)
+   ========================================================================== */
+
+section.fglass :is(ul, ol) {
+    padding: 20px 20px 20px 60px;
+    margin-left: -25px;
+    border-radius: 0 0 20px 20px;
+    border-top: 8px solid var(--color-navbar-font);
+    background-color: white;
+    box-shadow: 1px 1px 12px rgb(215, 224, 235);
+}
+
+section.trans {
+    background-color: var(--color-trans);
+}
+
+section.trans h2 {
+    text-align: center;
+    color: var(--color-title);
+    font-size: 2rem;
+}

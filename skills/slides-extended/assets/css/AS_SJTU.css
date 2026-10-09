@@ -1,0 +1,19 @@
+/* AS_SJTU.css — Slides Extended SJTU background images.
+   Load after AS_red.css or AS_blue.css via frontmatter:
+     remoteCSS:
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_red.css   OR  .../AS_blue.css
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css
+
+   When loaded, no need to declare `bg:` in frontmatter or `bg="..."` on slides.
+   First slide → SJTU-cover-bg.svg; all others → SJTU-bg1.svg.
+   AS_blue.css tints these red SVGs blue via filter (URLs unchanged here).
+*/
+
+div.backgrounds > div.slide-background.drop.cover:first-child > div.slide-background-content {
+    background-image: url(https://raw.githubusercontent.com/xjtusjtu/images/master/img/SJTU-cover-bg.svg);
+}
+
+div.backgrounds > div.slide-background.drop > div.slide-background-content {
+    background-image: url(https://raw.githubusercontent.com/xjtusjtu/images/master/img/SJTU-bg1.svg);
+}

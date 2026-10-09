@@ -1,0 +1,3499 @@
+/* AS_basic.css — Slides Extended basic layout & structure.
+   Load first via frontmatter `remoteCSS:` (GitHub raw URLs — any vault can use them;
+   remote URLs go in remoteCSS:, not css:):
+     remoteCSS:
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_red.css   OR  .../AS_blue.css
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
+
+   Architecture
+   ------------
+   §0  Design tokens (:root)
+   §1  Slide shell
+   §2  Typography
+   §3  Layout (columns, panel cols/rows, list-* families)
+   §4  Lists
+   §5  Code & math
+   §6  Blockquote, mark & callout modifiers (blank / noborder / notitle)
+   §7  Adaptive text — deck / slide has-* backgrounds
+   §8  Tables (+ §8.1 table-fit)
+   §9  Header / footer / scrollbox / split / gallery
+   §10 Images
+   §11 Form controls
+   §12 Footnotes & sup
+   §13 Fancy lists
+   §15 Cover page
+   §16 Transition pages
+   §14 Local block adaptive (.on-light-bg / .on-dark-bg) — physically last for cascade
+
+   List DOM paths (Slides Extended export):
+     A: section > div > ul|ol
+     B: section > div > .block > ul|ol   (template slot)
+     C: section div.as-body > ul|ol       (nav-shell <grid class="as-body">)
+
+   Nesting convention: host slide class nests A/B/C via &; adaptive scopes nest descendants.
+*/
+/* ==========================================================================
+   0. Design tokens (:root) — non-color only
+   ========================================================================== */
+
+:root {
+    --r-main-font: "Times New Roman", "Source Han Sans SC", "PingFang SC", Arial, Source Sans Pro, Verdana,
+        Helvetica, sans-serif;
+    --r-main-font-size: 30px;
+    --r-block-margin: 0.35em;
+    --r-heading-margin: 0.5em 0 0.5em 0;
+    --r-heading-font: "Bookerly", "Times New Roman", "Microsoft YaHei", "PingFang SC", Source Sans Pro, Helvetica,
+        sans-serif;
+    --r-heading-line-height: 1.2;
+    --r-heading-letter-spacing: normal;
+    --r-heading-text-transform: uppercase;
+    --r-heading-text-shadow: none;
+    --r-heading1-font-weight: 600;
+    --r-heading2-font-weight: 600;
+    --r-heading3-font-weight: 600;
+    --r-heading4-font-weight: 600;
+    --r-heading5-font-weight: 600;
+    --r-heading6-font-weight: 600;
+    --r-heading1-text-shadow: none;
+    --r-heading1-size: 2.5em;
+    --r-heading2-size: 1.6em;
+    --r-heading3-size: 1.3em;
+    --r-heading4-size: 1em;
+    --r-heading5-size: 0.8em;
+    --r-heading6-size: 0.6em;
+    --r-code-font: monospace;
+    --as-caption-font: "Times New Roman", "黑体", serif;
+    --as-caption-gap: 0.15em; /* 题注 ↔ 紧邻的图 / 表（flex 不塌缩，须成对改相贴边） */
+    --as-fancy-marker-size: 30px;
+    /* lighter than --r-main-color2 for task-list checkboxes */
+    --as-checkbox-color: color-mix(in srgb, var(--r-main-color2) 50%, #fff);
+    --header-title-min-width: 14ch;
+    --header-title-max-width: 22%;
+    --header-title-nav-gap: 1.25em;
+    --header-nav-gap-min: 8px;
+    --header-nav-font-min: 0.62em;
+    --header-nav-font-max: 0.85em;
+    /* list-grid / list-flex-* — overridden by slide host classes */
+    --list-grid-columns: repeat(2, minmax(0, 1fr));
+    --list-flex-direction: row;
+    --list-flex-gap: 40px;
+    --list-flex-justify: center;
+    --list-item-flex: 1;
+    --list-item-min-width: auto;
+    --list-item-bg: var(--r-grid-bg-front-color);
+    --list-item-border-width: 5px;
+    --list-item-border-block-start: var(--list-item-border-width) solid var(--r-border-color);
+    --list-item-border-block-end: none;
+    --list-item-direction: row;
+    --list-item-align: center;
+    --list-item-justify: center;
+    --list-item-padding: 0;
+    --list-item-font-size: 0.8em;
+    --list-item-inner-gap: 0;
+    --list-fragment-color: var(--r-accent-color);
+    /* list-card-grid + list-card-grid--{2|3} + list-card-grid--* */
+    --list-card-columns: repeat(2, minmax(0, 1fr));
+    --list-card-gap: 1rem;
+    --list-card-radius: 12px;
+    --list-card-padding: 1.2rem 1rem;
+    --list-card-bg: var(--r-grid-bg-front-color);
+    --list-card-marker-size: 2em;
+    --list-card-accent-width: 8px;
+    --list-card-accent-color: var(--r-main-color2);
+    --list-card-accent-alt: #c0392b;
+    /* list-card-grid--badge — top-centered emoji / icon ring */
+    --list-card-badge-size: 2.5em;
+    --list-card-badge-border-width: 0.16em;
+    --list-card-badge-border-color: var(--r-main-color2);
+    --list-card-badge-title-size: 1.12em;
+    --list-card-badge-body-size: 0.82em;
+}
+
+/* ==========================================================================
+   1. Slide shell — .reveal .slides global
+   ========================================================================== */
+
+.reveal .slides {
+    text-align: left;
+}
+
+/* ==========================================================================
+   2. Typography — headings, links, strong/em, caption
+   ========================================================================== */
+
+.reveal :is(h1, h2, h3, h4, h5, h6) {
+    text-transform: none;
+    margin: 0;
+}
+
+.reveal .slides :is(h2, h3) {
+    width: fit-content;
+    max-width: 100%;
+    margin: var(--r-heading-margin);
+}
+
+.reveal .slides h2::after {
+    content: "";
+    display: block;
+    background-color: var(--r-main-color2);
+    width: 100%;
+    height: 10px;
+    border-radius: 10px;
+}
+
+.reveal .slides section .header a {
+    color: var(--r-selection-color);
+}
+
+.reveal strong {
+    color: var(--r-strong-color);
+}
+
+.reveal em {
+    color: var(--r-em-color);
+}
+
+/* caption — table 题注需借助 center 元素；图下 *斜体* 图注 */
+.reveal .slides :is(img, .mermaid) + p > em,
+.reveal .slides p:has(> img) + p > em,
+.reveal .slides p:has(> img:only-child) + p > em,
+center {
+    font-style: normal;
+    display: block;
+    margin: 0.2rem 1rem 1rem 1rem;
+    font-size: calc(var(--r-main-font-size) * 0.9);
+    font-family: var(--as-caption-font);
+    line-height: 1.4;
+    color: var(--text-faint);
+    text-align: center;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Caption / <center> under center:false — same as display math (§5):
+   flex column + align-items:start shrink-wraps to content width, so
+   text-align:center has no visible effect. Stretch the flex item first. */
+.reveal .slides center,
+.reveal .slides :is(img, .mermaid) + p:has(> em),
+.reveal .slides p:has(> img) + p:has(> em),
+.reveal .slides p:has(> img:only-child) + p:has(> em) {
+    align-self: stretch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* 题注紧邻图/表：只收紧相贴边；无题注的图/表仍用自身 margin 与正文隔开 */
+.reveal .slides center:has(+ :is(table, .table-fit)) {
+    margin-bottom: var(--as-caption-gap);
+}
+
+.reveal .slides center + :is(table, .table-fit) {
+    margin-top: var(--as-caption-gap);
+}
+
+.reveal .slides :is(img, .mermaid):has(+ p > em),
+.reveal .slides p:has(> img:only-child):has(+ p > em) {
+    margin-bottom: var(--as-caption-gap);
+}
+
+.reveal .slides .mermaid:has(+ p > em) > svg {
+    margin-bottom: var(--as-caption-gap);
+}
+
+.reveal .slides :is(img, .mermaid) + p:has(> em),
+.reveal .slides p:has(> img) + p:has(> em),
+.reveal .slides p:has(> img:only-child) + p:has(> em) {
+    margin-top: var(--as-caption-gap);
+}
+
+.reveal .slides :is(img, .mermaid) + p:has(> em) > em,
+.reveal .slides p:has(> img) + p:has(> em) > em,
+.reveal .slides p:has(> img:only-child) + p:has(> em) > em {
+    margin-top: 0;
+}
+
+/* ==========================================================================
+   3. Layout — section div, r-stack, ltBlock/ltFlex, .as-body, columns
+   ========================================================================== */
+
+.reveal .slides .r-stack {
+    display: grid !important;
+}
+
+.reveal .slides section .as-body {
+    padding: 0 10px !important;
+    align-items: unset !important;
+    justify-content: center !important;
+}
+
+.reveal .slides > section.ltBlock > div {
+    display: block !important;
+    text-align: left;
+}
+
+.reveal .slides > section.ltFlex > div {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+}
+
+/* ---------- center:false 时还原 grid align-items（slide class） ---------- */
+
+/* 插件在 center:false 时对所有 grid 注入 inline align-items:start，盖掉 align="center"。
+   封面 / TOC 等需 grid 居中的 slide 加 class grid-align-restore；详见 P_obsidian-slides-extended.md */
+.reveal .slides section.grid-align-restore div {
+    align-items: unset !important;
+}
+
+/* ASTp absolute grid 栏（flex column + inline align-items:start）：
+   子级 .block 会 shrink-wrap；mermaid svg[width=100%] 相对窄父级，图显得极小。
+   槽块拉满栏宽（排除 header/footer）。 */
+.reveal .slides section > div > div:not(.header):not(.footer) > .block {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    align-self: stretch;
+}
+
+.reveal .slides .block > .mermaid {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.reveal .slides .block > .mermaid > svg {
+    display: block;
+    margin: var(--r-block-margin) auto;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Mermaid markdown 粗体吞字：
+   节点框按 regular 量宽；` **bold** ` 渲染为 <strong> 后约宽 8–12%。
+   SVG foreignObject 默认 overflow:hidden → 右侧裁字。
+   只放开裁切，不写 font-size（否则盖掉 YAML / %%{init}%% 的 themeVariables.fontSize）。
+   见 [[AS_Mermaid#@2026-08-19 markdown 粗体吞字]] */
+.reveal .mermaid .node,
+.reveal .mermaid .label,
+.reveal .mermaid foreignObject {
+    overflow: visible;
+}
+
+/* ---------- 针对任意内容的分栏样式 ---------- */
+
+.reveal .slides .columns .as-body {
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: flex-end !important;
+    gap: 12px;
+}
+
+.reveal .slides .columns .as-body h1,
+.reveal .slides .columns .as-body h2,
+.reveal .slides .columns .as-body h3,
+.reveal .slides .columns .as-body h4,
+.reveal .slides .columns .as-body h5,
+.reveal .slides .columns .as-body h6 {
+    width: 100%;
+}
+
+.reveal .slides .columns .as-body .block {
+    flex: 1;
+}
+
+.reveal .slides .columns .as-body > ul,
+.reveal .slides .columns .as-body > ol {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    grid-gap: 12px;
+}
+
+.reveal .slides .columns .as-body > ul > li,
+.reveal .slides .columns .as-body > ol > li {
+    flex: 1;
+}
+
+/* ---------- 纯文本分栏样式 ---------- */
+
+.reveal .slides .two-columns {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+    width: 100%;
+    align-content: center;
+    justify-items: center;
+}
+
+/* ---------- 针对列表的分栏样式 ----------
+   列表节点路径（Slides Extended 导出 DOM）：
+   - 无模板 / slide class：section > div > ul|ol
+   - 模板槽（::: items / left …）：section > div > .block > ul|ol
+   - nav-shell 正文区：section div.as-body > ul|ol（模板内 <grid class="as-body">，非 <% content %> 占位符）
+   ---------- */
+
+.reveal .slides div.g-columns {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    align-content: center;
+    justify-items: center;
+}
+
+/* ==========================================================================
+   3.x Panel layouts — Marp-compatible cols-* / rows-* (CSS path)
+      Slide class + ::: block + element class (ldiv/tdiv/…) or <div class="ldiv">.
+      Grid host: bare slide → section > div (absolute drop wrapper);
+      nav-shell → section > div > div.as-body (plugin wraps grids in absolute div;
+      do NOT grid header/footer; :has(div.as-body) not :has(> .as-body)).
+      Row rule: heading / toppanel / column / bottom bands = auto
+      (height = content; row height = tallest panel in that band).
+      Whole packed block vertically centered (AS align=left).
+      tdiv/bdiv: width = fit-content (not forced full grid track).
+   ========================================================================== */
+
+.reveal .slides section:is(
+    .cols-2,
+    .cols-3,
+    .cols-2-73,
+    .cols-2-64,
+    .cols-2-37,
+    .cols-2-46,
+    .rows-2,
+    .rows-1-2,
+    .rows-2-1
+) {
+    /* Host: nav as-body (under absolute wrapper), or bare content wrapper.
+       Plugin injects inline display:flex + flex-direction:column + align-items:start
+       (center:false); must beat with !important or panels stack & shrink-wrap. */
+    & > div > div.as-body,
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+        box-sizing: border-box;
+        display: grid !important;
+        flex-direction: unset !important;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        min-height: 0;
+        min-width: 0;
+        overflow: hidden;
+        align-items: stretch !important;
+        justify-items: stretch;
+        /* Pack tracks to content height, then center the block on the slide */
+        align-content: center;
+        justify-content: stretch !important;
+    }
+
+    & > div > div.as-body > :is(.ldiv, .limg),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(.ldiv, .limg) {
+        grid-area: leftpanel;
+    }
+
+    & > div > div.as-body > :is(.mdiv, .mimg),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(.mdiv, .mimg) {
+        grid-area: middlepanel;
+    }
+
+    & > div > div.as-body > :is(.rdiv, .rimg),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(.rdiv, .rimg) {
+        grid-area: rightpanel;
+    }
+
+    & > div > div.as-body > :is(.tdiv, .timg),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(.tdiv, .timg) {
+        grid-area: toppanel;
+    }
+
+    & > div > div.as-body > :is(.bdiv, .bimg),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(.bdiv, .bimg) {
+        grid-area: bottompanel;
+    }
+
+    & > div > div.as-body > :is(h2, h3),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(h2, h3) {
+        grid-area: slideheading;
+        margin-top: 0;
+    }
+
+    /* Text panels: AS align="left" — horizontal left, vertical center within row;
+       safe avoids clipping tall scroll content */
+    & > div > div.as-body > :is(.ldiv, .mdiv, .rdiv, .bdiv),
+    &:not(:has(div.as-body))
+        > div:not(.header):not(.footer)
+        > :is(.ldiv, .mdiv, .rdiv, .bdiv) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        justify-content: safe center;
+        align-items: stretch;
+        text-align: left;
+    }
+
+    /* tdiv/bdiv: shrink to content width (quotes, short captions); images stay full track */
+    & > div > div.as-body > :is(.tdiv, .bdiv),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(.tdiv, .bdiv) {
+        width: fit-content;
+        max-width: 100%;
+        justify-self: start;
+        box-sizing: border-box;
+    }
+
+    & > div > div.as-body > :is(.limg, .mimg, .rimg, .timg, .bimg),
+    &:not(:has(div.as-body)) > div:not(.header):not(.footer) > :is(.limg, .mimg, .rimg, .timg, .bimg) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        justify-content: safe center;
+    }
+
+    & > div > div.as-body > :is(.ldiv, .mdiv, .rdiv, .tdiv, .bdiv, .limg, .mimg, .rimg, .timg, .bimg),
+    &:not(:has(div.as-body))
+        > div:not(.header):not(.footer)
+        > :is(.ldiv, .mdiv, .rdiv, .tdiv, .bdiv, .limg, .mimg, .rimg, .timg, .bimg) {
+        min-width: 0;
+        min-height: 0;
+        overflow: auto;
+    }
+}
+
+/* rows-*: pack from top; unequal ldiv/rdiv top-align (not vertically centered in the row) */
+.reveal .slides section:is(.rows-2, .rows-1-2, .rows-2-1) > div > div.as-body,
+.reveal .slides section:is(.rows-2, .rows-1-2, .rows-2-1):not(:has(div.as-body))
+    > div:not(.header):not(.footer) {
+    align-content: start;
+}
+
+.reveal .slides section:is(.rows-2, .rows-1-2, .rows-2-1) > div > div.as-body > :is(.ldiv, .mdiv, .rdiv, .tdiv, .bdiv),
+.reveal .slides
+    section:is(.rows-2, .rows-1-2, .rows-2-1):not(:has(div.as-body))
+    > div:not(.header):not(.footer)
+    > :is(.ldiv, .mdiv, .rdiv, .tdiv, .bdiv) {
+    justify-content: flex-start;
+    justify-content: safe flex-start;
+}
+
+/* --- track templates ---
+   cols-*: heading auto + column band auto (equal height = max content);
+           whole block vertically centered (AS align=left), columns full width
+   rows-*: all bands auto (content height); tdiv/bdiv width fit-content; pack from top */
+
+.reveal .slides section.cols-2 > div > div.as-body,
+.reveal .slides section.cols-2:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1.5rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+.reveal .slides section.cols-3 > div > div.as-body,
+.reveal .slides section.cols-3:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading slideheading"
+        "leftpanel middlepanel rightpanel";
+}
+
+.reveal .slides section.cols-2-73 > div > div.as-body,
+.reveal .slides section.cols-2-73:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 7fr 3fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+.reveal .slides section.cols-2-64 > div > div.as-body,
+.reveal .slides section.cols-2-64:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 6fr 4fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+.reveal .slides section.cols-2-37 > div > div.as-body,
+.reveal .slides section.cols-2-37:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 3fr 7fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+.reveal .slides section.cols-2-46 > div > div.as-body,
+.reveal .slides section.cols-2-46:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 4fr 6fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel";
+}
+
+.reveal .slides section.rows-2 > div > div.as-body,
+.reveal .slides section.rows-2:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "slideheading"
+        "toppanel"
+        "bottompanel";
+}
+
+.reveal .slides section.rows-1-2 > div > div.as-body,
+.reveal .slides section.rows-1-2:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "toppanel toppanel"
+        "leftpanel rightpanel";
+}
+
+.reveal .slides section.rows-2-1 > div > div.as-body,
+.reveal .slides section.rows-2-1:not(:has(div.as-body)) > div:not(.header):not(.footer) {
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+        "slideheading slideheading"
+        "leftpanel rightpanel"
+        "bottompanel bottompanel";
+}
+
+
+/* Rename map: grid-list→list-grid; as-list-*→list-* (2026-07); card modifiers → list-card-grid--* */
+
+/* --- List layout families (compose slide classes on section) ---
+   list-grid [+ --1-2 | --2-1 | --3 | --4 …]          column grid of list items
+   list-flex-row | list-flex-col | list-flex-step  flex / step cards
+   list-card-grid [--2 | --3 | --4] + list-card-grid--{icon|ordered|tint|inline|badge|accent-odd|accent-even}  card matrix
+   --- */
+
+/* Grid list — list-grid + list-grid--* column modifiers */
+.reveal .slides section.list-grid {
+    & > div > :is(ul, ol),
+    & > div > .block > :is(ul, ol),
+    & div.as-body > :is(ul, ol) {
+        display: grid;
+        grid-template-columns: var(--list-grid-columns);
+        width: 95%;
+        counter-reset: step;
+        margin: 0 40px 0 10px;
+        gap: 0.7em;
+        /* outside 项目符号在首列 grid cell 左侧，须留内边距否则被裁切 */
+        padding-inline-start: 1.25em;
+        overflow: visible;
+
+        & > li {
+            margin-right: 5%;
+            overflow: visible;
+        }
+    }
+
+    /* §9.5 对 section>div 设 overflow:hidden 会裁切 grid 列表首列 outside 符号 */
+    & > div:not(.header):not(.footer) {
+        overflow: visible;
+    }
+}
+
+.reveal .slides section.list-grid--1-2 { --list-grid-columns: 1fr 2fr; }
+.reveal .slides section.list-grid--2-1 { --list-grid-columns: 2fr 1fr; }
+.reveal .slides section.list-grid--3 { --list-grid-columns: repeat(3, 1fr); }
+.reveal .slides section.list-grid--1-2-1 { --list-grid-columns: 1fr 2fr 1fr; }
+.reveal .slides section.list-grid--1-1-2 { --list-grid-columns: 1fr 1fr 2fr; }
+.reveal .slides section.list-grid--2-1-1 { --list-grid-columns: 2fr 1fr 1fr; }
+.reveal .slides section.list-grid--4 { --list-grid-columns: repeat(4, 1fr); }
+
+/* Flex row — direct-child ul (element- or section-level) */
+.reveal .slides .list-flex-row > ul,
+.reveal .slides section.list-flex-row > div > ul,
+.reveal .slides section.list-flex-row > div > .block > ul {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: var(--list-flex-direction);
+    justify-content: var(--list-flex-justify);
+    gap: var(--list-flex-gap);
+    margin: 0;
+    padding: 0;
+
+    & > li {
+        flex: var(--list-item-flex);
+        flex-wrap: wrap;
+        min-width: var(--list-item-min-width);
+        margin: 0;
+        padding: var(--list-item-padding);
+        background-color: var(--list-item-bg);
+        border-block-start: var(--list-item-border-block-start);
+        border-block-end: var(--list-item-border-block-end);
+        display: flex;
+        flex-direction: var(--list-item-direction);
+        align-items: var(--list-item-align);
+        justify-content: var(--list-item-justify);
+        gap: var(--list-item-inner-gap);
+        font-size: var(--list-item-font-size);
+
+        &:is(.current-fragment, :has(.current-fragment)) {
+            color: var(--list-fragment-color);
+            font-weight: 600;
+        }
+    }
+}
+
+/* Flex col — descendant ul paths */
+.reveal .slides .list-flex-col ul,
+.reveal .slides section.list-flex-col > div ul,
+.reveal .slides section.list-flex-col > div > .block ul {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: var(--list-flex-direction);
+    justify-content: var(--list-flex-justify);
+    gap: var(--list-flex-gap);
+    margin: 0;
+    padding: 0;
+
+    & > li {
+        flex: var(--list-item-flex);
+        flex-wrap: wrap;
+        min-width: var(--list-item-min-width);
+        margin: 0;
+        padding: var(--list-item-padding);
+        background-color: var(--list-item-bg);
+        border-block-start: var(--list-item-border-block-start);
+        border-block-end: var(--list-item-border-block-end);
+        display: flex;
+        flex-direction: var(--list-item-direction);
+        align-items: var(--list-item-align);
+        justify-content: var(--list-item-justify);
+        gap: var(--list-item-inner-gap);
+        font-size: var(--list-item-font-size);
+
+        &:is(.current-fragment, :has(.current-fragment)) {
+            color: var(--list-fragment-color);
+            font-weight: 600;
+        }
+    }
+}
+
+/* Token hosts — only deltas from :root */
+.list-flex-col {
+    --list-flex-direction: column;
+    --list-item-bg: var(--r-background-color);
+    --list-item-border-block-start: none;
+    --list-item-border-block-end: 5px solid var(--r-border-color);
+    --list-fragment-color: var(--r-main-color2);
+}
+
+/* flex-row nested sub-list */
+.reveal .slides :is(.list-flex-row) {
+    & > ul > li > ul,
+    & > div > ul > li > ul,
+    & > div > .block > ul > li > ul {
+        width: 100%;
+        padding: 0;
+
+        & > li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+            font-size: 0.8em;
+        }
+    }
+}
+
+/* Flex step — horizontal ordered step cards */
+.reveal .slides :is(section.list-flex-step, .list-flex-step) {
+    & > div > ol,
+    & > div > .block > ol,
+    & > ol {
+        display: flex;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: step-index;
+        gap: 1rem;
+        justify-content: space-around;
+
+        & > li {
+            position: relative;
+            flex: 0 1 auto;
+            min-width: 16rem;
+            margin: 0;
+            padding: 1.2rem 1rem 1rem;
+            background-color: var(--r-grid-bg-front-color);
+            border-block-start: 10px solid var(--r-border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0.75rem;
+            overflow: hidden;
+
+            &::before {
+                counter-increment: step-index;
+                content: "0" counter(step-index);
+                display: inline-flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                font-family: var(--r-heading-font);
+                font-size: 1.15em;
+                font-weight: 700;
+                line-height: 1;
+                letter-spacing: 0.06em;
+                color: var(--r-accent-color);
+            }
+
+            & > :first-child {
+                margin-top: 0;
+                font-size: 0.92em;
+                line-height: 1.35;
+                font-weight: 600;
+            }
+
+            & > :not(:first-child) {
+                width: 100%;
+                margin-top: 0;
+                font-size: 0.82em;
+                line-height: 1.45;
+            }
+
+            &:is(.current-fragment, :has(.current-fragment)) {
+                color: var(--list-fragment-color);
+                font-weight: 600;
+            }
+
+            & > :is(ol, ul) {
+                display: block;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+
+                & > li {
+                    margin: 0.35em 0;
+                    padding: 0;
+                    font-size: 0.82em;
+                    line-height: 1.45;
+                    list-style: none;
+                    border-top: none;
+
+                    &::before {
+                        content: none;
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Card grid — R×C matrix (each li is a card; rows auto-wrap) */
+.reveal .slides section.list-card-grid {
+    --list-card-columns: repeat(2, minmax(0, 1fr));
+
+    &.list-card-grid--3 {
+        --list-card-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    &.list-card-grid--4 {
+        --list-card-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    & > div > :is(ul, ol),
+    & > div > .block > :is(ul, ol),
+    & div.as-body > :is(ul, ol) {
+        display: grid;
+        grid-template-columns: var(--list-card-columns);
+        gap: var(--list-card-gap);
+        width: 95%;
+        margin: 0.5em 40px 0 10px;
+        padding: 0;
+        list-style: none;
+        overflow: visible;
+
+        & > li {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto auto;
+            align-content: start;
+            gap: 0.35rem 0.75rem;
+            margin: 0;
+            padding: var(--list-card-padding);
+            background-color: var(--list-card-bg);
+            border-radius: var(--list-card-radius);
+            overflow: hidden;
+            list-style: none;
+
+            & > :first-child {
+                grid-column: 2;
+                grid-row: 1;
+                margin: 0;
+                font-size: 0.92em;
+                line-height: 1.35;
+                font-weight: 600;
+            }
+
+            & > :is(ul, ol) {
+                grid-column: 2;
+                grid-row: 2;
+                display: block;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+
+                & > li {
+                    margin: 0.35em 0;
+                    padding: 0;
+                    font-size: 0.82em;
+                    line-height: 1.45;
+                    list-style: none;
+
+                    &::before {
+                        content: none;
+                        display: none;
+                    }
+                }
+            }
+
+            &:is(.current-fragment, :has(.current-fragment)) {
+                color: var(--list-fragment-color);
+                font-weight: 600;
+            }
+        }
+    }
+
+    & > div:not(.header):not(.footer) {
+        overflow: visible;
+    }
+}
+
+/* ordered — left 01/02 counter */
+.reveal .slides section.list-card-grid--ordered {
+    & > div > ol,
+    & > div > .block > ol,
+    & div.as-body > ol {
+        counter-reset: card-index;
+
+        & > li::before {
+            counter-increment: card-index;
+            content: "0" counter(card-index);
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            align-self: start;
+            font-family: var(--r-heading-font);
+            font-size: var(--list-card-marker-size);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.06em;
+            color: var(--r-accent-color);
+        }
+    }
+}
+
+/* icon — user-provided symbol / emoji as left marker (unordered) */
+.reveal .slides section.list-card-grid--icon {
+    & > div > ul > li,
+    & > div > .block > ul > li,
+    & div.as-body > ul > li {
+        &::before {
+            content: none;
+            display: none;
+        }
+
+        /* top-level marker line — blank line before nested list → <p> */
+        & > :is(p, span):first-child,
+        & > .block:first-child:not(:has(:is(ul, ol))) {
+            grid-column: 1;
+            grid-row: 1 / span 2;
+            align-self: start;
+            margin: 0;
+            font-size: var(--list-card-marker-size);
+            font-weight: 700;
+            line-height: 1;
+            color: var(--r-accent-color);
+
+            & p {
+                margin: 0;
+            }
+        }
+
+        & > :is(ul, ol) {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            display: block;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            & > li {
+                margin: 0.35em 0;
+                padding: 0;
+                list-style: none;
+
+                &::before {
+                    content: none;
+                    display: none;
+                }
+
+                & p {
+                    margin: 0;
+                }
+
+                /* title — first nested item (usually **bold**) */
+                &:first-child {
+                    margin-top: 0;
+                    font-size: 0.92em;
+                    font-weight: 600;
+                    line-height: 1.35;
+                }
+
+                /* body */
+                &:not(:first-child) {
+                    font-size: 0.82em;
+                    font-weight: 400;
+                    line-height: 1.45;
+                }
+            }
+        }
+    }
+}
+
+/* tint — per-card pastel background (4-color cycle) */
+.reveal .slides section.list-card-grid--tint {
+    & > div > :is(ul, ol) > li:nth-child(4n + 1),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n + 1),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n + 1) {
+        --list-card-bg: #eef4ff;
+    }
+
+    & > div > :is(ul, ol) > li:nth-child(4n + 2),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n + 2),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n + 2) {
+        --list-card-bg: #eefaf0;
+    }
+
+    & > div > :is(ul, ol) > li:nth-child(4n + 3),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n + 3),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n + 3) {
+        --list-card-bg: #faf6ee;
+    }
+
+    & > div > :is(ul, ol) > li:nth-child(4n),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n) {
+        --list-card-bg: #f3eef9;
+    }
+}
+
+/* inline — title beside marker (same size); nested list flush with marker start */
+.reveal .slides section.list-card-grid.list-card-grid--inline {
+    & > div > :is(ul, ol) > li,
+    & > div > .block > :is(ul, ol) > li,
+    & div.as-body > :is(ul, ol) > li {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.35rem 0.75rem;
+
+        & > :first-child {
+            flex: 1 1 auto;
+            grid-column: unset;
+            grid-row: unset;
+            margin: 0;
+            font-size: var(--list-card-marker-size);
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        & > :is(ul, ol) {
+            flex: 1 1 100%;
+            grid-column: unset;
+            grid-row: unset;
+            display: block;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            & > li {
+                margin: 0.35em 0;
+                padding: 0;
+                font-size: 0.82em;
+                line-height: 1.45;
+                list-style: none;
+
+                &::before {
+                    content: none;
+                    display: none;
+                }
+            }
+        }
+    }
+}
+
+.reveal .slides section.list-card-grid--ordered.list-card-grid--inline {
+    & > div > ol > li::before,
+    & > div > .block > ol > li::before,
+    & div.as-body > ol > li::before {
+        grid-column: unset;
+        grid-row: unset;
+        align-self: unset;
+    }
+}
+
+.reveal .slides section.list-card-grid--icon.list-card-grid--inline {
+    & > div > ul > li > :is(p, span):first-child,
+    & > div > .block > ul > li > :is(p, span):first-child,
+    & div.as-body > ul > li > :is(p, span):first-child {
+        grid-column: unset;
+        grid-row: unset;
+        align-self: unset;
+        font-size: var(--list-card-marker-size);
+    }
+}
+
+/* badge — emoji/icon disc centered on top edge; nested li = subtitle + body (centered) */
+.reveal .slides section.list-card-grid.list-card-grid--badge {
+    & > div > :is(ul, ol),
+    & > div > .block > :is(ul, ol),
+    & div.as-body > :is(ul, ol) {
+        overflow: visible;
+        padding-top: calc(var(--list-card-badge-size) * 0.5 + 0.25rem);
+
+        & > li {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: visible;
+            min-height: 7.5rem;
+            padding: calc(var(--list-card-badge-size) * 0.5 + 0.45rem) 1rem 1rem;
+
+            & > :first-child {
+                grid-column: unset;
+                grid-row: unset;
+            }
+
+            /* top-level emoji line — CommonMark needs blank line before nested list → <p> */
+            & > :is(p, span):first-child,
+            & > .block:first-child:not(:has(:is(ul, ol))),
+            & > :is(ul, ol) > li:first-child:not(:has(:is(strong, b))) {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                z-index: 1;
+                transform: translate(-50%, -50%);
+                width: var(--list-card-badge-size);
+                height: var(--list-card-badge-size);
+                margin: 0;
+                padding: 0;
+                border-radius: 50%;
+                background-color: var(--list-card-bg);
+                border: var(--list-card-badge-border-width) solid var(--list-card-badge-border-color);
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: calc(var(--list-card-badge-size) * 0.56);
+                font-weight: 400;
+                line-height: 1;
+                list-style: none;
+
+                & p {
+                    margin: 0;
+                }
+            }
+
+            & > :is(ul, ol) > li:first-child:not(:has(:is(strong, b))) {
+                &::before {
+                    content: none;
+                    display: none;
+                }
+            }
+
+            & > :is(ul, ol) {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                grid-column: unset;
+                grid-row: unset;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+
+                & > li {
+                    margin: 0.18em 0;
+                    padding: 0;
+                    list-style: none;
+                    text-align: center;
+
+                    &::before {
+                        content: none;
+                        display: none;
+                    }
+
+                    & p {
+                        margin: 0;
+                    }
+                }
+
+                /* title — first bold nested li, or li after emoji-only first li */
+                & > li:first-child:has(:is(strong, b)),
+                & > li:first-child:not(:has(:is(strong, b))) + li {
+                    font-size: var(--list-card-badge-title-size);
+                    font-weight: 700;
+                    line-height: 1.35;
+                    color: inherit;
+                }
+
+                /* body — lines after title */
+                & > li:first-child:has(:is(strong, b)) ~ li,
+                & > li:first-child:not(:has(:is(strong, b))) ~ li ~ li {
+                    font-size: var(--list-card-badge-body-size);
+                    font-weight: 400;
+                    line-height: 1.5;
+                    color: var(--text-faint);
+                }
+            }
+        }
+    }
+}
+
+/* accent-odd / accent-even — top bar; combine both for row-alternating colors */
+.reveal .slides section:is(.list-card-grid--accent-odd, .list-card-grid--accent-even) {
+    & > div > :is(ul, ol) > li,
+    & > div > .block > :is(ul, ol) > li,
+    & div.as-body > :is(ul, ol) > li {
+        border-block-start: var(--list-card-accent-width) solid var(--list-card-accent-color);
+        border-radius: 0 0 var(--list-card-radius) var(--list-card-radius);
+    }
+}
+
+/* accent-odd alone — all cards primary */
+.reveal .slides section.list-card-grid--accent-odd:not(.list-card-grid--accent-even) {
+    & > div > :is(ul, ol) > li,
+    & > div > .block > :is(ul, ol) > li,
+    & div.as-body > :is(ul, ol) > li {
+        --list-card-accent-color: var(--r-main-color2);
+    }
+}
+
+/* accent-even alone — all cards alt */
+.reveal .slides section.list-card-grid--accent-even:not(.list-card-grid--accent-odd) {
+    & > div > :is(ul, ol) > li,
+    & > div > .block > :is(ul, ol) > li,
+    & div.as-body > :is(ul, ol) > li {
+        --list-card-accent-color: var(--list-card-accent-alt);
+    }
+}
+
+/* both + 2 columns — odd rows primary, even rows alt (4n cycle) */
+.reveal .slides section.list-card-grid--accent-odd.list-card-grid--accent-even.list-card-grid:not(.list-card-grid--3) {
+    & > div > :is(ul, ol) > li:nth-child(4n + 1),
+    & > div > :is(ul, ol) > li:nth-child(4n + 2),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n + 1),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n + 2),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n + 1),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n + 2) {
+        --list-card-accent-color: var(--r-main-color2);
+    }
+
+    & > div > :is(ul, ol) > li:nth-child(4n + 3),
+    & > div > :is(ul, ol) > li:nth-child(4n),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n + 3),
+    & > div > .block > :is(ul, ol) > li:nth-child(4n),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n + 3),
+    & div.as-body > :is(ul, ol) > li:nth-child(4n) {
+        --list-card-accent-color: var(--list-card-accent-alt);
+    }
+}
+
+/* both + 3 columns — odd rows primary, even rows alt (6n cycle) */
+.reveal .slides section.list-card-grid--accent-odd.list-card-grid--accent-even.list-card-grid--3 {
+    & > div > :is(ul, ol) > li:nth-child(6n + 1),
+    & > div > :is(ul, ol) > li:nth-child(6n + 2),
+    & > div > :is(ul, ol) > li:nth-child(6n + 3),
+    & > div > .block > :is(ul, ol) > li:nth-child(6n + 1),
+    & > div > .block > :is(ul, ol) > li:nth-child(6n + 2),
+    & > div > .block > :is(ul, ol) > li:nth-child(6n + 3),
+    & div.as-body > :is(ul, ol) > li:nth-child(6n + 1),
+    & div.as-body > :is(ul, ol) > li:nth-child(6n + 2),
+    & div.as-body > :is(ul, ol) > li:nth-child(6n + 3) {
+        --list-card-accent-color: var(--r-main-color2);
+    }
+
+    & > div > :is(ul, ol) > li:nth-child(6n + 4),
+    & > div > :is(ul, ol) > li:nth-child(6n + 5),
+    & > div > :is(ul, ol) > li:nth-child(6n),
+    & > div > .block > :is(ul, ol) > li:nth-child(6n + 4),
+    & > div > .block > :is(ul, ol) > li:nth-child(6n + 5),
+    & > div > .block > :is(ul, ol) > li:nth-child(6n),
+    & div.as-body > :is(ul, ol) > li:nth-child(6n + 4),
+    & div.as-body > :is(ul, ol) > li:nth-child(6n + 5),
+    & div.as-body > :is(ul, ol) > li:nth-child(6n) {
+        --list-card-accent-color: var(--list-card-accent-alt);
+    }
+}
+
+/* ==========================================================================
+   4. Lists
+   ========================================================================== */
+
+.reveal ul ul,
+.reveal ul ol,
+.reveal ol ol,
+.reveal ol ul {
+    display: block;
+    margin-left: 30px;
+    padding-left: 10px;
+}
+
+.reveal ol,
+.reveal dl,
+.reveal ul {
+    text-align: justify;
+}
+
+.reveal .slides section .as-body :is(ul, ol) > li {
+    margin-block: 0.25em;
+}
+
+.reveal .slides .steps ul li {
+    list-style: none;
+}
+
+/* ==========================================================================
+   5. Code & math
+   ========================================================================== */
+
+.reveal .slides code > mjx-container {
+    color: var(--as-math-inline);
+}
+
+/* MathJax display (legacy): center within the paragraph line box */
+.reveal .slides p > mjx-container {
+    display: block;
+    text-align: center;
+}
+
+/* Display math under center:false
+   --------------------------------
+   Slide body is flex column + inline align-items:start, so a <p> that only wraps
+   $$…$$ shrink-wraps to the formula width — KaTeX text-align:center then has no
+   visible effect. cols-* text panels (.ldiv/…) use align-items:stretch, so the
+   same formula looks centered there.
+
+   Reveal+KaTeX DOM is typically p > span > .katex-display (not a direct child),
+   so use descendant :has(.katex-display), not :has(> .katex-display). */
+.reveal .slides p:has(.katex-display),
+.reveal .slides p:has(mjx-container[display="true"]) {
+    align-self: stretch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.reveal .slides .katex-display,
+.reveal .slides mjx-container[display="true"] {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.reveal code {
+    border-radius: 3px;
+    /* color: var(--as-code-color); */
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    font-size: 90%;
+    padding: 2px 4px;
+}
+
+/* ==========================================================================
+   6. Blockquote, mark & callout modifiers (blank / noborder / notitle)
+   ========================================================================== */
+
+.reveal blockquote {
+    margin: var(--r-block-margin);
+    font-style: normal;
+    width: 90%;
+    padding: 0 1em;
+    color: var(--as-text-faint);
+    border-left: .25em solid var(--as-blockquote-border);
+}
+
+/* Inside content-sized tdiv/bdiv: avoid 90% cyclic % against fit-content parent */
+.reveal .slides :is(.tdiv, .bdiv) > blockquote {
+    width: auto;
+    max-width: 100%;
+}
+
+.reveal mark {
+    background-color: var(--as-mark-bg);
+    border-radius: 0.3em;
+}
+
+
+.reveal .callout {
+    width: fit-content;
+}
+
+/* Callout modifiers via data-type
+   Slides Extended: > [!noborder blank] → data-type="noborder blank"
+   (space-separated tokens in data-type). Adapted from Blue Topaz.
+   Horizontal strips of img/mermaid/svg → use .gallery (not callout). */
+
+/* --- blank / notitle: hide auto title (plugin uses type name as title) --- */
+.reveal .slides .callout:is([data-type*="blank"], [data-type*="notitle"]) .callout-title {
+    display: none !important;
+}
+
+/* --- blank: transparent shell --- */
+.reveal .slides .callout[data-type*="blank"] {
+    max-width: 100%;
+    margin: 0;
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.reveal .slides .callout[data-type*="blank"] .callout-content {
+    margin: 0;
+    padding: 0 !important;
+    border: none !important;
+    overflow: visible;
+    background: transparent !important;
+}
+
+/* --- noborder: no left bar / fill / shadow --- */
+.reveal .slides .callout[data-type*="noborder"] {
+    border: none !important;
+    border-left: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.reveal .slides .callout[data-type*="noborder"] .callout-title {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+.reveal .slides .callout[data-type*="noborder"] .callout-content {
+    border: none !important;
+    border-left: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* ==========================================================================
+   7. Adaptive text — background contrast
+      Automatic (reveal.js / Slides Extended):
+        :where(body.has-*)   … deck-wide default (:where → 0 spec contribution)
+        section.has-*        … per-slide solid bg (getContrastClass / <!-- slide bg -->)
+      Manual:
+        .on-light-bg / .on-dark-bg on any element under .slides
+        (section, grid, .header, …) — see §14; overrides component colors.
+        Nested .on-light-bg after .on-dark-bg wins for its descendants.
+      .reveal.has-* is bubbled from current slide — do NOT style all sections via it.
+   ========================================================================== */
+
+/* --- deck / slide: on-light --- */
+:is(
+    :where(body.has-light-background) .reveal .slides section,
+    .reveal .slides section.has-light-background
+) {
+    color: var(--as-text-on-light);
+
+    :is(h1, h2, h3, h4, h5, h6) {
+        color: var(--as-heading-on-light);
+    }
+
+    :is(h2, h3)::after {
+        background-color: var(--as-heading-rule-on-light);
+    }
+
+    strong {
+        color: var(--as-strong-on-light);
+    }
+
+    em {
+        color: var(--as-em-on-light);
+    }
+
+    a {
+        color: var(--as-link-on-light);
+
+        &:hover {
+            color: var(--as-link-hover-on-light);
+        }
+    }
+
+    blockquote {
+        color: var(--as-faint-on-light);
+        border-left-color: var(--as-blockquote-border-on-light);
+    }
+
+    :not(.code-wrapper) > code {
+        color: var(--as-code-on-light);
+    }
+
+    code > mjx-container,
+    p > mjx-container {
+        color: var(--as-math-on-light);
+    }
+
+    img + p > em,
+    center {
+        color: var(--as-faint-on-light);
+    }
+
+    mark {
+        background-color: var(--as-mark-bg-on-light);
+    }
+}
+
+/* --- deck / slide: on-dark (overrides body when section differs) --- */
+:is(
+    :where(body.has-dark-background) .reveal .slides section,
+    .reveal .slides section.has-dark-background
+) {
+    color: var(--as-text-on-dark);
+
+    :is(h1, h2, h3, h4, h5, h6) {
+        color: var(--as-heading-on-dark);
+    }
+
+    :is(h2, h3)::after {
+        background-color: var(--as-heading-rule-on-dark);
+    }
+
+    strong {
+        color: var(--as-strong-on-dark);
+    }
+
+    em {
+        color: var(--as-em-on-dark);
+    }
+
+    a {
+        color: var(--as-link-on-dark);
+
+        &:hover {
+            color: var(--as-link-hover-on-dark);
+        }
+    }
+
+    blockquote {
+        color: var(--as-faint-on-dark);
+        border-left-color: var(--as-blockquote-border-on-dark);
+    }
+
+    code {
+        color: var(--as-code-on-dark);
+    }
+
+    code > mjx-container,
+    p > mjx-container {
+        color: var(--as-math-on-dark);
+    }
+
+    img + p > em,
+    center {
+        color: var(--as-faint-on-dark);
+    }
+
+    mark {
+        background-color: var(--as-mark-bg-on-dark);
+    }
+
+    .header mark {
+        background-color: var(--as-text-on-dark);
+        color: var(--r-main-color2);
+    }
+
+    .header mark a {
+        color: var(--r-main-color2);
+    }
+
+    .header a {
+        color: var(--as-link-on-dark);
+    }
+}
+
+.reveal .slides section.has-dark-background.header mark {
+    background-color: var(--as-text-on-dark);
+    color: var(--r-main-color2);
+}
+
+.reveal .slides section.has-dark-background.header mark a {
+    color: var(--r-main-color2);
+}
+
+.reveal .slides section.has-dark-background.header a {
+    color: var(--as-link-on-dark);
+}
+
+/* local .on-light-bg / .on-dark-bg → see §14 (end of file; wins over component colors) */
+
+/* ==========================================================================
+   8. Tables — .reveal table, .academia
+   ========================================================================== */
+
+.reveal table {
+    margin: 20px auto;
+}
+
+/* adjust mark style for cells */
+:is(
+    :where(body.has-light-background) .reveal .slides section,
+    .reveal .slides section.has-light-background,
+    :where(body.has-dark-background) .reveal .slides section,
+    .reveal .slides section.has-dark-background
+) table td > mark {
+    background-color: transparent;
+    border: 2.72px solid var(--r-main-color2);
+}
+
+/* Academia-specific table styles */
+.reveal .academia table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+    width: auto;
+    max-width: 100%;
+    border-top: 2.27px solid var(--as-table-border);
+    border-bottom: 2.27px solid var(--as-table-border);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.reveal .academia th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.reveal .academia th,
+.reveal .academia td {
+    border: 0 none;
+    padding: 0.2em 0.5em;
+    line-height: 1.1;
+    border-bottom: none;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.reveal .academia table > thead > tr:first-child > th,
+.reveal .academia table > tbody > tr:first-child > td {
+    border-top: 1.36px solid var(--as-table-border);
+}
+
+.reveal .academia table > tbody > tr:last-child > td,
+.reveal .academia table > thead > tr:last-child > th {
+    border-bottom: 1.36px solid var(--as-table-border);
+}
+
+.reveal .academia thead th {
+    background-color: var(--r-background-color) !important;
+    font-weight: 700;
+    padding: 0.2em 0.5em;
+}
+
+.reveal .academia tr:nth-child(even) {
+    background-color: var(--as-table-stripe);
+}
+
+.reveal .academia tbody tr:hover td {
+    background-color: var(--as-table-hover);
+}
+
+/* ==========================================================================
+   8.1 Table fit — .table-fit
+      任意带 .table-fit 的容器内表格字号随该容器剩余空间缩放（cqh/cqw）。
+      容器须有高度链（scrollbox、content 槽 div、split .block 等）；可选 --as-table-fit-rows / --as-table-fit-cols。
+   ========================================================================== */
+
+.reveal .slides .table-fit {
+    container-type: size;
+    container-name: as-table-fit;
+}
+
+@container as-table-fit (min-height: 0) {
+    table {
+        font-size: clamp(
+            var(--as-table-fit-min, 0.55em),
+            min(
+                calc(100cqh / var(--as-table-fit-rows, 12)),
+                calc(100cqw / var(--as-table-fit-cols, 8))
+            ),
+            var(--as-table-fit-max, 1em)
+        );
+        line-height: 1.2;
+    }
+}
+
+/* 容器内标题固定、直连 table 占剩余高度（仅非 scrollbox；scrollbox 由容器滚，见 §9.5） */
+.reveal .slides .table-fit:not(.scrollbox):not(.scrollbox-x):not(.scrollbox-y):has(> table) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.reveal .slides .table-fit:not(.scrollbox):not(.scrollbox-x):not(.scrollbox-y):has(> table)
+    > :is(h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, hr) {
+    flex-shrink: 0;
+}
+
+.reveal .slides .table-fit:not(.scrollbox):not(.scrollbox-x):not(.scrollbox-y):has(> table) > table {
+    flex: 1 1 0;
+    min-height: 0;
+    align-self: stretch;
+    width: 100%;
+}
+
+/* ==========================================================================
+   9. Header / footer / chapters
+   ========================================================================== */
+
+.bg-with-dark-color {
+    background-color: var(--r-main-color2) !important;
+}
+
+/* --- header --- */
+.reveal .slides section .header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+}
+
+/* ::: header block → div.block；p = short title，ul = nav */
+.reveal .slides section .header > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--header-title-nav-gap);
+    /* cqi 参照此容器；勿放在 ul 上——inline-size containment 会使 ul 无法按子元素定宽 */
+    container-type: inline-size;
+    min-width: 0;
+}
+
+.reveal .slides section .header p {
+    flex: 0 0 auto;
+    min-width: var(--header-title-min-width);
+    max-width: var(--header-title-max-width);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.reveal .slides section .header ul {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: var(--header-nav-gap-min);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.reveal .slides section .header ul li {
+    flex: 0 0 auto;
+    font-size: clamp(
+        var(--header-nav-font-min),
+        2.8cqi,
+        var(--header-nav-font-max)
+    );
+    padding: 10px clamp(6px, 1.2cqi, 20px);
+    margin: 0;
+    border-radius: 30px;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.reveal .slides section .header ul li:has(mark) {
+    padding: 0;
+}
+
+/* --- footer --- */
+.reveal .slides section .footer {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* ::: footer block 会把 ul 包进一层 div，需撑满宽度以便三栏 flex 分配 */
+.reveal .slides section .footer > div {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center !important;
+    width: 100%;
+}
+
+.reveal .slides section .footer ul {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    color: var(--r-progress-background-color);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.reveal .slides section .footer ul li {
+    padding: 0;
+    margin-left: 0;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.reveal .slides section .footer ul li:first-child,
+.reveal .slides section .footer ul li:last-child {
+    flex: 1;
+}
+
+.reveal .slides section .footer ul li:not(:first-child):not(:last-child) {
+    flex: 2;
+}
+
+.reveal .slides section .footer ul li:nth-child(odd) {
+    background-color: var(--as-footer-odd-bg);
+}
+
+.reveal .slides section .footer ul li:nth-child(even) {
+    background-color: var(--r-main-color2);
+}
+
+/* --- nav highlight: ==mark== in header list marks current chapter --- */
+.reveal .slides section .header mark {
+    background-color: var(--r-progress-background-color);
+    color: var(--r-progress-text-color);
+    border-radius: 30px;
+    padding: 10px clamp(6px, 1.2cqi, 20px);
+    white-space: nowrap;
+}
+
+.reveal .slides section .header mark a {
+    color: var(--r-main-color2);
+}
+
+/* --- header text on dark bar (.bg-with-dark-color; tokens in AS_red / AS_blue) --- */
+.reveal .slides section .header.bg-with-dark-color p {
+    color: var(--as-header-title-on-dark-bar);
+}
+
+.reveal .slides section .header.bg-with-dark-color p a {
+    color: var(--as-header-title-on-dark-bar);
+}
+
+.reveal .slides section .header.bg-with-dark-color p a:hover {
+    color: var(--as-header-nav-hover-on-dark-bar);
+}
+
+.reveal .slides section .header.bg-with-dark-color ul li:not(:has(mark)) a {
+    color: var(--as-header-nav-on-dark-bar);
+}
+
+.reveal .slides section .header.bg-with-dark-color ul li:not(:has(mark)) a:hover {
+    color: var(--as-header-nav-hover-on-dark-bar);
+}
+
+/* override §7 deck link colors inside dark header bar */
+:is(
+    :where(body.has-light-background) .reveal .slides section,
+    .reveal .slides section.has-light-background
+) .header.bg-with-dark-color p,
+:is(
+    :where(body.has-dark-background) .reveal .slides section,
+    .reveal .slides section.has-dark-background
+) .header.bg-with-dark-color p {
+    color: var(--as-header-title-on-dark-bar);
+}
+
+:is(
+    :where(body.has-light-background) .reveal .slides section,
+    .reveal .slides section.has-light-background
+) .header.bg-with-dark-color p a,
+:is(
+    :where(body.has-dark-background) .reveal .slides section,
+    .reveal .slides section.has-dark-background
+) .header.bg-with-dark-color p a {
+    color: var(--as-header-title-on-dark-bar);
+}
+
+:is(
+    :where(body.has-light-background) .reveal .slides section,
+    .reveal .slides section.has-light-background
+) .header.bg-with-dark-color ul li:not(:has(mark)) a,
+:is(
+    :where(body.has-dark-background) .reveal .slides section,
+    .reveal .slides section.has-dark-background
+) .header.bg-with-dark-color ul li:not(:has(mark)) a {
+    color: var(--as-header-nav-on-dark-bar);
+}
+
+/* ==========================================================================
+   9.4 Split 分栏 — split > .block / split > .scrollbox 高度链
+   template 源码为 block + .element 注释；Reveal 运行时将右栏变为 split 直接子级 .scrollbox
+   ========================================================================== */
+
+.reveal split:not([wrap]) {
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    max-height: 100%;
+    align-items: center;
+    align-content: center;
+    overflow: hidden;
+}
+
+/* 含直接 scrollbox 子级（如 c-3 多图右栏），或 block 内嵌 scrollbox（如 Condition 2）：stretch 保留高度链 */
+.reveal split:not([wrap]):has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y)),
+.reveal split:not([wrap]):has(> .block:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y))) {
+    align-items: stretch;
+    align-content: stretch;
+}
+
+.reveal split:not([wrap]):has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y))
+    > .block:not(:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y))) {
+    justify-content: center;
+}
+
+.reveal split:not([wrap]) > .block {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* 运行时：annotation 将槽变为 split 直接子级 scrollbox（不设 flex 简写，保留 left/right 宽比） */
+.reveal split:not([wrap]) > :is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+.reveal split:not([wrap]) > .block:is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    align-self: stretch;
+    min-height: 0;
+    max-height: 100%;
+    overflow: auto;
+}
+
+.reveal split:not([wrap]) > .block > :is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    max-height: none;
+    width: 100%;
+    overflow: auto;
+}
+
+.reveal split:not([wrap]) > .block > .scrollbox-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.reveal split:not([wrap]) > .block > .scrollbox-y {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* ==========================================================================
+   9.5 Scroll containers — scrollbox / scrollbox-x / scrollbox-y
+   容器 flex 列 + 自身 overflow 滚动；标题 sticky 固定。
+   table 保持 display:table（勿拆 thead/tbody）；pre/mermaid 等可自滚；
+   多图/纯图子项 flex:0 自然堆叠，由容器整体 overflow 滚动
+   ========================================================================== */
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    /* align-items: flex-start; */
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* nav-grid left/right 槽：内容块在栏内垂直居中，左右共用 slide 中线（50% 高度） */
+.reveal .slides section > div:not(.header):not(.footer),
+.reveal .slides section .as-body > div {
+    min-width: 0;
+    min-height: 0;
+}
+
+.reveal .slides section > div:not(.header):not(.footer) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.reveal .slides section .as-body > div:not(:is(.scrollbox, .scrollbox-x, .scrollbox-y)) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center !important;
+    align-items: stretch !important;
+    /* height: 100%; */
+    max-height: 100%;
+}
+
+/* 写法 B / nav-shell：.as-body 下直接挂 scrollbox，占剩余高度、内部顶格堆叠并滚动 */
+.reveal .slides section .as-body > :is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+
+.reveal .slides section .as-body > .scrollbox-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.reveal .slides section .as-body > .scrollbox-y {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* 槽内 .block 随内容增高，上限为栏高；超出时由内部 scrollbox 滚动 */
+.reveal .slides section .as-body > div > .block:not(:is(.scrollbox, .scrollbox-x, .scrollbox-y)) {
+    flex: 0 1 auto;
+    max-height: 100%;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* 写法 A：.block.scrollbox 自身即滚动容器（如多图诊断页） */
+.reveal .slides section .as-body > div > .block:is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    flex: 0 1 auto;
+    max-height: 100%;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    overflow: auto;
+}
+
+/* 模板槽 .block 内嵌 scrollbox：块级 flex 分区，不撑满整栏（便于与对栏一起居中） */
+.reveal .slides .block:is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    overflow: auto;
+    width: 100%;
+}
+
+.reveal .slides .block:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y)) {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+    min-height: 0;
+    min-width: 0;
+    max-height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+
+.reveal .slides .block:is(.scrollbox, .scrollbox-x, .scrollbox-y)
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides .block:is(.scrollbox, .scrollbox-x, .scrollbox-y)
+    > p:not(:has(> img:only-child)),
+.reveal .slides .block:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y))
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides .block:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y))
+    > p:not(:has(> img:only-child)) {
+    flex-shrink: 0;
+}
+
+.reveal .slides .block > :is(.scrollbox, .scrollbox-x, .scrollbox-y) {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    overflow: auto;
+}
+
+.reveal .slides .block > .scrollbox-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.reveal .slides .block > .scrollbox-y {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* 写法 B 在 .block 内：容器滚动，子 table 保持自然高度（避免 flex:1 压成 0） */
+.reveal .slides .block > :is(.scrollbox, .scrollbox-x, .scrollbox-y) > table {
+    flex: 0 0 auto;
+    min-height: auto;
+    display: table;
+    overflow: visible;
+}
+
+.reveal .slides .block > :is(.scrollbox, .scrollbox-x) > table {
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+}
+
+.reveal .slides .block > .scrollbox-y > table {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* scrollbox 整页级：绝对定位 drop 包装下的直系 scrollbox 占剩余高度 */
+.reveal .slides section > :is(.scrollbox-y, .scrollbox-x, .scrollbox),
+.reveal .slides section > div:not(.header):not(.footer) > :is(.scrollbox-y, .scrollbox-x, .scrollbox) {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+}
+
+/* 高度链：scrollbox 包裹内层 .block（非 block 自身即 scrollbox） */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) > .block {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    width: 100%;
+    max-height: 100%;
+}
+
+/* 写法 A：.block.scrollbox 自身为滚动容器，须 overflow:auto（勿与 > .block 共用 hidden） */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y):is(.block) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 0;
+    min-width: 0;
+    overflow: auto;
+    width: 100%;
+    max-height: 100%;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .as-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+}
+
+/* 写法 B：scrollbox 嵌在 .as-body 内时，标题固定、scrollbox 占剩余空间 */
+.reveal .slides .as-body:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y)) {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.reveal .slides .as-body:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y))
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides .as-body:has(> :is(.scrollbox, .scrollbox-x, .scrollbox-y))
+    > p:not(:has(> img:only-child)) {
+    flex-shrink: 0;
+}
+
+/* Chrome：标题、段落、列表等不参与滚动 */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .as-body
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .as-body
+    > p:not(:has(> img:only-child)) {
+    flex-shrink: 0;
+}
+
+/* Scroll target 基类：占剩余空间（pre/mermaid 等；table 见下方专用规则；img 见「纯图」） */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y)
+    :is(
+        .as-body > pre,
+        .as-body > .mermaid,
+        .as-body > iframe,
+        .as-body > video,
+        > pre,
+        > .mermaid,
+        > iframe,
+        > video
+    ) {
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+    align-self: stretch;
+    width: 100%;
+}
+
+.reveal .slides .scrollbox
+    :is(
+        .as-body > pre,
+        .as-body > .mermaid,
+        .as-body > iframe,
+        .as-body > video,
+        > pre,
+        > .mermaid,
+        > iframe,
+        > video
+    ) {
+    overflow: auto;
+}
+
+.reveal .slides .scrollbox-x
+    :is(
+        .as-body > pre,
+        .as-body > .mermaid,
+        .as-body > iframe,
+        .as-body > video,
+        > pre,
+        > .mermaid,
+        > iframe,
+        > video
+    ) {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.reveal .slides .scrollbox-y
+    :is(
+        .as-body > pre,
+        .as-body > .mermaid,
+        .as-body > iframe,
+        .as-body > video,
+        > pre,
+        > .mermaid,
+        > iframe,
+        > video
+    ) {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/*
+ * 纯图 scrollbox：每张图按作者指定尺寸自然堆叠，容器整体滚动（不均分高度）
+ */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y)
+    :is(
+        > img,
+        > figure,
+        > .image-container,
+        > p:has(> img:only-child),
+        .as-body > img,
+        .as-body > figure,
+        .as-body > .image-container,
+        .as-body > p:has(> img:only-child)
+    ) {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    min-height: auto;
+    min-width: 0;
+    overflow: visible;
+}
+
+/* 仅 scrollbox-y 锁横向；普通 scrollbox 允许宽图横滚 */
+.reveal .slides .scrollbox-y:has(
+    > :is(img, figure, .image-container, p:has(> img:only-child)),
+    .as-body > :is(img, figure, .image-container, p:has(> img:only-child))
+) {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.reveal .slides .scrollbox-x:has(
+    > :is(img, figure, .image-container, p:has(> img:only-child)),
+    .as-body > :is(img, figure, .image-container, p:has(> img:only-child))
+) {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y):has(
+    > :is(img, figure, .image-container, p:has(> img:only-child)),
+    .as-body > :is(img, figure, .image-container, p:has(> img:only-child))
+)
+    > :is(img, p:has(> img:only-child)) {
+    margin-top: 0;
+    margin-bottom: var(--r-block-margin);
+}
+
+/* 写法 B：HTML div.scrollbox-* 直接挂在 .as-body 下（规则见上方 .as-body > .scrollbox-*） */
+.reveal .slides section .as-body > :is(.scrollbox, .scrollbox-x, .scrollbox-y):not(.block) {
+    flex: 1 1 0;
+    min-height: 0;
+    min-width: 0;
+}
+
+.reveal .slides .scrollbox-y:not(.block):not(.as-body) {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.reveal .slides .scrollbox-x:not(.block):not(.as-body) {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.reveal .slides .scrollbox:not(.block):not(.as-body) {
+    overflow: auto;
+}
+
+/*
+ * Table scroll model（勿再拆 thead/tbody 为独立 display:table —— 列宽会对不齐）
+ * - 整表保持 display:table；横/纵 overflow 在 scrollbox 容器上
+ * - scrollbox-x / scrollbox：width:max-content，撑开后触发容器横滚
+ * - scrollbox-y：width:100%，由容器纵滚；academia 可 table-layout:fixed
+ * - 写法 A（标题与表同容器）时 chrome sticky，避免横/纵滚带走标题
+ * - 图注 p:has(> em:only-child) 不参与 sticky（否则 --r-background-color 白底盖住 SJTU 底）
+ */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y)
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y)
+    > p:not(:has(> img:only-child)):not(:has(> em:only-child)),
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .as-body
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .as-body
+    > p:not(:has(> img:only-child)):not(:has(> em:only-child)) {
+    position: sticky;
+    z-index: 2;
+    background-color: var(--r-background-color);
+}
+
+.reveal .slides .scrollbox-x
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides .scrollbox-x
+    > p:not(:has(> img:only-child)):not(:has(> em:only-child)),
+.reveal .slides .scrollbox-x .as-body
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides .scrollbox-x .as-body
+    > p:not(:has(> img:only-child)):not(:has(> em:only-child)) {
+    left: 0;
+    width: max-content;
+    max-width: 100%;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-y)
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides :is(.scrollbox, .scrollbox-y)
+    > p:not(:has(> img:only-child)):not(:has(> em:only-child)),
+.reveal .slides :is(.scrollbox, .scrollbox-y) .as-body
+    > :is(h1, h2, h3, h4, h5, h6, ul, ol, blockquote, hr),
+.reveal .slides :is(.scrollbox, .scrollbox-y) .as-body
+    > p:not(:has(> img:only-child)):not(:has(> em:only-child)) {
+    top: 0;
+}
+
+/* 图注：取消 sticky 白底（含写法 A：.block.scrollbox-y） */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y)
+    > p:has(> em:only-child),
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .as-body
+    > p:has(> em:only-child) {
+    position: static;
+    z-index: auto;
+    background: transparent !important;
+    background-color: transparent !important;
+    width: auto;
+    max-width: 100%;
+}
+
+/* 直连 / .as-body 下 table：完整 table 盒，不在 table 上设 overflow。
+   注意：:is() 不接受以 > 开头的相对选择器，须拆开写 > table。 */
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) > table,
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .as-body > table {
+    display: table;
+    overflow: visible;
+    flex: 0 0 auto;
+    min-height: auto;
+    align-self: flex-start;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x) > table,
+.reveal .slides :is(.scrollbox, .scrollbox-x) .as-body > table {
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+    table-layout: auto;
+}
+
+.reveal .slides .scrollbox-y > table,
+.reveal .slides .scrollbox-y .as-body > table {
+    width: 100%;
+    max-width: 100%;
+    align-self: stretch;
+}
+
+/* scrollbox 内覆盖 section.academia 对 table 的宽度/截断限制 */
+.reveal .slides section.academia :is(.scrollbox, .scrollbox-x) table,
+.reveal .slides section.academia .block:is(.scrollbox, .scrollbox-x) > table,
+.reveal .slides section.academia .block > :is(.scrollbox, .scrollbox-x) table {
+    table-layout: auto;
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+}
+
+.reveal .slides section.academia .scrollbox-y table,
+.reveal .slides section.academia .block.scrollbox-y > table,
+.reveal .slides section.academia .block > .scrollbox-y table {
+    table-layout: fixed;
+    width: 100%;
+    max-width: 100%;
+}
+
+.reveal .slides section.academia :is(.scrollbox, .scrollbox-x) th,
+.reveal .slides section.academia :is(.scrollbox, .scrollbox-x) td,
+.reveal .slides section.academia .block:is(.scrollbox, .scrollbox-x) th,
+.reveal .slides section.academia .block:is(.scrollbox, .scrollbox-x) td,
+.reveal .slides section.academia .block > :is(.scrollbox, .scrollbox-x) th,
+.reveal .slides section.academia .block > :is(.scrollbox, .scrollbox-x) td {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: nowrap;
+}
+
+.reveal .slides section.academia .scrollbox-y th,
+.reveal .slides section.academia .scrollbox-y td,
+.reveal .slides section.academia .block.scrollbox-y th,
+.reveal .slides section.academia .block.scrollbox-y td,
+.reveal .slides section.academia .block > .scrollbox-y th,
+.reveal .slides section.academia .block > .scrollbox-y td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) img,
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) p:has(> img:only-child) img {
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: unset;
+    /* inline style / `![|w]` / `![|w×h]` 仍优先于 width/height:auto */
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) > p:has(> img:only-child) {
+    margin: 0 0 var(--r-block-margin) 0;
+    width: fit-content;
+    max-width: none;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) pre {
+    max-width: none;
+    width: auto;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) .mermaid {
+    display: block;
+    max-width: none;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x) .mermaid {
+    width: max-content;
+    min-width: 100%;
+}
+
+/* scrollbox-x / scrollbox：宽图横滚，左对齐不居中 */
+.reveal .slides :is(.scrollbox, .scrollbox-x) .mermaid svg {
+    max-width: none !important;
+    width: auto !important;
+    min-width: max-content !important;
+    height: auto !important;
+    margin: 0 !important;
+}
+
+/* scrollbox-y：宽度占满，无需 margin 居中 */
+.reveal .slides .scrollbox-y .mermaid svg {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: var(--r-block-margin) 0 0 0 !important;
+}
+
+/* as-no-scale：取消 mermaid SVG 撑满缩放。须配合 useMaxWidth: false
+   （否则属性 width="100%"，CSS 钉不住固有宽）。不含 overflow；滚动交给 scrollbox-*。
+   类可在祖先或 .mermaid 自身。见 [[AS_Mermaid#as-no-scale]]
+   wrapper 保持 100% 作滚动视口（盖掉 .scrollbox-x .mermaid { width: max-content }）。 */
+.reveal .slides .as-no-scale.mermaid,
+.reveal .slides .as-no-scale .mermaid {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.reveal .slides .as-no-scale.mermaid > svg,
+.reveal .slides .as-no-scale .mermaid > svg {
+    max-width: none !important;
+    width: max-content !important;
+    min-width: max-content !important;
+    height: auto !important;
+    flex-shrink: 0;
+}
+
+/* 普通容器（非 scrollbox）内 mermaid：居中，与 img 一致 */
+.reveal .slides :not(:is(.scrollbox, .scrollbox-x, .scrollbox-y)) > .mermaid > svg,
+.reveal .slides :not(:is(.scrollbox, .scrollbox-x, .scrollbox-y)) .as-body > .mermaid > svg {
+    display: block;
+    margin: var(--r-block-margin) auto;
+}
+
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) iframe,
+.reveal .slides :is(.scrollbox, .scrollbox-x, .scrollbox-y) video {
+    max-width: none;
+    width: auto;
+    height: auto;
+}
+
+/* ==========================================================================
+   9.6 gallery — horizontal strip of large blocks (independent of scrollbox-*)
+      长廊：img / figure / .mermaid / svg / iframe / video 横排 + 容器横滚。
+      标题写在容器外。挂载同 scrollbox 写法 A/B（::: block + element class，或 <div>）。
+   ========================================================================== */
+
+.reveal .slides .gallery {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0.25rem 0;
+    overflow-x: auto;
+    overflow-y: visible; /* 勿 hidden：否则裁切 img:active 全屏放大 */
+}
+
+.reveal .slides .gallery
+    > :is(
+        img,
+        figure,
+        .mermaid,
+        svg,
+        iframe,
+        video,
+        .image-container,
+        p:has(> img:only-child),
+        p:has(> .mermaid)
+    ) {
+    flex: 0 0 auto;
+    align-self: center;
+    min-width: 0;
+    margin: 0;
+}
+
+.reveal .slides .gallery > p {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    margin: 0;
+}
+
+/* 宽高由作者控制（|w| / element style），不统一成固定值。
+   只给一边时另一边保持 auto，并覆盖插件常注入的 object-fit:fill，避免非等比拉伸。 */
+.reveal .slides .gallery :is(img, iframe, video, .mermaid > svg):not(:active) {
+    max-width: none;
+    display: block;
+}
+
+.reveal .slides .gallery img:not(:active),
+.reveal .slides .gallery figure img:not(:active),
+.reveal .slides .gallery .image-container img:not(:active),
+.reveal .slides .gallery p > img:not(:active) {
+    width: auto;
+    height: auto;
+    object-fit: contain !important;
+    object-position: center;
+    cursor: zoom-in;
+}
+
+.reveal .slides .gallery > .mermaid,
+.reveal .slides .gallery > p > .mermaid {
+    flex: 0 0 auto;
+    overflow: visible;
+}
+
+.reveal .slides .gallery > .mermaid > svg,
+.reveal .slides .gallery > p > .mermaid > svg {
+    display: block;
+    margin: 0;
+}
+
+/* Click-to-zoom lightbox for gallery images */
+.reveal .slides .gallery:has(img:active) {
+    overflow: visible !important;
+    z-index: 100;
+}
+
+.reveal .slides .gallery img:active {
+    position: fixed !important;
+    inset: 0 !important;
+    left: 0 !important;
+    top: 0 !important;
+    z-index: 200 !important;
+    flex: none !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    object-fit: contain !important;
+    background-color: rgba(255, 255, 255, 0.94);
+    cursor: zoom-out !important;
+}
+
+/* ==========================================================================
+   10. Images — img, .container, .image-container, hold-to-peek (:active)
+   ========================================================================== */
+
+.reveal img {
+    margin: var(--r-block-margin) auto;
+}
+
+.reveal .slides section div.container,
+.reveal .slides section.container div {
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+}
+
+/* .image-container — scrollbox-x + 边框装饰；兼容横向多图画廊 */
+.reveal .slides .image-container {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: row !important;
+    white-space: nowrap;
+    border: 1px solid var(--as-image-border);
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    margin-left: 20px;
+}
+
+.reveal .slides .image-container p {
+    align-self: center;
+}
+
+.reveal .slides .image-container img,
+.reveal .slides .image-container iframe,
+.reveal .slides .image-container video {
+    max-width: none;
+    width: auto;
+    height: auto;
+    margin-right: 10px;
+    object-fit: contain !important;
+}
+
+.reveal .image-container ul {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+}
+
+.reveal .image-container ul ul {
+    display: flex;
+    flex-direction: column;
+    top: 100%;
+    left: 0;
+}
+
+.reveal .image-container ul ul > li {
+    margin: 5px auto;
+    font-style: italic;
+}
+
+/* Hold-to-peek — 左键按住 img / svg 放大至幻灯片约 80%，松开恢复。
+   Reveal 对 .slides 有 transform：fixed 相对幻灯片，勿用 vw/vh。
+   img 是替换元素：inset + width/height:auto 只用固有尺寸，贴左上偏位；
+   用 Reveal 注入的 --slide-width / --slide-height（随 frontmatter 变）拉满画布，
+   padding:10% + object-fit:contain → 内容居中约 80%。
+   须 object-fit:contain !important（覆盖行内 scale-down，否则不会放大）。
+   白底便于透明 SVG；祖先 overflow:hidden 会裁切 → 按住时强制 visible。
+   排除：加 class as-no-peek。 */
+.reveal .slides section:has(:is(img, svg):not(.as-no-peek):active),
+.reveal .slides section:has(:is(img, svg):not(.as-no-peek):active)
+    :is(div, .block, .as-body, .mermaid, .scrollbox, .scrollbox-x, .scrollbox-y) {
+    overflow: visible !important;
+}
+
+.reveal .slides :is(img, svg):not(.as-no-peek) {
+    cursor: zoom-in;
+}
+
+.reveal .slides section :is(img, svg):not(.as-no-peek):active {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: var(--slide-width, 1920px) !important;
+    height: var(--slide-height, 1080px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 1% !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    transform: none !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    z-index: 2147483646 !important;
+    background-color: #fff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    cursor: zoom-out;
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+/* ==========================================================================
+   11. Form controls — checkbox (task lists: - [ ] / - [x])
+   DOM (Slides Extended): <li><input type="checkbox"> …</li>
+   Also match li > * > input when markdown wraps the control.
+   ========================================================================== */
+
+.reveal input[type="checkbox"] {
+    appearance: none;
+    position: relative;
+    left: 0;
+    margin: 0 0.35em 0 0;
+    vertical-align: middle;
+}
+
+/* Drop native marker gutter so checkbox + text align with body copy */
+.reveal :is(ul, ol):has(> li > input[type="checkbox"]),
+.reveal :is(ul, ol):has(> li > * > input[type="checkbox"]) {
+    margin: 10px 0;
+    padding-inline-start: 0;
+    list-style: none;
+}
+
+.reveal li:has(> input[type="checkbox"]),
+.reveal li:has(> * > input[type="checkbox"]) {
+    list-style: none;
+    position: relative;
+}
+
+.reveal li:has(> input[type="checkbox"])::marker,
+.reveal li:has(> * > input[type="checkbox"])::marker {
+    content: none;
+}
+
+/* Suppress fancy-ol / other li::before markers on task items */
+.reveal li:has(> input[type="checkbox"])::before,
+.reveal li:has(> * > input[type="checkbox"])::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* Nested lists under a task item keep indent */
+.reveal li:has(> input[type="checkbox"]) > :is(ul, ol),
+.reveal li:has(> * > input[type="checkbox"]) > :is(ul, ol) {
+    padding-inline-start: 1.5em;
+    margin: 0.35em 0;
+}
+
+.reveal input[type="checkbox"]::before {
+    content: " ";
+    box-sizing: border-box;
+    margin: 0;
+    width: var(--as-fancy-marker-size);
+    height: var(--as-fancy-marker-size);
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4em;
+    font-family: var(--r-heading-font);
+    font-weight: 700;
+    line-height: 1;
+    background-color: #fff;
+    border: 2.5px solid var(--as-checkbox-color);
+    color: #fff;
+    transform: translate(0, -0.15em);
+}
+
+.reveal input[type="checkbox"]:checked::before {
+    content: "\2714";
+    background-color: var(--as-checkbox-color);
+    border-color: var(--as-checkbox-color);
+    color: #fff;
+    transform: translate(0, -0.1em);
+}
+
+/* ==========================================================================
+   12. Footnotes & sup
+      GFM footnote: <sup id="fnref:N" role="doc-noteref">  →  float .footnotes #fn:N
+      Plain <sup>/<sub> (e.g. x<sup>22</sup>): browser default, no badge / hover.
+   ========================================================================== */
+
+/* --- plain math / typographic superscripts: leave as native --- */
+.reveal .slides section :is(sup, sub):not([role="doc-noteref"]):not([id^="fnref:"]) {
+    position: static;
+    display: inline;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    color: inherit;
+    background: none;
+    padding: 0;
+    margin: 0;
+    cursor: inherit;
+    font-size: smaller;
+    line-height: 0;
+    vertical-align: super;
+}
+
+.reveal .slides section sub:not([role="doc-noteref"]):not([id^="fnref:"]) {
+    vertical-align: sub;
+}
+
+.reveal .slides section :is(sup, sub):not([role="doc-noteref"]):not([id^="fnref:"])::before {
+    content: none;
+    display: none;
+}
+
+/* --- in-body footnote noteref badge --- */
+.reveal .slides section sup[role="doc-noteref"],
+.reveal .slides section sup[id^="fnref:"] {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1em;
+    height: 1em;
+    padding: 0.12em 0.35em;
+    margin: 0 0.1em;
+    font-size: 0.65em;
+    font-weight: 600;
+    line-height: 1;
+    vertical-align: super;
+    border-radius: 3px;
+    background-color: var(--as-sup-bg);
+    color: var(--r-link-color-hover);
+    cursor: help;
+}
+
+/* --- footnote bank: invisible until paired noteref is hovered --- */
+.reveal .slides section .footnotes {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    bottom: 5%;
+    z-index: 40;
+    margin: 0;
+    padding: 0;
+    pointer-events: none;
+}
+
+.reveal .slides section .footnotes > ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.reveal .slides section .footnotes .footnote,
+.reveal .slides section .footnotes li[role="doc-endnote"] {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    box-sizing: border-box;
+    max-height: 28vh;
+    overflow: auto;
+    margin: 0;
+    padding: 0.65em 1em;
+    font-size: 0.72em;
+    line-height: 1.45;
+    background-color: var(--r-background-color, #fff);
+    border-left: 4px solid var(--as-checkbox-color, var(--r-link-color));
+    border-radius: 0 8px 8px 0;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.14);
+    color: var(--r-main-color, #222);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.35em);
+    transition:
+        opacity 0.18s ease,
+        visibility 0.18s ease,
+        transform 0.18s ease;
+}
+
+.reveal .slides section .footnotes .footnote p {
+    margin: 0.25em 0;
+}
+
+.reveal .slides section .footnotes .footnote-backref {
+    display: none;
+}
+
+/* Pair fnref:N ↔ fn:N (covers typical per-slide footnote counts) */
+.reveal .slides section:has([id="fnref:1"]:hover) [id="fn:1"],
+.reveal .slides section:has([id="fnref:2"]:hover) [id="fn:2"],
+.reveal .slides section:has([id="fnref:3"]:hover) [id="fn:3"],
+.reveal .slides section:has([id="fnref:4"]:hover) [id="fn:4"],
+.reveal .slides section:has([id="fnref:5"]:hover) [id="fn:5"],
+.reveal .slides section:has([id="fnref:6"]:hover) [id="fn:6"],
+.reveal .slides section:has([id="fnref:7"]:hover) [id="fn:7"],
+.reveal .slides section:has([id="fnref:8"]:hover) [id="fn:8"],
+.reveal .slides section:has([id="fnref:9"]:hover) [id="fn:9"],
+.reveal .slides section:has([id="fnref:10"]:hover) [id="fn:10"],
+.reveal .slides section:has([id="fnref:11"]:hover) [id="fn:11"],
+.reveal .slides section:has([id="fnref:12"]:hover) [id="fn:12"] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+
+/* ==========================================================================
+   13. Fancy lists — .fglass, .fancy-ol-sq, .fancy-ol-ci
+      List paths: section > div > list | .block > list | div.as-body > list
+      div.as-body = explicit <grid class="as-body"> in nav-shell template
+   ========================================================================== */
+
+.reveal .slides section.fglass {
+    &:not(:has(div.as-body)) > div > :is(ul, ol):not(:is(ul, ol) :is(ul, ol)),
+    & > div > .block > :is(ul, ol),
+    & div.as-body > :is(ul, ol) {
+        padding: 20px 20px 20px 60px;
+        margin-left: -25px;
+        border-radius: 0 0 20px 20px;
+        border-top: 8px solid var(--r-main-color2);
+        background-color: var(--r-background-color);
+        box-shadow: 1px 1px 12px var(--as-fglass-shadow);
+    }
+}
+
+/* shared list + marker base — fancy-ol-sq & fancy-ol-ci
+   Nested markdown (1. title + - sub) wraps the title in <p>; block <p> would
+   push an inline ::before onto its own line — keep marker + title on one row via flex. */
+.reveal .slides section:is(.fancy-ol-sq, .fancy-ol-ci) {
+    & > div > :is(ol, ul),
+    & > div > .block > :is(ol, ul),
+    & div.as-body > :is(ol, ul) {
+        list-style-type: none;
+        column-gap: 3em;
+
+        & > li {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            column-gap: 10px;
+        }
+
+        & > li::before {
+            flex: 0 0 var(--as-fancy-marker-size);
+            margin: 0.15em 0 0;
+            width: var(--as-fancy-marker-size);
+            height: var(--as-fancy-marker-size);
+            display: inline-flex;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-family: var(--r-heading-font);
+            background-color: var(--r-main-color2);
+            color: var(--as-on-accent-color);
+        }
+
+        /* title line shares the row with ::before */
+        & > li > :is(p, .block):first-child {
+            flex: 1 1 0;
+            min-width: 0;
+            margin: 0;
+        }
+
+        /* nested list on its own row, indented under title */
+        & > li > :is(ul, ol) {
+            flex: 1 0 100%;
+        }
+    }
+
+    /* nested lists: plain markers, indent from parent fancy marker */
+    :is(ol, ul) :is(ol, ul) {
+        list-style-type: decimal;
+        display: block;
+        margin: 0.35em 0;
+        margin-inline-start: calc(var(--as-fancy-marker-size) + 10px);
+        padding-inline-start: 1.25em;
+
+        & > li::before {
+            content: none !important;
+            display: none !important;
+            width: auto;
+            height: auto;
+            margin: 0;
+            background: none;
+        }
+    }
+
+    :is(ol, ul) ul {
+        list-style-type: disc;
+    }
+}
+
+/* fancy-ol-sq: 方形序号，hover 旋转 */
+.reveal .slides section.fancy-ol-sq {
+    & > div > :is(ol, ul) > li,
+    & > div > .block > :is(ol, ul) > li,
+    & div.as-body > :is(ol, ul) > li {
+        counter-increment: fancy-ol-sq;
+
+        &::before {
+            content: counter(fancy-ol-sq);
+        }
+
+        &:hover::before {
+            -moz-transition: all 0.5s ease-out;
+            transition: all 0.7s ease-out;
+            -moz-transform: rotate(360deg);
+            -webkit-transform: rotate(360deg);
+            -o-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+}
+
+/* fancy-ol-ci: 圆形序号，hover 动画 */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.reveal .slides section.fancy-ol-ci {
+    & > div > :is(ol, ul) > li,
+    & > div > .block > :is(ol, ul) > li,
+    & div.as-body > :is(ol, ul) > li {
+        counter-increment: fancy-ol-ci;
+
+        &::before {
+            content: counter(fancy-ol-ci);
+            border-radius: 50%;
+            transform: translate(0, -0.1em);
+        }
+
+        &:hover::before {
+            animation: rotate 0.7s ease-out 1;
+        }
+    }
+
+    :is(ol, ul) :is(ol, ul) > li {
+        counter-increment: none;
+    }
+}
+
+/* ==========================================================================
+   15. Cover page — section.cover
+      Pair with [[AsTp-Cover]]; tokens in AS_red / AS_blue.
+   ========================================================================== */
+
+
+/* --- strip all heading ::before / ::after on cover ---
+   NOTE: pseudo-elements cannot go inside :is() — use ::before / ::after outside. */
+.reveal .slides section.cover :is(h1, h2, h3, h4, h5, h6)::before,
+.reveal .slides section.cover :is(h1, h2, h3, h4, h5, h6)::after,
+:is(
+    :where(body.has-light-background) .reveal .slides section.cover,
+    .reveal .slides section.cover.has-light-background,
+    .reveal .slides section.cover.on-light-bg,
+    .reveal .slides section.cover .on-light-bg,
+    :where(body.has-dark-background) .reveal .slides section.cover,
+    .reveal .slides section.cover.has-dark-background,
+    .reveal .slides section.cover.on-dark-bg,
+    .reveal .slides section.cover .on-dark-bg
+) :is(h1, h2, h3, h4, h5, h6)::before,
+:is(
+    :where(body.has-light-background) .reveal .slides section.cover,
+    .reveal .slides section.cover.has-light-background,
+    .reveal .slides section.cover.on-light-bg,
+    .reveal .slides section.cover .on-light-bg,
+    :where(body.has-dark-background) .reveal .slides section.cover,
+    .reveal .slides section.cover.has-dark-background,
+    .reveal .slides section.cover.on-dark-bg,
+    .reveal .slides section.cover .on-dark-bg
+) :is(h1, h2, h3, h4, h5, h6)::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* --- title / subtitle / meta (AsTp-Cover slots) --- */
+.reveal .slides section.cover h1 {
+    font-size: 2.8em;
+    font-weight: 700;
+    color: var(--as-cover-title-color);
+}
+
+.reveal .slides section.cover h2 {
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 400;
+    color: var(--as-cover-subtitle-color);
+}
+
+.reveal .slides section.cover h3,
+.reveal .slides section.cover h4,
+.reveal .slides section.cover h5,
+.reveal .slides section.cover h6 {
+    color: var(--as-cover-subtitle-color);
+}
+
+.reveal .slides section.cover p {
+    color: var(--as-cover-meta-color);
+}
+
+/* --- info table (content slot: 汇报人 / 日期 等) ---
+   列宽 table-layout:auto，由最长单元格自然撑开。
+   对齐跟 markdown 分隔行：:--- 左 | ---: 右 | :---: / --- 无冒号 → 两端对齐。 */
+.reveal .slides section.cover table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    width: auto;
+    max-width: 90%;
+    table-layout: auto;
+    background: transparent;
+
+    & :is(tr, thead, tbody) {
+        background: transparent;
+    }
+
+    & tr {
+        border: none;
+    }
+
+    & :is(th, td) {
+        border: none;
+        background: transparent;
+        font-weight: normal;
+        font-size: var(--r-main-font-size);
+        font-family: var(--r-main-font);
+        color: var(--as-cover-meta-color);
+        padding: 0.2em 0;
+        vertical-align: baseline;
+        line-height: 1.5;
+    }
+
+    & :is(th, td)[align="left"] {
+        text-align: left;
+    }
+
+    & :is(th, td)[align="right"] {
+        text-align: right;
+    }
+
+    & :is(th, td)[align="center"],
+    & :is(th, td):not([align]) {
+        text-align: justify;
+        text-align-last: justify;
+        text-justify: inter-character;
+    }
+
+    & :is(th, td):first-child {
+        padding-right: 0.6em;
+    }
+
+    & :is(th, td):last-child {
+        padding-left: 0;
+    }
+
+    & strong {
+        color: var(--as-cover-meta-color);
+        font-weight: normal;
+    }
+}
+
+.reveal .slides section.cover table a::after {
+    content: "";
+}
+
+/* ==========================================================================
+   16. Transition pages — section.trans_a / section.trans_b
+      Both pair with [[ASTp-grid-lr]]; decorations on grid shell div (> div).
+      Grid shell has explicit px height from frontmatter; section collapses.
+   ========================================================================== */
+
+.reveal .slides section.trans_a img, 
+.reveal .slides section.trans_b img {
+    max-width: none;
+    max-height: none;
+    margin: 0 0 0 var(--r-block-margin);
+}
+
+
+
+/* --- trans_b: image parallelogram (A→B) / gap (B→C) / accent triangle (C→right) ---
+   All slanted edges share slope base-span. Triangle apex at slide top-right (100%, 0).
+   shift moves image left edge A only.
+   clip-path on right grid cell (50% slide width); *2 maps slide tokens to cell %.
+   B→C gap is transparent (slide background); ::after = accent triangle.
+   Center accent line: left column ::after, from slide bottom-center upward (parallel). */
+.reveal .slides section.trans_b > div {
+    position: relative;
+}
+
+.reveal .slides section.trans_b > div > div:first-child {
+    position: relative;
+}
+
+.reveal .slides section.trans_b > div > div:first-child::after {
+    content: "";
+    position: absolute;
+    left: 100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--as-trans-accent);
+    clip-path: polygon(
+        0 100%,
+        calc(var(--as-trans-b-center-line-width, 0.25%) * 2) 100%,
+        calc(
+                var(--as-trans-b-base-span, 14%) * 2 +
+                    var(--as-trans-b-center-line-width, 0.25%) * 2
+            )
+            0,
+        calc(var(--as-trans-b-base-span, 14%) * 2) 0
+    );
+    z-index: 3;
+    pointer-events: none;
+}
+
+.reveal .slides section.trans_b > div > div:nth-child(2) {
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(
+        calc(
+                var(--as-trans-b-shift, 2%) * 2 + var(--as-trans-b-base-span, 14%) * 2
+            )
+            0,
+        calc(100% - var(--as-trans-b-band-width, 2%) * 2) 0,
+        calc(
+                100% - var(--as-trans-b-base-span, 14%) * 2 - var(--as-trans-b-band-width, 2%) * 2
+            )
+            100%,
+        calc(var(--as-trans-b-shift, 2%) * 2) 100%
+    );
+}
+
+.reveal .slides section.trans_b img {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- trans_a: center vertical divider --- */
+.reveal .slides section.trans_a > div::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 5px;
+    height: 100%;
+    background-color: var(--as-trans-divider-color);
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.reveal .slides section.trans_b > div::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--as-trans-accent);
+    clip-path: polygon(
+        100% 0,
+        100% 100%,
+        calc(100% - var(--as-trans-b-base-span, 14%)) 100%
+    );
+    z-index: 1;
+    pointer-events: none;
+}
+
+
+/* ==========================================================================
+   14. Local block adaptive text — .on-light-bg / .on-dark-bg
+      Placed last; beats §7 deck defaults (:where body) and §2/§9 components.
+   ========================================================================== */
+
+/* --- on-dark --- */
+:is(
+    .reveal .slides section.on-dark-bg,
+    .reveal .slides section .on-dark-bg
+) {
+    color: var(--as-text-on-dark);
+
+    :is(h1, h2, h3, h4, h5, h6) {
+        color: var(--as-heading-on-dark);
+    }
+
+    :is(h2, h3)::after {
+        background-color: var(--as-heading-rule-on-dark);
+    }
+
+    li {
+        color: inherit;
+    }
+
+    strong {
+        color: var(--as-strong-on-dark);
+    }
+
+    em {
+        color: var(--as-em-on-dark);
+    }
+
+    a {
+        color: var(--as-link-on-dark);
+
+        &:hover {
+            color: var(--as-link-hover-on-dark);
+        }
+    }
+
+    blockquote {
+        color: var(--as-faint-on-dark);
+        border-left-color: var(--as-blockquote-border-on-dark);
+    }
+
+    :not(.code-wrapper) > code {
+        color: var(--as-code-on-dark);
+    }
+
+    code > mjx-container,
+    p > mjx-container {
+        color: var(--as-math-on-dark);
+    }
+
+    img + p > em,
+    center {
+        color: var(--as-faint-on-dark);
+    }
+
+    mark {
+        background-color: var(--as-mark-bg-on-dark);
+    }
+
+    .header mark,
+    .header.on-dark-bg mark {
+        background-color: var(--as-text-on-dark);
+        color: var(--r-main-color2);
+    }
+
+    .header mark a,
+    .header.on-dark-bg mark a {
+        color: var(--r-main-color2);
+    }
+
+    .header a,
+    .header.on-dark-bg a {
+        color: var(--as-link-on-dark);
+    }
+
+    .footer ul,
+    .footer.on-dark-bg ul {
+        color: var(--as-text-on-dark);
+    }
+
+    /* as-list fragment highlights on dark local blocks */
+    :is(.list-flex-row, .list-flex-step) > ul > li:is(.current-fragment, :has(.current-fragment)),
+    section:is(.list-flex-row, .list-flex-step) > div > ul > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-flex-step > div > ol > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-card-grid > div > :is(ul, ol) > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-card-grid > div > .block > :is(ul, ol) > li:is(.current-fragment, :has(.current-fragment)) {
+        --list-fragment-color: var(--as-strong-on-dark);
+        color: var(--as-strong-on-dark);
+    }
+
+    :is(.list-flex-col) ul > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-flex-col > div ul > li:is(.current-fragment, :has(.current-fragment)) {
+        --list-fragment-color: var(--as-em-on-dark);
+        color: var(--as-em-on-dark);
+    }
+}
+
+/* --- on-light (after on-dark — nested light pocket wins) --- */
+:is(
+    .reveal .slides section.on-light-bg,
+    .reveal .slides section .on-light-bg
+) {
+    color: var(--as-text-on-light);
+
+    :is(h1, h2, h3, h4, h5, h6) {
+        color: var(--as-heading-on-light);
+    }
+
+    :is(h2, h3)::after {
+        background-color: var(--as-heading-rule-on-light);
+    }
+
+    li {
+        color: inherit;
+    }
+
+    strong {
+        color: var(--as-strong-on-light);
+    }
+
+    em {
+        color: var(--as-em-on-light);
+    }
+
+    a {
+        color: var(--as-link-on-light);
+
+        &:hover {
+            color: var(--as-link-hover-on-light);
+        }
+    }
+
+    blockquote {
+        color: var(--as-faint-on-light);
+        border-left-color: var(--as-blockquote-border-on-light);
+    }
+
+    code {
+        color: var(--as-code-on-light);
+    }
+
+    code > mjx-container,
+    p > mjx-container {
+        color: var(--as-math-on-light);
+    }
+
+    img + p > em,
+    center {
+        color: var(--as-faint-on-light);
+    }
+
+    mark {
+        background-color: var(--as-mark-bg-on-light);
+    }
+
+    .header mark,
+    .header.on-light-bg mark {
+        background-color: var(--r-progress-background-color);
+        color: var(--r-progress-text-color);
+    }
+
+    .header mark a,
+    .header.on-light-bg mark a {
+        color: var(--r-main-color2);
+    }
+
+    .header a,
+    .header.on-light-bg a {
+        color: var(--as-link-on-light);
+    }
+
+    .footer ul,
+    .footer.on-light-bg ul {
+        color: var(--as-text-on-light);
+    }
+
+    :is(.list-flex-row, .list-flex-step) > ul > li:is(.current-fragment, :has(.current-fragment)),
+    section:is(.list-flex-row, .list-flex-step) > div > ul > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-flex-step > div > ol > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-card-grid > div > :is(ul, ol) > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-card-grid > div > .block > :is(ul, ol) > li:is(.current-fragment, :has(.current-fragment)) {
+        --list-fragment-color: var(--as-strong-on-light);
+        color: var(--as-strong-on-light);
+    }
+
+    :is(.list-flex-col) ul > li:is(.current-fragment, :has(.current-fragment)),
+    section.list-flex-col > div ul > li:is(.current-fragment, :has(.current-fragment)) {
+        --list-fragment-color: var(--as-em-on-light);
+        color: var(--as-em-on-light);
+    }
+}

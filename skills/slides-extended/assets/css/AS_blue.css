@@ -1,0 +1,108 @@
+/* AS_blue.css — Slides Extended blue color tokens + background tint.
+   Load after AS_basic.css (mutually exclusive with AS_red.css):
+     remoteCSS:
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_blue.css
+       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
+
+   Background SVG URLs stay in AS_SJTU.css; this file tints red SVGs blue via filter.
+   Tune --as-bg-filter* in Obsidian preview if needed.
+*/
+
+:root {
+    /* --- reveal.js core colors --- */
+    --r-background-color: #fff;
+    --r-background-color2: #F2F2F2;
+    --r-main-color: #222;
+    --r-heading-color: #222;
+    --r-link-color: #2E75D3;
+    --r-link-color-dark: #002C5F;
+    --r-link-color-hover: #6ca0e8;
+    --r-selection-background-color: #98bdef;
+    --r-selection-color: #fff;
+    --r-main-color2: #004098;
+    --r-strong-color: #2E75D3;
+    --r-em-color: #FFC000;
+    --r-progress-background-color: var(--r-selection-color);
+    --r-progress-text-color: var(--r-main-color2);
+    --r-light-color: #B9975B;
+    --r-accent-color: #B9975B;
+
+    /* --- layout color tokens (used by column/grid step lists) --- */
+    --r-grid-bg-front-color: #fff;
+    --r-border-color: var(--r-main-color2);
+
+    /* --- theme colors (blue palette) --- */
+    --as-text-faint: #636c76;
+    --as-code-color: #002C5F;
+    --as-math-inline: #00b050;
+    --as-table-stripe: #ebecf1;
+    --as-table-hover: #e8eef5;
+    --as-table-border: #000;
+    --as-blockquote-border: #d0d7de;
+    --as-mark-bg: #D9D9D9;
+    --as-sup-bg: #f0f0f0;
+    --as-footer-odd-bg: hsl(211deg 55% 45%);
+    --as-image-border: #ccc;
+    --as-fglass-shadow: rgb(215, 224, 235);
+    --as-on-accent-color: #fff;
+    --as-sup-hover-color: #000;
+
+    /* --- adaptive text (has-light/dark-background, on-*-bg) --- */
+    --as-text-on-light: var(--r-main-color);
+    --as-heading-on-light: var(--r-heading-color);
+    --as-strong-on-light: var(--r-strong-color);
+    --as-em-on-light: var(--r-em-color);
+    --as-link-on-light: var(--r-link-color);
+    --as-link-hover-on-light: var(--r-link-color-hover);
+    --as-faint-on-light: var(--as-text-faint);
+    --as-code-on-light: var(--as-code-color);
+    --as-math-on-light: var(--as-math-inline);
+    --as-heading-rule-on-light: var(--r-main-color2);
+    --as-blockquote-border-on-light: var(--as-blockquote-border);
+    --as-mark-bg-on-light: var(--as-mark-bg);
+
+    --as-text-on-dark: #fff;
+    --as-heading-on-dark: #fff;
+    --as-strong-on-dark: #98bdef;
+    --as-em-on-dark: #ffd966;
+    --as-link-on-dark: #a8c8f8;
+    --as-link-hover-on-dark: #cce0ff;
+    --as-faint-on-dark: rgba(255, 255, 255, 0.75);
+    --as-code-on-dark: #cce0ff;
+    --as-math-on-dark: #7dcea0;
+    --as-heading-rule-on-dark: rgba(255, 255, 255, 0.85);
+    --as-blockquote-border-on-dark: rgba(255, 255, 255, 0.4);
+    --as-mark-bg-on-dark: rgba(255, 255, 255, 0.25);
+
+    /* --- header on dark bar (bg-with-dark-color; rules in AS_basic.css §9) --- */
+    --as-header-title-on-dark-bar: #fff;
+    --as-header-nav-on-dark-bar: #fff;
+    --as-header-nav-hover-on-dark-bar: #cce0ff;
+
+    /* --- cover / transition (rules in AS_basic.css §15–§16) --- */
+    --as-cover-title-color: var(--r-main-color2);
+    --as-cover-subtitle-color: #333;
+    --as-cover-meta-color: var(--as-text-faint);
+    --as-trans-divider-color: var(--r-main-color2);
+    --as-trans-accent: var(--r-main-color2);
+    /* trans_b: base-span = slope; band-width = white gap; shift = image window right offset */
+    --as-trans-b-base-span: 14%;
+    --as-trans-b-band-width: 2%;
+    --as-trans-b-shift: 2%;
+
+    /* --- background tint (red SVG → blue; URLs unchanged in AS_SJTU.css) --- */
+    --as-bg-filter: hue-rotate(200deg) saturate(1.15) brightness(0.98);
+    --as-bg-filter-cover: hue-rotate(200deg) saturate(1.2) brightness(1);
+
+    /* aliases */
+    --text-faint: var(--as-text-faint);
+}
+
+div.backgrounds > div.slide-background.drop > div.slide-background-content {
+    filter: var(--as-bg-filter);
+}
+
+div.backgrounds > div.slide-background.drop:first-child > div.slide-background-content {
+    filter: var(--as-bg-filter-cover);
+}
