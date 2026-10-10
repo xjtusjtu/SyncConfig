@@ -172,6 +172,10 @@ flowchart LR
 
 Theme extensions may add scroll containers or sizing options for wide diagrams.
 
+**Emoji**: never put emoji inside Mermaid labels — Marp Core replaces them with twemoji `<img alt="🧑" …/>` before Mermaid parses, and the `alt="…"` quotes terminate `["…"]` strings → `Syntax error in text`. Use plain text (see vault doc `P_Marp for VS Code.md`).
+
+**Font size & label centering**: set fontSize via `themeVariables` (in `%%{init}%%` or `mermaid.initialize` — both work). Do NOT pin font-size in theme CSS. If node text sits below center after enlarging fontSize (multi-line/cylinder nodes worst), the root cause is Mermaid measuring line height (~16.6px/line @18px) smaller than the rendered `line-height: 1.5` (27px/line) — no CSS fix; use the post-render label-centering script from vault doc `P_Marp for VS Code.md` (§ 调大 fontSize 后节点文字不垂直居中). Do not reset `p` margins inside mermaid — that worsens it.
+
 ## Images
 
 Marp image syntax extensions:
@@ -210,6 +214,8 @@ Inline: `$E = mc^2$` — Block: `$$...$$`
 | Plain note frontmatter on deck | Remove UID, `[toc]`, agent-note fields |
 | Theme not found | Register CSS path in `markdown.marp.themes` |
 | Same global directive repeated | Marp uses the **last** value only |
+| Emoji in Mermaid label → `Syntax error in text` | Remove emoji from labels; twemoji replacement injects `alt="…"` quotes before Mermaid parses |
+| Mermaid node text not vertically centered after fontSize change | Mermaid line-height measure/render mismatch — apply post-render label-centering script (see `P_Marp for VS Code.md`) |
 
 ## Theme Extensions
 
@@ -218,6 +224,7 @@ Custom themes add CSS classes and layout patterns on top of standard Marp syntax
 | Theme | Companion file | CSS |
 |:------|:---------------|:----|
 | Marp_basic / Marp_blue | [themes/marp_basic.md](themes/marp_basic.md) | `assets/css/Marp_basic.css`, `assets/css/Marp_blue.css` |
+| Marp_slate | [themes/marp_slate.md](themes/marp_slate.md) | `assets/css/Marp_slate.css` (child theme — `@import "Marp_basic"`) |
 
 Workflow:
 

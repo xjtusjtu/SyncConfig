@@ -327,6 +327,7 @@ Panel vs template → [Panel layouts](#panel-layouts). Catalog → [references.m
 | Custom theme/CSS outside vault | Theme Directory files must be **inside** the vault |
 | Block comment syntax in doc slide body | Do not write triple-colon slot markers in explanatory slides (backticks do not escape); use **slot 槽** labels and link [[AS-Templates]] |
 | `fglass` / `on-light-bg` unknown | See §13 / §14 in this file; full CSS in `AS_basic.css` |
+| Mermaid node text vertically off-center after fontSize change | Mermaid line-height measure/render mismatch (same root cause as bold-text clipping) — do NOT pin font-size in CSS; see `AS_Mermaid.md` 使用日志 @2026-10-10 |
 
 Per-slide annotations, separators, speaker notes → see [SKILL.md](../SKILL.md).
 

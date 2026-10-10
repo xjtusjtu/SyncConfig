@@ -52,6 +52,7 @@ Base directory: `Sources/Equipments/PPT/Advanced Slides/`
 | SJTU nav + AS_basic/AS_red/AS_blue/AS_SJTU theme | [themes/as_basic.md](themes/as_basic.md) |
 | Nav shell / cover / trans 等 ASTp 模板用法 | [showcase/AS_Basic Showcase.md](showcase/AS_Basic%20Showcase.md) |
 | Scroll containers / **gallery** (img·mermaid strip) in template slots | `Sources/Equipments/PPT/Advanced Slides/AS-Scrollbox.md` |
+| Mermaid 配置、吞字、字号与文字错位 | `Sources/Equipments/PPT/Advanced Slides/AS_Mermaid.md` |
 | List grid columns (`list-grid`, `list-grid--*` modifiers) | `Sources/Program/代码库/css_AS_Grid Listi网格列表.md` — demo in `AS_Basic Showcase.md` §列表分列 |
 | Flex step lists (`list-flex-row` / `list-flex-col` / `list-flex-step`) | `Sources/Program/代码库/css_AS列表横向、纵向逐步显示.md` — demo in `AS_Basic Showcase.md` §横排有序步骤图 |
 | Card grid lists (`list-card-grid`, modifiers) | [themes/as_basic.md](themes/as_basic.md) § List card grid — demo in `AS_Basic Showcase.md` §卡片矩阵 |

@@ -23,7 +23,7 @@ style: |
 
 # Marp Basic Showcase
 
-###### Marp_basic / Marp_blue 主题布局与样式演示
+## Marp_basic / Marp_blue 主题布局与样式演示
 
 | 汇报人：| 吕小布 |
 |:--:|:--:|
@@ -37,8 +37,6 @@ style: |
 <!-- _header: "CONTENTS" -->
 <!-- _footer: "" -->
 <!-- _paginate: "" -->
-
-## 目录
 
 - [启用主题](#启用主题)
 - [类名速查](#类名速查)
@@ -129,6 +127,7 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | 类 | 作用 |
 |:---|:-----|
 | `cover_a`–`cover_e` | 五种封面 |
+| `cover_f`（别名 `lead`） | 深色渐变封面 / 章节过渡页 |
 | `toc_a` / `toc_b` | 目录页 |
 | `cols-2` / `cols-3` | 1:1 / 三栏 |
 | `cols-2-73` / `64` / `37` / `46` | 比例双栏 |
@@ -137,6 +136,9 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | `fglass` | 列表装饰（与 `cols2_*` 联用） |
 | `fixedtitleB` / `footnote` | 固定标题 / 脚注 |
 | `navbar` / `lastpage` / `trans` | 顶栏 / 致谢 / 过渡页 |
+| `th_fill` | 表头填充主题强调色 |
+| `quote_mark` | 引用框改回「引号装饰」样式 |
+| `zebra_bar` | 顶部 9px 主题强调色条（默认无） |
 
 ---
 
@@ -180,10 +182,18 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | `--font-size-2-3` | 30px | `h2` |
 | `--font-size-h3` | 25px | `h3` |
 | `--font-size-code` | 14px | `pre code` |
+| `--font-size-cover-title` | `max(52px, --font-size-1 * 1.2)` | 封面主标题（cover_a–e） |
+| `--font-size-cover-body` | `max(22px, --font-size-main * 1.08)` | 封面正文 / cover_a 信息表 |
+| `--foot-size-subtitle` | 兼容别名（见 `:root`） | 封面副标题（cover_a–e / lastpage） |
 | `--color-strong` | `#dc143c` | `**粗体**` |
 | `--color-em` | `#20b2aa` | `*斜体*` |
+| `--color-blockquote-bg` / `-border` | `--color-quote` / `--color-much` | 引用框底色 / 左边框 |
+| `--color-table-header-bg` / `-fg` | `--color-much` / `--color-title` | `th_fill` 表头背景 / 文字 |
+| `--color-cover-from` / `-to` | `#592b32` / `#773f49` | `cover_f` / `lead` 渐变 |
+| `--color-coverbg` | `var(--color-cover-to)` | `cover_a`–`cover_e` 色块 |
+| `--color-cover-accent` / `-muted` | `#ffd5d9` / `#ead8db` | 封面副标题/强调文字、正文/斜体 |
 
-`Marp_blue` 覆盖配色令牌，布局类不变。
+`Marp_blue` / `Marp_slate` 覆盖配色令牌（含引用框、表头、封面渐变），布局类不变。
 
 ---
 
@@ -212,12 +222,15 @@ style: |
 | 元素 / Markdown | 效果 |
 |:----------------|:-----|
 | `h1` | 45px，居中 |
-| `h2`–`h6` | 主题色字号阶梯；`h4` 前有 🍀 |
+| `h2`–`h6` | 主题色字号阶梯；`h4` 前有 🍀；封面/尾页副标题用 `h2` |
 | `**粗体**` / `*斜体*` | 红 / 青绿 |
 | `<u>下划线</u>` | 红色底边线 |
 | `paginate: true` | 右下角 `Page n / total` |
-| `table` | `0.8em`、满宽、`table-layout: fixed` |
-| `blockquote` | 底色 + 左边框 + 引号装饰 |
+| `table` | `0.8em`、满宽、`table-layout: fixed`；表头默认仅描边 |
+| `th_fill`（class） | 表头填充主题强调色 |
+| `blockquote` | 浅底 + 左侧强调色粗边框（默认） |
+| `quote_mark`（class） | 引用框改为「引号装饰」样式 |
+| `zebra_bar`（class） | 顶部 9px 色条，颜色为 `--color-much`；三套主题默认均无 |
 
 ---
 
@@ -227,7 +240,7 @@ style: |
 
 ## 封面页
 
-五种 `cover_*` 版式；`cover_a` 使用 **table** 呈现个人信息。封面 / toc / lastpage 建议 `<!-- _paginate: "" -->`。
+六种 `cover_*` 版式（`cover_a`–`cover_e` + 深色渐变 `cover_f`）；`cover_a` 使用 **table** 呈现个人信息。**副标题用 `##`（h2）**，勿用 `######`；封面 / toc / lastpage 建议 `<!-- _paginate: "" -->`。
 
 ---
 
@@ -239,9 +252,13 @@ style: |
 
 # cover_b
 
-###### 副标题示例
+## 副标题示例
 
-@Your Name · mail@example.com
+@Xiaobu
+学科：组织管理系
+发布时间：2026年10月1日
+mail@example.com
+通讯地址：上海市徐汇区华山路1954号
 
 ---
 
@@ -253,9 +270,13 @@ style: |
 
 # cover_c
 
-###### 副标题示例（header 放 logo，footer 放校训）
+## 副标题示例（header 放 logo，footer 放校训）
 
-@Your Name · mail@example.com
+@Xiaobu
+学科：组织管理系
+发布时间：2026年10月1日
+mail@example.com
+通讯地址：上海市徐汇区华山路1954号
 
 ---
 
@@ -266,9 +287,13 @@ style: |
 
 # cover_d
 
-###### 副标题示例（仅 footer 校训）
+## 副标题示例（仅 footer 校训）
 
-@Your Name · mail@example.com
+@Xiaobu
+学科：组织管理系
+发布时间：2026年10月1日
+mail@example.com
+通讯地址：上海市徐汇区华山路1954号
 
 ---
 
@@ -280,9 +305,31 @@ style: |
 
 # cover_e
 
-###### 副标题示例（header + footer 均可放 logo）
+## 副标题示例（header + footer 均可放 logo）
 
-@Your Name · mail@example.com
+@Xiaobu
+学科：组织管理系
+发布时间：2026年10月1日
+mail@example.com
+通讯地址：上海市徐汇区华山路1954号
+
+---
+
+<!-- AGENT: layout=cover_f | 深色渐变封面 / 章节过渡页（别名 lead） -->
+<!-- _class: cover_f -->
+<!-- _header: "" -->
+<!-- _footer: "" -->
+<!-- _paginate: "" -->
+
+# cover_f
+
+## 深色渐变封面 / 章节过渡页
+
+**加粗**
+
+*别名 `lead` 等效；配色来自 `--color-cover-*` 令牌*
+
+正文
 
 ---
 
@@ -666,6 +713,50 @@ style: |
 
 ---
 
+<!-- AGENT: layout=zebra_bar | 按需启用顶部主题色条 -->
+<!-- _class: zebra_bar -->
+<!-- _footer: "" -->
+
+## 顶部色条 `zebra_bar`
+
+三套主题默认均无顶部色条，只有调用 `zebra_bar` 才显示。
+
+```markdown
+<!-- _class: zebra_bar -->
+<!-- _class: cols-2 zebra_bar -->
+<!-- _class: cover_f zebra_bar -->
+```
+
+每页选用一条 class 指令；色条为 9px，颜色随主题的 `--color-much` 变化。
+
+---
+
+<!-- AGENT: layout=th_fill | 表头填充主题强调色 -->
+<!-- _class: th_fill -->
+<!-- _footer: "" -->
+
+## 表头填充 `th_fill`
+
+| 变量 | 含义 | 默认 |
+|:-----|:-----|:-----|
+| `--color-table-header-bg` | 表头背景 | `--color-much` |
+| `--color-table-header-fg` | 表头文字 | `--color-title` |
+
+默认表格仅描边；`th_fill` 给表头填充主题强调色，配色随主题变化。
+
+---
+
+<!-- AGENT: layout=quote_mark | 引用框引号装饰 -->
+<!-- _class: quote_mark -->
+<!-- _footer: "" -->
+
+## 引用框 `quote_mark`
+
+> 默认引用框为浅底 + 左侧强调色粗边框。
+> `quote_mark` 改回带引号装饰的旧版式（原 Marp_basic 样式）。
+
+---
+
 <!-- AGENT: layout=cols-2+limg+rdiv | 左图右文 -->
 <!-- _class: cols-2 -->
 
@@ -907,7 +998,7 @@ scroll 不生效时检查内容高度与 `scrollbox-y` 在 slide 内的顺序。
 <!-- _footer: "" -->
 <!-- _paginate: "" -->
 
-###### Thank You
+## Thank You
 
 <div class="icons">
 

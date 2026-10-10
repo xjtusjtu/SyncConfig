@@ -12,50 +12,79 @@
    ========================================================================== */
 
 :root {
-  /* 字体族 */
-  --font-family-main: "Times New Roman", Arial, 楷体;
-  --font-family-table: "Times New Roman", "黑体", serif;
+    /* 字体族 */
+    --font-family-main: "Times New Roman", Arial, 楷体;
+    --font-family-title: "Times New Roman", Arial, 楷体;
+    --font-family-table: "Times New Roman", "黑体", serif;
 
-  /* 字号（section 根字号 = --font-size-main，供 em/rem 参照） */
-  --font-size-main: 18px;
-  --font-size-1: 45px; /* h1 */
-  --font-size-2-3: 30px; /* h2；h3 见 --font-size-h3 */
-  --font-size-h3: 25px;
-  --font-size-4-5: 23px; /* h4；h5 见 --font-size-h5 */
-  --font-size-h5: 21px;
-  --font-size-subtitle: 20px; /* h6 */
-  --font-size-code: 14px;
-  --font-size-table: 0.8em;
-  --font-size-footnote: 16px;
-  --font-size-page: 12px;
-  --font-size-blockquote-mark: 2em;
+    /* 字号（section 根字号 = --font-size-main，供 em/rem 参照） */
+    --font-size-main: 18px;
+    --font-size-1: 45px; /* h1 */
+    --font-size-2-3: 30px; /* h2；h3 见 --font-size-h3 */
+    --font-size-h3: 25px;
+    --font-size-4-5: 23px; /* h4；h5 见 --font-size-h5 */
+    --font-size-h5: 21px;
+    --font-size-subtitle: 20px; /* 封面副标题 h2（cover_* / lastpage） */
+    --font-size-code: 14px;
+    --font-size-table: 0.8em;
+    --font-size-footnote: 16px;
+    --font-size-page: 12px;
+    --font-size-blockquote-mark: 2em;
 
-  /* am_template 主题色（默认 am_red；Marp_blue 等子主题覆盖） */
-  --font-family-title: "Times New Roman", Arial, 楷体;
-  --foot-size-subtitle: var(--font-size-subtitle);
-  --color-code-bg: #f6eeef;
-  --color-coverbg: #a7535a;
-  --color-few: #53a7a0;
-  --color-footer: #8c8c8c;
-  --color-main: #211112;
-  --color-much: #864248;
-  --color-navbar-bg: #edddde;
-  --color-navbar-font: rgb(108, 95, 91);
-  --color-quote: rgba(254, 176, 98, 0.1);
-  --color-title: rgb(255, 255, 255);
-  --color-trans: #b9757b;
-  --filter-b: brightness(30%) contrast(70%) grayscale(100%);
-  --filter-c: brightness(0%) contrast(60%) grayscale(80%);
-  --filter-e: brightness(0%) contrast(70%) grayscale(100%);
+    /* 传统封面（cover_a–cover_e）字号：主标题明显大于副标题，正文略大于页面正文 */
+    --font-size-cover-title: max(52px, calc(var(--font-size-1) * 1.2));
+    --font-size-cover-body: max(22px, calc(var(--font-size-main) * 1.08));
+    /* 兼容别名：传统封面 / lastpage 副标题字号（由上面各字号推导，子主题可覆盖） */
+    --foot-size-subtitle: max(
+        var(--font-size-subtitle),
+        calc(var(--font-size-1) * 0.7),
+        calc(var(--font-size-main) * 1.2)
+    );
 
-  /* 强调色与装饰色 */
-  --color-strong: #dc143c;
-  --color-em: #20b2aa;
-  --color-underline: #f00;
-  --color-blockquote-bg: var(--color-quote);
-  --color-blockquote-border: #ccc;
-  --color-blockquote-mark: #ccc;
-  --color-table-border: #000;
+    /* 基础颜色（默认 am_red；Marp_blue / Marp_slate 等子主题覆盖） */
+    --color-main: #211112;
+    --color-much: #864248;
+    --color-title: rgb(255, 255, 255);
+    --color-few: #53a7a0;
+    --color-footer: #8c8c8c;
+    --color-code-bg: #f6eeef;
+    --color-navbar-bg: #edddde;
+    --color-navbar-font: rgb(108, 95, 91);
+    --color-quote: rgba(254, 176, 98, 0.1);
+    --color-trans: #b9757b;
+    --color-trans-text: var(--color-main);
+
+    /* 强调色与装饰色 */
+    --color-strong: #dc143c;
+    --color-em: #20b2aa;
+    --color-underline: #f00;
+
+    /* 引用框（默认：浅底 + 左侧强调色粗边框，美学取自 Marp_slate） */
+    --color-blockquote-bg: var(--color-quote);
+    --color-blockquote-border: var(--color-much);
+    --color-blockquote-text: var(--color-main);
+    /* 引用框（opt-in `quote_mark`：引号装饰；原 Marp_basic 样式） */
+    --color-blockquote-mark: #ccc;
+
+    /* 表格 */
+    --color-table-border: #000;
+    /* 表头填充（opt-in `th_fill`：各主题用自身强调色） */
+    --color-table-header-bg: var(--color-much);
+    --color-table-header-fg: var(--color-title);
+
+    /* 封面（传统封面色块 cover_a–cover_e 取 --color-coverbg；
+       cover_f（等价别名 lead）取 --color-cover-from/-to 渐变）；子主题覆盖为自身配色 */
+    --color-coverbg: var(--color-cover-to);
+    --color-cover-from: #592b32;
+    --color-cover-to: #773f49;
+    --color-cover-accent: #ffd5d9;
+    --color-cover-text: var(--color-title);
+    --color-cover-muted: #ead8db;
+
+    /* 图片滤镜（子主题覆盖） */
+    --filter-b: brightness(30%) contrast(70%) grayscale(100%);
+    --filter-c: brightness(0%) contrast(60%) grayscale(80%);
+    --filter-e: brightness(0%) contrast(70%) grayscale(100%);
 }
 
 /* ==========================================================================
@@ -71,6 +100,10 @@ section {
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
+}
+
+section.zebra_bar {
+    border-top: 9px solid var(--color-much);
 }
 
 header {
@@ -125,8 +158,16 @@ li {
     font-family: var(--font-family-main);
 }
 
-h1 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-family-title);
+}
+
+h1 {
     font-size: var(--font-size-1);
     color: var(--color-title);
     text-align: center;
@@ -134,13 +175,8 @@ h1 {
 
 h2,
 h3 {
-    font-family: var(--font-family-title);
     font-size: var(--font-size-2-3);
     color: var(--color-much);
-}
-
-h4::before {
-    content: "🍀";
 }
 
 h3 {
@@ -149,13 +185,15 @@ h3 {
 
 h4,
 h5 {
-    font-family: var(--font-family-title);
     font-size: var(--font-size-4-5);
     color: var(--color-much);
 }
 
+h4::before {
+    content: "🍀";
+}
+
 h6 {
-    font-family: var(--font-family-title);
     font-size: var(--font-size-subtitle);
     color: var(--color-much);
 }
@@ -201,14 +239,27 @@ u {
    3. Content elements — blockquote, table, image, form
    ========================================================================== */
 
+/* 默认引用框：浅底 + 左侧强调色粗边框（美学取自 Marp_slate） */
 blockquote {
     background: var(--color-blockquote-bg);
-    border-left: 10px solid var(--color-blockquote-border);
+    color: var(--color-blockquote-text);
+    border-left: 5px solid var(--color-blockquote-border);
+    padding: 12px 20px;
+}
+
+blockquote p {
+    margin: 0;
+}
+
+/* opt-in `quote_mark`：带引号装饰的引用框（原 Marp_basic 样式） */
+section.quote_mark blockquote {
+    background: var(--color-quote);
+    border-left: 10px solid var(--color-blockquote-mark);
     border-radius: 0.5em;
     quotes: "\201C""\201D""\2018""\2019";
 }
 
-blockquote::before {
+section.quote_mark blockquote::before {
     color: var(--color-blockquote-mark);
     content: open-quote;
     font-size: var(--font-size-blockquote-mark);
@@ -217,7 +268,7 @@ blockquote::before {
     vertical-align: -0.4em;
 }
 
-blockquote p {
+section.quote_mark blockquote p {
     display: inline;
 }
 
@@ -244,6 +295,12 @@ td {
     overflow-wrap: break-word;
     word-break: break-word;
     white-space: normal;
+}
+
+/* opt-in `th_fill`：表头填充主题强调色（背景/文字随主题变化） */
+section.th_fill th {
+    background: var(--color-table-header-bg);
+    color: var(--color-table-header-fg);
 }
 
 /* alt 以 C 结尾 → 块级居中 */
@@ -466,19 +523,25 @@ section :is(.limg, .mimg, .rimg, .timg, .bimg) {
     justify-content: center;
 }
 
+/* grid 布局（cols-* / rows-*）内的 div 同样垂直居中（与 limg 对齐）；
+   不设 align-items，保持横向 stretch，避免收窄列表/表格宽度 */
+section:is(
+    .cols-2, .cols-3, .cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46,
+    .rows-2, .rows-1-2, .rows-2-1
+) :is(.ldiv, .mdiv, .rdiv, .tdiv, .bdiv) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 /* ==========================================================================
    7. Migrated layouts — cols / rows
    ========================================================================== */
 
-section.cols-2,
-section.cols-3,
-section.cols-2-73,
-section.cols-2-64,
-section.cols-2-37,
-section.cols-2-46,
-section.rows-2,
-section.rows-1-2,
-section.rows-2-1 {
+section:is(
+    .cols-2, .cols-3, .cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46,
+    .rows-2, .rows-1-2, .rows-2-1
+) {
     overflow: visible;
     display: grid;
     align-content: center;
@@ -502,40 +565,29 @@ section.cols-3 {
         "leftpanel middlepanel rightpanel";
 }
 
-section.cols-2-73 {
+/* 双栏比例版式：网格区域与间距相同，仅左右列宽不同 */
+section:is(.cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46) {
     gap: 1rem;
-    grid-template-columns: 7fr 3fr;
     grid-template-rows: auto auto;
     grid-template-areas:
         "slideheading slideheading"
         "leftpanel rightpanel";
+}
+
+section.cols-2-73 {
+    grid-template-columns: 7fr 3fr;
 }
 
 section.cols-2-64 {
-    gap: 1rem;
     grid-template-columns: 6fr 4fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-        "slideheading slideheading"
-        "leftpanel rightpanel";
 }
 
 section.cols-2-37 {
-    gap: 1rem;
     grid-template-columns: 3fr 7fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-        "slideheading slideheading"
-        "leftpanel rightpanel";
 }
 
 section.cols-2-46 {
-    gap: 1rem;
     grid-template-columns: 4fr 6fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-        "slideheading slideheading"
-        "leftpanel rightpanel";
 }
 
 section.rows-2 {
@@ -568,27 +620,20 @@ section.rows-2-1 {
         "bottompanel bottompanel";
 }
 
-section.cols-2 > :is(h2, h3),
-section.cols-3 > :is(h2, h3),
-section.cols-2-73 > :is(h2, h3),
-section.cols-2-64 > :is(h2, h3),
-section.cols-2-37 > :is(h2, h3),
-section.cols-2-46 > :is(h2, h3),
-section.rows-2 > :is(h2, h3),
-section.rows-1-2 > :is(h2, h3),
-section.rows-2-1 > :is(h2, h3) {
+section:is(
+    .cols-2, .cols-3, .cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46,
+    .rows-2, .rows-1-2, .rows-2-1
+) > :is(h2, h3) {
     grid-area: slideheading;
 }
 
-section.cols-2 :is(.ldiv, .rdiv, .limg, .rimg),
-section.cols-3 :is(.ldiv, .mdiv, .rdiv, .limg, .mimg, .rimg) {
+section:is(.cols-2, .cols-3) :is(.ldiv, .rdiv, .limg, .rimg),
+section.cols-3 :is(.mdiv, .mimg) {
     margin-top: -5%;
 }
 
-section.cols-2-73 :is(.ldiv, .rdiv, .limg, .rimg),
-section.cols-2-64 :is(.ldiv, .rdiv, .limg, .rimg),
-section.cols-2-37 :is(.ldiv, .rdiv, .limg, .rimg),
-section.cols-2-46 :is(.ldiv, .rdiv, .limg, .rimg) {
+section:is(.cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46)
+    :is(.ldiv, .rdiv, .limg, .rimg) {
     margin-top: -2%;
 }
 
@@ -652,6 +697,7 @@ section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li::befo
     background-color: var(--color-much);
     color: white;
     margin-left: -8%;
+    border-radius: 0;
 }
 
 section.cols2_ol_sq ol {
@@ -664,7 +710,6 @@ section.cols2_ol_sq ol > li {
 
 section.cols2_ol_sq ol > li::before {
     content: counter(cols2_ol_sq);
-    border-radius: 0;
 }
 
 section.cols2_ol_ci ol {
@@ -685,13 +730,13 @@ section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li:hover
     transform: rotate(360deg);
 }
 
-/* 无序列表：小色块（仅 ul；_sq / _ol_ci 方形，仅 cols2_ul_ci 为圆点） */
+/* 无序列表：小色块（ul；方形为默认，仅 cols2_ul_ci 为圆点） */
 section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li {
     display: block;
     position: relative;
 }
 
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq) ul > li::before {
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li::before {
     content: "";
     display: inline-flex;
     position: absolute;
@@ -705,15 +750,6 @@ section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq) ul > li::before {
 }
 
 section.cols2_ul_ci ul > li::before {
-    content: "";
-    display: inline-flex;
-    position: absolute;
-    top: 1.2em;
-    left: -30px;
-    margin-top: -0.9em;
-    background-color: var(--color-much);
-    height: 10px;
-    width: 10px;
     border-radius: 50%;
 }
 
@@ -750,14 +786,10 @@ section.fixedtitleB .div {
 }
 
 /* ==========================================================================
-   10. Cover pages — cover_a … cover_e
+   10. Cover pages — cover_a … cover_f
    ========================================================================== */
 
-section.cover_a,
-section.cover_b,
-section.cover_c,
-section.cover_d,
-section.cover_e {
+section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) {
     width: 100%;
 }
 
@@ -767,6 +799,10 @@ section.cover_a {
 
 section.cover_c {
     background: linear-gradient(to bottom, white 20%, var(--color-coverbg) 20% 88%, white 88%);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 20% 20% 12% 36% 12%;
+    padding: 0 6%;
 }
 
 section.cover_d {
@@ -776,6 +812,10 @@ section.cover_d {
         var(--color-coverbg) 5% 60%,
         white 60%
     );
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 5% 35% 20% 40%;
+    padding: 0 6%;
 }
 
 section.cover_e {
@@ -793,9 +833,27 @@ section.cover_e {
     text-align: left;
 }
 
-section.cover_a :is(h1, h6, p),
-section.cover_b :is(h1, h6, p),
-section.cover_e :is(h1, h6, p) {
+/* 封面副标题用 h2（普通 Markdown 打开时层级合理）；字号收窄到副标题尺度 */
+section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) h1 {
+    font-size: var(--font-size-cover-title);
+    line-height: 1.2;
+}
+
+section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) > p {
+    font-size: var(--font-size-cover-body);
+}
+
+section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) h2 {
+    font-family: var(--font-family-title);
+    font-size: var(--foot-size-subtitle);
+}
+
+/* 封面链接不加分页码后缀 */
+section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) a::after {
+    content: "";
+}
+
+section:is(.cover_a, .cover_b, .cover_e) :is(h1, h2, p) {
     position: absolute;
 }
 
@@ -804,25 +862,20 @@ section.cover_a h1 {
     top: 28%;
     width: 88%;
     left: 6%;
+    text-align: center;
     background-color: var(--color-coverbg);
     vertical-align: middle;
 }
 
-section.cover_a h6 {
+section.cover_a h2 {
     top: 38%;
-    width: 90%;
+    width: 88%;
     left: 6%;
-    font-family: var(--font-family-title);
-    font-size: var(--foot-size-subtitle);
     color: var(--color-title);
 }
 
 section.cover_a strong {
     color: var(--color-main);
-}
-
-section.cover_a a::after {
-    content: "";
 }
 
 section.cover_a p {
@@ -863,7 +916,7 @@ section.cover_a table :is(th, td) {
     border: none;
     background: transparent;
     font-weight: normal;
-    font-size: var(--font-size-main);
+    font-size: var(--font-size-cover-body);
     font-family: var(--font-family-main);
     padding: 0.2em 0 0.2em 0;
     vertical-align: baseline;
@@ -897,14 +950,12 @@ section.cover_b h1 {
     text-align: center;
 }
 
-section.cover_b h6 {
+section.cover_b h2 {
     top: 33%;
     right: 5%;
     left: 5%;
     height: 13%;
     padding-top: 30px;
-    font-family: var(--font-family-title);
-    font-size: var(--foot-size-subtitle);
     color: var(--color-title);
     background-color: var(--color-coverbg);
     text-align: center;
@@ -923,10 +974,6 @@ section.cover_b strong {
     color: var(--color-main);
 }
 
-section.cover_b a::after {
-    content: "";
-}
-
 /* --- cover_c --- */
 section.cover_c img {
     background-color: rgba(255, 255, 255, 0);
@@ -935,35 +982,31 @@ section.cover_c img {
 }
 
 section.cover_c h1 {
-    width: 95%;
-    padding-top: 8%;
+    grid-row: 2;
+    align-self: end;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
 }
 
-section.cover_c h6 {
-    margin-top: 0;
-    width: 95%;
-    font-family: var(--font-family-title);
-    font-size: var(--foot-size-subtitle);
+section.cover_c h2 {
+    grid-row: 3;
+    align-self: start;
+    margin: 12px 0 0;
+    width: 100%;
     color: var(--color-title);
 }
 
 section.cover_c p {
-    margin-top: 5%;
+    grid-row: 4;
+    align-self: center;
+    margin: 0;
     color: var(--color-title);
 }
 
 section.cover_c :is(strong, a) {
     color: var(--color-title);
-}
-
-section.cover_c a::after {
-    content: "";
-}
-
-section.cover_c footer {
-    font-size: larger;
-    left: 68%;
-    bottom: 30px;
 }
 
 section.cover_c header {
@@ -977,35 +1020,34 @@ section.cover_c header {
 
 /* --- cover_d --- */
 section.cover_d h1 {
-    width: 95%;
-    position: relative;
-    bottom: 2%;
+    grid-row: 2;
+    align-self: end;
+    width: 100%;
+    margin: 0;
+    text-align: left;
 }
 
-section.cover_d h6 {
-    margin-top: 0;
-    width: 95%;
-    position: relative;
-    bottom: 0;
-    font-family: var(--font-family-title);
-    font-size: var(--foot-size-subtitle);
+section.cover_d h2 {
+    grid-row: 3;
+    align-self: start;
+    margin: 12px 0 0;
+    width: 100%;
     color: var(--color-title);
 }
 
 section.cover_d p {
-    position: relative;
-    bottom: -22%;
+    grid-row: 4;
+    align-self: center;
+    margin: 0;
+    color: var(--color-main);
 }
 
 section.cover_d strong {
     color: var(--color-main);
 }
 
-section.cover_d a::after {
-    content: "";
-}
-
-section.cover_d footer {
+/* cover_c / cover_d 页脚：仅校训，位置一致 */
+section:is(.cover_c, .cover_d) footer {
     font-size: larger;
     left: 68%;
     bottom: 30px;
@@ -1014,36 +1056,32 @@ section.cover_d footer {
 /* --- cover_e --- */
 section.cover_e h1 {
     top: 28%;
-    width: 70%;
-    left: 1.2%;
+    width: 64%;
+    left: 6%;
+    text-align: left;
     color: var(--color-much);
 }
 
-section.cover_e h6 {
+section.cover_e h2 {
     top: 38%;
-    width: 68%;
-    font-family: var(--font-family-title);
-    font-size: var(--foot-size-subtitle);
+    width: 64%;
+    left: 6%;
     color: var(--color-much);
 }
 
 section.cover_e p {
     bottom: 15%;
-    left: 5%;
+    left: 7%;
 }
 
 section.cover_e strong {
     color: var(--color-main);
 }
 
-section.cover_e a::after {
-    content: "";
-}
-
 section.cover_e footer {
     height: 128px;
     width: 26%;
-    left: 72%;
+    left: 70%;
     bottom: 0;
     padding: 0;
 }
@@ -1091,15 +1129,73 @@ section.cover_e header > img {
     flex-shrink: 0;
 }
 
+/* --- cover_f: 深色渐变封面 / 章节过渡页（美学取自 Marp_slate `lead`）
+    等价别名 `lead` 一并生效 --- */
+section:is(.cover_f, .lead) {
+    justify-content: center;
+    background: linear-gradient(
+        125deg,
+        var(--color-cover-from),
+        var(--color-cover-to)
+    );
+    color: var(--color-cover-muted);
+}
+
+section:is(.cover_f, .lead) :is(h1, h2, p) {
+    text-align: left;
+}
+
+section:is(.cover_f, .lead) h1 {
+    color: var(--color-cover-text);
+    font-size: 48px;
+    line-height: 1.35;
+}
+
+section:is(.cover_f, .lead) h2 {
+    color: var(--color-cover-accent);
+    font-size: var(--font-size-h3);
+    font-weight: 400;
+}
+
+section:is(.cover_f, .lead) strong {
+    color: var(--color-cover-accent);
+}
+
+section:is(.cover_f, .lead) footer,
+section:is(.cover_f, .lead)::after,
+section:is(.cover_f, .lead) em,
+section:is(.cover_f, .lead) > p > em {
+    color: var(--color-cover-muted);
+}
+
+section:is(.cover_f, .lead) a {
+    color: var(--color-cover-accent);
+}
+
+section:is(.cover_f, .lead) :not(pre) > code {
+    color: inherit;
+    background: transparent;
+}
+
 
 /* ==========================================================================
    11. TOC pages — toc_a / toc_b
    ========================================================================== */
 
+section.toc_a {
+    padding: 150px 7% 40px;
+}
+
 section.toc_a ul {
     list-style-type: none;
-    padding: 30px;
-    margin: 30px;
+    padding: 20px 30px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    flex: 1;
+    min-height: 0;
     position: relative;
     border-radius: 0 0 20px 20px;
     border-top: 8px solid var(--color-navbar-font);
@@ -1109,6 +1205,10 @@ section.toc_a ul {
 
 section.toc_a ul li {
     counter-increment: toc_a;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    line-height: 1.2;
 }
 
 section.toc_a ul li::before {
@@ -1116,9 +1216,10 @@ section.toc_a ul li::before {
     color: white;
     content: counter(toc_a);
     margin-right: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 0;
     width: 35px;
     height: 35px;
+    flex-shrink: 0;
     display: inline-flex;
     position: relative;
     align-items: center;
@@ -1134,16 +1235,19 @@ section.toc_a ul li:hover::before {
 
 section.toc_a header {
     position: absolute;
-    top: 0;
-    left: -8px;
-    height: 100%;
-    width: 150%;
+    top: 20px;
+    left: 7%;
+    right: auto;
+    height: 110px;
+    width: 86%;
     font-weight: bolder;
-    font-size: 1080%;
+    font-size: 96px;
     text-align: center;
     display: flex;
     justify-content: center;
-    line-height: 162px;
+    align-items: center;
+    line-height: 1.2;
+    white-space: nowrap;
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 0.75px var(--color-navbar-font);
 }
@@ -1158,6 +1262,9 @@ section.toc_b > :is(ul, ol) {
     display: table;
     width: 63%;
     left: 30%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
     position: absolute;
     line-height: 200%;
 }
@@ -1228,7 +1335,7 @@ section.lastpage {
         "icons";
 }
 
-section.lastpage h6 {
+section.lastpage h2 {
     grid-area: heading;
     display: grid;
     width: 100%;
@@ -1333,6 +1440,17 @@ section.fglass :is(ul, ol) {
 
 section.trans {
     background-color: var(--color-trans);
+    color: var(--color-trans-text);
+}
+
+section.trans :is(p, li, a, strong, em, header, footer),
+section.trans::after {
+    color: var(--color-trans-text);
+}
+
+section.trans :not(pre) > code {
+    color: inherit;
+    background: transparent;
 }
 
 section.trans h2 {

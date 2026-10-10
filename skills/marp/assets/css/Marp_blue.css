@@ -2,19 +2,49 @@
 
 @import 'Marp_basic';
 
+/* Indigo palette — deliberately cool violet-blue (hue ≈ 232°) so it stays clearly
+   distinct from Marp_slate's teal (hue ≈ 187°); the previous blue was within 5° of
+   slate's accent and read as the same colour.
+   Every chromatic Marp_basic token is overridden here, so nothing warm (the parent's
+   red/green accents) leaks through; only neutral tokens (--color-title / -table-border
+   / -blockquote-mark) and the derived aliases (--color-coverbg, --color-blockquote-bg)
+   are still inherited. */
 :root {
-  --color-code-bg: #e8f4f6;
-  --color-coverbg: #2c9cb1;
-  --color-few: #91a814;
-  --color-footer: #8c8c8c;
-  --color-main: #041d22;
-  --color-much: #1482a8;
-  --color-navbar-bg: #d0e9ee;
-  --color-navbar-font: rgb(108, 95, 91);
-  --color-quote: rgba(254, 176, 98, 0.1);
-  --color-title: rgb(255, 255, 255);
-  --color-trans: #72bdcb;
-  --filter-b: brightness(30%) contrast(70%) grayscale(100%);
-  --filter-c: brightness(0%) contrast(60%) grayscale(80%);
-  --filter-e: brightness(0%) contrast(70%) grayscale(100%);
+  /* neutrals / surfaces */
+  --color-main: #1a1f36;
+  --color-code-bg: #eef0fa;
+  --color-footer: #6f7587;
+
+  /* accent — headings, markers, rules, colour blocks */
+  --color-much: #3949ab;
+  --color-few: #7e57c2;
+  --color-underline: #3949ab;
+
+  /* emphasis */
+  --color-strong: #d81b60;
+  --color-em: #5e35b1;
+
+  /* blockquote */
+  --color-quote: rgba(57, 73, 171, 0.1);
+  --color-blockquote-border: #3949ab;
+  --color-blockquote-text: #1a1f36;
+
+  /* table (opt-in th_fill) */
+  --color-table-header-bg: #3949ab;
+  --color-table-header-fg: #ffffff;
+
+  /* navbar */
+  --color-navbar-bg: #dfe3f5;
+  --color-navbar-font: #4a5578;
+
+  /* trans */
+  --color-trans: #303f9f;
+  --color-trans-text: var(--color-title);
+
+  /* covers */
+  --color-cover-from: #141a3a;
+  --color-cover-to: #2a3583;
+  --color-cover-accent: #9fa8da;
+  --color-cover-text: #ffffff;
+  --color-cover-muted: #c5cae9;
 }

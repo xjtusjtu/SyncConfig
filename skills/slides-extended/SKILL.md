@@ -222,6 +222,7 @@ reveal.js uses MathJax/KaTeX via plugin settings. For rendering issues (line bre
 | `\newline` not working | First backslash may be consumed as escape; try `\\newline` |
 | Export HTML missing media on other PC | Create `attachments/` folder; copy images/videos; replace vault-relative paths in `index.html` — see 技巧汇总 §Export |
 | Plain note frontmatter on deck | Remove UID, `[toc]`, agent-note fields |
+| Mermaid text off-center / clipped after fontSize change | Measure/render divergence — fontSize via YAML/`%%{init}%%` only (never CSS), keep `overflow: visible`; see `AS_Mermaid.md` 使用日志 |
 | Confusing with Marp | This skill is **not** Marp — no `marp: true`, no `_class` directives |
 | AS_basic / SJTU / nav / list-* / scrollbox / gallery theme issues | See [themes/as_basic.md](themes/as_basic.md) **Key Pitfalls** |
 
