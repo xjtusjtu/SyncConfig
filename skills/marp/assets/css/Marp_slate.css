@@ -13,11 +13,11 @@
  *
  * Ported into Marp_basic as shared defaults:
  *   - default `blockquote`  → light panel + accent left rule  (this theme's look)
- *   - `cover_f` (alias `lead`) → dark gradient cover
+ *   - `cover_f` → dark gradient cover
  *   - `th_fill` → filled table header
  * Opt-in Marp_basic variants (available here too): `quote_mark`, `th_fill`.
  *
- * Slide classes: `lead` (= `cover_f`) · `compact` · `figure` · `diagram`
+ * Slide classes: `cover_f` · `compact` · `figure` · `diagram`
  * Mermaid: this file styles `pre.mermaid` blocks, but Mermaid's own colors come from
  *          a deck-level `mermaid.initialize({ themeVariables: ... })` script.
  */
@@ -69,7 +69,7 @@
   --color-table-header-bg: #113454;
   --color-table-header-fg: #ffffff;
 
-  /* cover_f / lead */
+  /* cover_f */
   --color-cover-from: #113454;
   --color-cover-to: #155a70;
   --color-cover-accent: #a7e2e8;
@@ -152,14 +152,14 @@ section > p > em {
   color: var(--color-footer);
 }
 
-/* Blockquote panel, `th_fill` table header and the `cover_f` / `lead` gradient are
+/* Blockquote panel, `th_fill` table header and the `cover_f` gradient are
    inherited from Marp_basic — driven by the token overrides above, no duplication. */
 
 /* ==========================================================================
    3. Slide classes
    ========================================================================== */
 
-/* --- lead / cover_f: dark gradient cover / section opener — gradient, colors and
+/* --- cover_f: dark gradient cover / section opener — gradient, colors and
        h1/h2 scale are inherited from Marp_basic, no duplication here. --- */
 
 /* --- compact: denser text and tables for data-heavy slides --- */

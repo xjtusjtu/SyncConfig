@@ -127,7 +127,7 @@ Do not use horizontal rules inside slide content unless intentional.
 HTML comments at the top of a slide override global settings for **that page only**. Prefix with `_`:
 
 ```markdown
-<!-- _class: lead -->
+<!-- _class: cover_f -->
 <!-- _header: "Custom header" -->
 <!-- _footer: "" -->
 <!-- _paginate: false -->

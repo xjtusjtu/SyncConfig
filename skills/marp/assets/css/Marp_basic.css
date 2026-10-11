@@ -5,6 +5,7 @@
 
 @import "default";
 @import "https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css";
+@import url(https://fonts.bunny.net/css?family=charm:700);
 
 /* ==========================================================================
    0. Design tokens (:root)
@@ -31,15 +32,13 @@
     --font-size-page: 12px;
     --font-size-blockquote-mark: 2em;
 
-    /* 传统封面（cover_a–cover_e）字号：主标题明显大于副标题，正文略大于页面正文 */
-    --font-size-cover-title: max(52px, calc(var(--font-size-1) * 1.2));
-    --font-size-cover-body: max(22px, calc(var(--font-size-main) * 1.08));
-    /* 兼容别名：传统封面 / lastpage 副标题字号（由上面各字号推导，子主题可覆盖） */
-    --foot-size-subtitle: max(
-        var(--font-size-subtitle),
-        calc(var(--font-size-1) * 0.7),
-        calc(var(--font-size-main) * 1.2)
-    );
+    /* 封面（cover_a–cover_f）统一字号：主标题 / 副标题 / 正文，
+       三级字号差距明显；所有封面共用同一组变量，保证相对大小一致 */
+    --font-size-cover-title: max(58px, calc(var(--font-size-1) * 1.5));
+    --font-size-cover-subtitle: max(36px, calc(var(--font-size-1) * 0.95));
+    --font-size-cover-body: max(24px, var(--font-size-main));
+    /* 兼容别名：仍被传统封面 / lastpage 副标题引用 */
+    --foot-size-subtitle: var(--font-size-cover-subtitle);
 
     /* 基础颜色（默认 am_red；Marp_blue / Marp_slate 等子主题覆盖） */
     --color-main: #211112;
@@ -72,8 +71,8 @@
     --color-table-header-bg: var(--color-much);
     --color-table-header-fg: var(--color-title);
 
-    /* 封面（传统封面色块 cover_a–cover_e 取 --color-coverbg；
-       cover_f（等价别名 lead）取 --color-cover-from/-to 渐变）；子主题覆盖为自身配色 */
+     /* 封面（传统封面色块 cover_a–cover_e 取 --color-coverbg；
+         cover_f 取 --color-cover-from/-to 渐变）；子主题覆盖为自身配色 */
     --color-coverbg: var(--color-cover-to);
     --color-cover-from: #592b32;
     --color-cover-to: #773f49;
@@ -135,7 +134,7 @@ footer::after {
 }
 
 section::after {
-    font-family: "Font Awesome 6 Free", FontAwesome, sans-serif;
+    font-family: "Font Awesome 6 Free", sans-serif;
     font-weight: 900;
     font-size: var(--font-size-page);
     margin-right: -10px;
@@ -1129,9 +1128,8 @@ section.cover_e header > img {
     flex-shrink: 0;
 }
 
-/* --- cover_f: 深色渐变封面 / 章节过渡页（美学取自 Marp_slate `lead`）
-    等价别名 `lead` 一并生效 --- */
-section:is(.cover_f, .lead) {
+/* --- cover_f: 深色渐变封面 / 章节过渡页 --- */
+section.cover_f {
     justify-content: center;
     background: linear-gradient(
         125deg,
@@ -1141,38 +1139,51 @@ section:is(.cover_f, .lead) {
     color: var(--color-cover-muted);
 }
 
-section:is(.cover_f, .lead) :is(h1, h2, p) {
+section.cover_f :is(h1, h2, p) {
     text-align: left;
 }
 
-section:is(.cover_f, .lead) h1 {
+section.cover_f h1 {
     color: var(--color-cover-text);
-    font-size: 48px;
-    line-height: 1.35;
+    font-size: var(--font-size-cover-title);
+    line-height: 1.08;
+    margin: 0;
 }
 
-section:is(.cover_f, .lead) h2 {
+section.cover_f h2 {
     color: var(--color-cover-accent);
-    font-size: var(--font-size-h3);
+    font-size: var(--foot-size-subtitle);
     font-weight: 400;
+    margin: 0.05em 0 0.5em;
 }
 
-section:is(.cover_f, .lead) strong {
+section.cover_f > p {
+    font-size: var(--font-size-cover-body);
+    line-height: 1.25;
+    margin: 0.15em 0;
+}
+
+section.cover_f > p > em {
+    font-size: var(--font-size-cover-body);
+    line-height: 1.25;
+}
+
+section.cover_f strong {
     color: var(--color-cover-accent);
 }
 
-section:is(.cover_f, .lead) footer,
-section:is(.cover_f, .lead)::after,
-section:is(.cover_f, .lead) em,
-section:is(.cover_f, .lead) > p > em {
+section.cover_f footer,
+section.cover_f::after,
+section.cover_f em,
+section.cover_f > p > em {
     color: var(--color-cover-muted);
 }
 
-section:is(.cover_f, .lead) a {
+section.cover_f a {
     color: var(--color-cover-accent);
 }
 
-section:is(.cover_f, .lead) :not(pre) > code {
+section.cover_f :not(pre) > code {
     color: inherit;
     background: transparent;
 }

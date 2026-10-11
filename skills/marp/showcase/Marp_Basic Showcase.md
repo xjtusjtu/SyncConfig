@@ -1,10 +1,10 @@
 ---
 marp: true
-theme: Marp_blue
+theme: Marp_slate
 paginate: true
 size: 16:9
-header: 'Marp_basic Layout Showcase'
-footer: 'Marp_basic / Marp_blue'
+header: 'Customized Marp Layout Showcase'
+footer: 'Xiaobu'
 style: |
   mark {
     background-color: rgba(251, 211, 234, 0.6);
@@ -127,7 +127,7 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | 类 | 作用 |
 |:---|:-----|
 | `cover_a`–`cover_e` | 五种封面 |
-| `cover_f`（别名 `lead`） | 深色渐变封面 / 章节过渡页 |
+| `cover_f` | 深色渐变封面 / 章节过渡页 |
 | `toc_a` / `toc_b` | 目录页 |
 | `cols-2` / `cols-3` | 1:1 / 三栏 |
 | `cols-2-73` / `64` / `37` / `46` | 比例双栏 |
@@ -189,7 +189,7 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | `--color-em` | `#20b2aa` | `*斜体*` |
 | `--color-blockquote-bg` / `-border` | `--color-quote` / `--color-much` | 引用框底色 / 左边框 |
 | `--color-table-header-bg` / `-fg` | `--color-much` / `--color-title` | `th_fill` 表头背景 / 文字 |
-| `--color-cover-from` / `-to` | `#592b32` / `#773f49` | `cover_f` / `lead` 渐变 |
+| `--color-cover-from` / `-to` | `#592b32` / `#773f49` | `cover_f` 渐变 |
 | `--color-coverbg` | `var(--color-cover-to)` | `cover_a`–`cover_e` 色块 |
 | `--color-cover-accent` / `-muted` | `#ffd5d9` / `#ead8db` | 封面副标题/强调文字、正文/斜体 |
 
@@ -315,19 +315,19 @@ mail@example.com
 
 ---
 
-<!-- AGENT: layout=cover_f | 深色渐变封面 / 章节过渡页（别名 lead） -->
+<!-- AGENT: layout=cover_f | 深色渐变封面 / 章节过渡页 -->
 <!-- _class: cover_f -->
 <!-- _header: "" -->
 <!-- _footer: "" -->
 <!-- _paginate: "" -->
 
-# cover_f
+# 标题：cover_f
 
-## 深色渐变封面 / 章节过渡页
+## 副标题：深色渐变封面 / 章节过渡页
 
 **加粗**
 
-*别名 `lead` 等效；配色来自 `--color-cover-*` 令牌*
+*配色来自 `--color-cover-*` 令牌*
 
 正文
 

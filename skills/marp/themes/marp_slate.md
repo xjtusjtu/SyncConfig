@@ -12,7 +12,7 @@ Load this file when:
 
 - User sets `theme: Marp_slate`
 - User asks for the slate/navy/teal research-report look
-- User needs the `lead` / `compact` / `figure` / `diagram` slide classes
+- User needs the `cover_f` / `compact` / `figure` / `diagram` slide classes
 - Parent `marp` skill delegates via Theme Extensions
 
 ## Environment
@@ -71,12 +71,12 @@ Slate-specific classes:
 
 | Class | Effect |
 |:------|:-------|
-| `lead` (= `cover_f`) | Dark navy→teal gradient cover / section opener; left-aligned white title with layered accent text |
+| `cover_f` | Dark navy→teal gradient cover / section opener; left-aligned white title with layered accent text |
 | `compact` | Denser text (24px) and tables (20px) for data-heavy slides |
 | `figure` | Centered figure slides; images `object-fit: contain` |
 | `diagram` | Frames `pre` code blocks and Mermaid in a light panel with navy mono text |
 
-Apply per slide with `<!-- _class: lead -->`. Combine sparingly (`compact` + `diagram` is fine).
+Apply per slide with `<!-- _class: cover_f -->`. Combine sparingly (`compact` + `diagram` is fine).
 All Marp_basic layout classes (`cols-*`, `rows-*`, `cover_*`, `toc_*`, `scrollbox*`, `navbar`,
 `lastpage`, …) are also available — see [marp_basic.md](marp_basic.md).
 The shared `zebra_bar` class adds a 9px top accent rule; slate has no top rule by default.
@@ -100,7 +100,7 @@ frontmatter `style:` or a child theme.
 | `--color-blockquote-text` | `#113454` | Blockquote text |
 | `--color-table-border` | `#dce5ed` | Table cell borders |
 | `--color-table-header-bg` / `-fg` | `#113454` / `#ffffff` | `th_fill` header |
-| `--color-cover-from` / `-to` | `#113454` / `#155a70` | `lead` / `cover_f` gradient |
+| `--color-cover-from` / `-to` | `#113454` / `#155a70` | `cover_f` gradient |
 | `--color-cover-accent` / `-text` | `#a7e2e8` / `#ffffff` | Cover accent / title |
 | `--font-family-main` / `-title` / `-table` | `"LXGW WenKai", "Noto Sans CJK SC", sans-serif` | Body font |
 | `--font-size-main` / `-1` / `-2-3` / `-h3` / `-table` | `26px` / `40px` / `29px` / `25px` / `22px` | Type scale |
@@ -141,7 +141,7 @@ document.fonts.ready.then(renderMermaid);
 
 | Issue | Fix |
 |:------|:----|
-| Slate-specific classes do nothing | Only `lead` / `compact` / `figure` / `diagram` are defined here; all other layouts come from Marp_basic |
+| Slate-specific classes do nothing | Only `compact` / `figure` / `diagram` are defined here; all other layouts come from Marp_basic |
 | Mermaid nodes uncolored | Add the deck-level `mermaid.initialize(...)` script |
 | Caption not muted | Caption must be a top-level paragraph that is *only* emphasis: `*note*` |
-| Cover shows page number | `<!-- _paginate: "" -->` on the `lead` / `cover_f` slide |
+| Cover shows page number | `<!-- _paginate: "" -->` on the `cover_f` slide |
