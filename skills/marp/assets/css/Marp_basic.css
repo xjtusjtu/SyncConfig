@@ -53,7 +53,7 @@
     --color-bg: #fff;
     --color-main: #211112;
     --color-much: #864248;
-    --color-title: rgb(255, 255, 255);
+    --color-title: rgb(255, 255, 255); /* 深色 / 彩色底块上的浅色文字（封面、表头、toc_b 标题等） */
     --color-footer: #8c8c8c;
     --color-navbar-bg: #edddde;
     --color-navbar-font: rgb(108, 95, 91);
@@ -65,6 +65,9 @@
     --color-strong: #dc143c;
     --color-em: #20b2aa;
     --color-underline: #f00;
+    /* 标题 h1（非封面页）：默认取主题强调色，随子主题自动变化；
+       封面 / trans 等深色底页面的 h1 由各自规则改用 --color-title */
+    --color-h1: var(--color-much);
 
     /* 引用框（默认：浅底 + 左侧强调色粗边框，美学取自 Marp_slate） */
     --color-blockquote-bg: var(--color-quote);
@@ -175,7 +178,9 @@ h6 {
 
 h1 {
     font-size: var(--font-size-1);
-    color: var(--color-title);
+    /* 非封面页 h1 用独立令牌 --color-h1（默认 = 主题强调色）；
+       落在色块 / 深色底上的封面 h1 由 cover_* 规则改用浅色 --color-title */
+    color: var(--color-h1);
     text-align: center;
 }
 
@@ -853,6 +858,9 @@ section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) h1 {
     font-size: var(--font-size-cover-title);
     line-height: 1.2;
     box-sizing: border-box;
+    /* 封面 h1 位于自身色块上 → 浅色；cover_e 的 h1 在白色一侧，
+       由下方 section.cover_e h1 覆盖为 --color-h1 */
+    color: var(--color-title);
 }
 
 section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) > p {
@@ -1084,7 +1092,8 @@ section.cover_e h1 {
     width: 64%;
     margin: 0;
     text-align: left;
-    color: var(--color-much);
+    /* 白色一侧，与普通页 h1 同令牌 */
+    color: var(--color-h1);
 }
 
 section.cover_e h2 {
@@ -1492,6 +1501,7 @@ section.trans :not(pre) > code {
     background: transparent;
 }
 
+section.trans h1,
 section.trans h2 {
     text-align: center;
     color: var(--color-title);

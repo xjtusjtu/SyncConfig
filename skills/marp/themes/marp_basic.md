@@ -76,6 +76,17 @@ cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* (+ fglass) → scrollbox-y
 - 封面字号入口：主标题 `--font-size-cover-title`、正文 `--font-size-cover-body`、副标题 `--font-size-cover-subtitle`（`cover_a`–`cover_f` 共用，子主题可覆盖）
 - Opt-in 变体：`th_fill` 表头填充主题强调色；`quote_mark` 引用框改回「引号装饰」样式（默认引用框为浅底 + 左侧强调色粗边框）
 - `zebra_bar`：顶部 9px 主题强调色条（`--color-much`）；三套主题默认均不显示，可与其他布局 class 组合
+- **h1 颜色**：非封面页取 `--color-h1`（默认 = 主题强调色 `--color-much`，可单独调）；
+  封面 `cover_a`–`cover_d` / `cover_f` 及 `trans` 页的 h1 落在色块 / 深色底上，改用浅色 `--color-title`；
+  `cover_e` 的 h1 在白色一侧，用 `--color-h1`
+
+## Design Tokens
+
+| 令牌 | 默认值 | 用途 |
+|:-----|:-------|:-----|
+| `--color-h1` | `var(--color-much)` | 非封面页 `h1` 颜色（封面 / `trans` 另用 `--color-title`） |
+| `--color-title` | `#fff` | 深色 / 彩色底块上的浅色文字（封面、表头、`trans` 等） |
+| `--color-much` | `#864248` | 主题强调色：`h2`/`h3`、标记、`zebra_bar`、`--color-h1` 默认值 |
 
 ## 封面布局模型（cover_a / cover_b / cover_e）
 

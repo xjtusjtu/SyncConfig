@@ -97,6 +97,7 @@ frontmatter `style:` or a child theme.
 | `--color-main` | `#172b4d` | Body text |
 | `--color-coverbg` | `var(--color-cover-to)` → `#155a70` | Traditional cover backgrounds / title panels |
 | `--color-much` | `#147d92` | `h2`/`h3`, accents, `zebra_bar`, links, blockquote rule |
+| `--color-h1` | `var(--color-much)` → `#147d92` | Non-cover `h1` (inherited accent, no slate override) |
 | `--color-strong` / `--color-em` | `#096a80` | `**strong**` / `*em*` |
 | `--color-footer` | `#63758b` | Footer, page number, captions |
 | `--color-cover-muted` | `#c1dbe5` | Cover body text, italic text, footer, page number |
