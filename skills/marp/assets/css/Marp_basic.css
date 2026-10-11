@@ -1,6 +1,6 @@
 /**
  * @theme Marp_basic
- * @auto-scaling math, code
+ * @auto-scaling fittingHeader, math, code
  */
 
 @import "default";
@@ -14,39 +14,47 @@
 
 :root {
     /* 字体族 */
-    --font-family-main: "Times New Roman", Arial, 楷体;
-    --font-family-title: "Times New Roman", Arial, 楷体;
-    --font-family-table: "Times New Roman", "黑体", serif;
+    --font-family-main: "Times New Roman", "LXGW WenKai", "Noto Sans CJK SC", Arial, sans-serif, 楷体;
+    --font-family-title: "Times New Roman", "LXGW WenKai", "Noto Sans CJK SC", Arial, sans-serif, 楷体;
+    --font-family-table: "Times New Roman", Arial, "黑体", serif;
 
-    /* 字号（section 根字号 = --font-size-main，供 em/rem 参照） */
+    /* 字号（section 根字号 = --font-size-main，供 em/rem 参照）
+       以 --font-size-main 为基准，各级标题按倍数推导；round() 取整到 1px，
+       防止非整数倍数在缩放渲染时发虚。注释内为 18px 基准下的实际像素值 */
     --font-size-main: 18px;
-    --font-size-1: 45px; /* h1 */
-    --font-size-2-3: 30px; /* h2；h3 见 --font-size-h3 */
-    --font-size-h3: 25px;
-    --font-size-4-5: 23px; /* h4；h5 见 --font-size-h5 */
-    --font-size-h5: 21px;
-    --font-size-subtitle: 20px; /* 封面副标题 h2（cover_* / lastpage） */
-    --font-size-code: 14px;
+    --font-size-1: round(calc(var(--font-size-main) * 2.5), 1px); /* h1 ≈ 45px */
+    --font-size-2-3: round(calc(var(--font-size-main) * 1.67), 1px); /* h2 ≈ 30px；h3 见 --font-size-h3 */
+    --font-size-h3: round(calc(var(--font-size-main) * 1.39), 1px); /* ≈ 25px */
+    --font-size-4-5: round(calc(var(--font-size-main) * 1.28), 1px); /* h4 / h5 ≈ 23px */
+    --font-size-code: round(calc(var(--font-size-main) * 0.78), 1px); /* ≈ 14px */
     --font-size-table: 0.8em;
-    --font-size-footnote: 16px;
-    --font-size-page: 12px;
+    --font-size-footnote: round(calc(var(--font-size-main) * 0.89), 1px); /* ≈ 16px */
+    --font-size-page: round(calc(var(--font-size-main) * 0.67), 1px); /* ≈ 12px */
     --font-size-blockquote-mark: 2em;
 
     /* 封面（cover_a–cover_f）统一字号：主标题 / 副标题 / 正文，
-       三级字号差距明显；所有封面共用同一组变量，保证相对大小一致 */
-    --font-size-cover-title: max(58px, calc(var(--font-size-1) * 1.5));
-    --font-size-cover-subtitle: max(36px, calc(var(--font-size-1) * 0.95));
+       三级字号差距明显；所有封面共用同一组变量，保证相对大小一致；
+       round() 取整防非整数倍数发虚，max() 保底（小基准时仍可读） */
+    --font-size-cover-title: max(58px, round(calc(var(--font-size-1) * 1.5), 1px));
+    --font-size-cover-subtitle: max(36px, round(calc(var(--font-size-1) * 0.95), 1px));
     --font-size-cover-body: max(24px, var(--font-size-main));
-    /* 兼容别名：仍被传统封面 / lastpage 副标题引用 */
-    --foot-size-subtitle: var(--font-size-cover-subtitle);
+
+    /* 封面间距：
+       --gap-cover-title 主标题↔副标题，全封面统一（h1 被 <!-- fit --> 放大时
+         副标题随之下移，不再被覆盖）；
+       --gap-cover-body 标题块↔正文，各封面按自身设计覆盖此值 */
+    --gap-cover-title: 0.6em;
+    --gap-cover-body: 3.5em;
+    /* 相邻色块间的重叠量：h1/h2 各自带背景时，两盒边界在缩放渲染下
+       会出现亚像素白缝，用负 margin 让两者重叠几个像素即可消除 */
+    --cover-seam: 3px;
 
     /* 基础颜色（默认 am_red；Marp_blue / Marp_slate 等子主题覆盖） */
+    --color-bg: #fff;
     --color-main: #211112;
     --color-much: #864248;
     --color-title: rgb(255, 255, 255);
-    --color-few: #53a7a0;
     --color-footer: #8c8c8c;
-    --color-code-bg: #f6eeef;
     --color-navbar-bg: #edddde;
     --color-navbar-font: rgb(108, 95, 91);
     --color-quote: rgba(254, 176, 98, 0.1);
@@ -81,9 +89,7 @@
     --color-cover-muted: #ead8db;
 
     /* 图片滤镜（子主题覆盖） */
-    --filter-b: brightness(30%) contrast(70%) grayscale(100%);
     --filter-c: brightness(0%) contrast(60%) grayscale(80%);
-    --filter-e: brightness(0%) contrast(70%) grayscale(100%);
 }
 
 /* ==========================================================================
@@ -95,6 +101,7 @@ section {
     font-size: var(--font-size-main);
     --marpit-root-font-size: var(--font-size-main);
     color: var(--color-main);
+    background: var(--color-bg);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -190,11 +197,6 @@ h5 {
 
 h4::before {
     content: "🍀";
-}
-
-h6 {
-    font-size: var(--font-size-subtitle);
-    color: var(--color-much);
 }
 
 p {
@@ -792,8 +794,16 @@ section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) {
     width: 100%;
 }
 
+/* cover_a：色块 = 标题块自身的背景（h1+h2），随标题高度伸缩，
+   标题被 <!-- fit --> 放大时色块同步变高，永远与标题匹配 */
 section.cover_a {
-    background: linear-gradient(to bottom, var(--color-coverbg) 60%, white 40%);
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 0;
+    --gap-cover-body: 4em;
 }
 
 section.cover_c {
@@ -819,6 +829,12 @@ section.cover_d {
 
 section.cover_e {
     background: linear-gradient(108deg, white 70%, var(--color-coverbg) 30%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 150px 6% 0;
+    --gap-cover-body: 3em;
 }
 
 section.cover_a,
@@ -836,6 +852,7 @@ section.cover_e {
 section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) h1 {
     font-size: var(--font-size-cover-title);
     line-height: 1.2;
+    box-sizing: border-box;
 }
 
 section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) > p {
@@ -844,7 +861,8 @@ section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) > p {
 
 section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) h2 {
     font-family: var(--font-family-title);
-    font-size: var(--foot-size-subtitle);
+    font-size: var(--font-size-cover-subtitle);
+    box-sizing: border-box;
 }
 
 /* 封面链接不加分页码后缀 */
@@ -852,24 +870,26 @@ section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) a::after {
     content: "";
 }
 
-section:is(.cover_a, .cover_b, .cover_e) :is(h1, h2, p) {
-    position: absolute;
-}
-
-/* --- cover_a: 标题 + table 个人信息 --- */
+/* --- cover_a: 标题 + table 个人信息 ---
+   h1/h2 走正常文档流：h1 被放大时把 h2 挤下去；两者自带色块背景 */
 section.cover_a h1 {
-    top: 28%;
-    width: 88%;
-    left: 6%;
+    position: static;
+    width: 100%;
+    margin: 0;
+    padding: 150px 6% 0;
     text-align: center;
     background-color: var(--color-coverbg);
+    color: var(--color-title);
     vertical-align: middle;
 }
 
 section.cover_a h2 {
-    top: 38%;
-    width: 88%;
-    left: 6%;
+    position: static;
+    width: 100%;
+    margin: calc(-1 * var(--cover-seam)) 0 0;
+    padding: var(--gap-cover-title) 6% 24px;
+    text-align: right;
+    background-color: var(--color-coverbg);
     color: var(--color-title);
 }
 
@@ -877,19 +897,16 @@ section.cover_a strong {
     color: var(--color-main);
 }
 
-section.cover_a p {
-    bottom: 8%;
+section.cover_a > p {
+    position: static;
     width: 100%;
-    left: 6%;
+    margin: var(--gap-cover-body) 0 0;
 }
 
 section.cover_a table {
-    margin: 0 auto;
     border-collapse: collapse;
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    transform: translateX(-50%);
+    position: static;
+    margin: var(--gap-cover-body) auto 0;
     width: auto;
     max-width: 90%;
     table-layout: auto;
@@ -934,38 +951,46 @@ section.cover_a table :is(th, td):last-child {
     padding-left: 0;
 }
 
-/* --- cover_b --- */
+/* --- cover_b ---
+   h1 + h2 走正常文档流并拼成一整块圆角色块（h1 上圆角 / h2 下圆角，
+   中间不留缝）；h1 被放大时整块随之变高 */
+section.cover_b {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    padding: 108px 5% 0;
+    --gap-cover-body: 3em;
+}
+
 section.cover_b h1 {
-    top: 15%;
-    right: 5%;
-    left: 5%;
-    height: 26%;
+    position: static;
+    width: 100%;
+    margin: 0;
     padding: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: var(--color-coverbg);
-    border-radius: 20px;
+    border-radius: 20px 20px 0 0;
     text-align: center;
 }
 
 section.cover_b h2 {
-    top: 33%;
-    right: 5%;
-    left: 5%;
-    height: 13%;
-    padding-top: 30px;
+    position: static;
+    width: 100%;
+    margin: calc(-1 * var(--cover-seam)) 0 0;
+    padding: var(--gap-cover-title) 30px 30px;
     color: var(--color-title);
     background-color: var(--color-coverbg);
     text-align: center;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
+    border-radius: 0 0 20px 20px;
 }
 
-section.cover_b p {
-    bottom: 13%;
+section.cover_b > p {
+    position: static;
     width: 100%;
-    transform: translateX(-6%);
+    margin: var(--gap-cover-body) 0 0;
     text-align: center;
 }
 
@@ -1052,25 +1077,28 @@ section:is(.cover_c, .cover_d) footer {
     bottom: 30px;
 }
 
-/* --- cover_e --- */
+/* --- cover_e ---
+   标题与正文都在白色一侧；h1/h2 走正常文档流 */
 section.cover_e h1 {
-    top: 28%;
+    position: static;
     width: 64%;
-    left: 6%;
+    margin: 0;
     text-align: left;
     color: var(--color-much);
 }
 
 section.cover_e h2 {
-    top: 38%;
+    position: static;
     width: 64%;
-    left: 6%;
+    margin: var(--gap-cover-title) 0 0;
+    text-align: left;
     color: var(--color-much);
 }
 
-section.cover_e p {
-    bottom: 15%;
-    left: 7%;
+section.cover_e > p {
+    position: static;
+    width: 64%;
+    margin: var(--gap-cover-body) 0 0;
 }
 
 section.cover_e strong {
@@ -1152,7 +1180,7 @@ section.cover_f h1 {
 
 section.cover_f h2 {
     color: var(--color-cover-accent);
-    font-size: var(--foot-size-subtitle);
+    font-size: var(--font-size-cover-subtitle);
     font-weight: 400;
     margin: 0.05em 0 0.5em;
 }

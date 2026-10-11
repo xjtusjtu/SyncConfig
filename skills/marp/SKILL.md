@@ -213,6 +213,10 @@ Inline: `$E = mc^2$` — Block: `$$...$$`
 | HTML / div layouts not rendering | Set `markdown.marp.enableHtml: true` |
 | Plain note frontmatter on deck | Remove UID, `[toc]`, agent-note fields |
 | Theme not found | Register CSS path in `markdown.marp.themes` |
+| `<!-- fit -->` heading not auto-scaling | Theme must declare `fittingHeader` in its metadata: `@auto-scaling fittingHeader, math, code`. A theme with only `@auto-scaling math, code` silently ignores `<!-- fit -->`. Built-in `default`/`gaia`/`uncover` use `@auto-scaling true` (all features), so they always scale. Child themes that redeclare `@auto-scaling` must repeat `fittingHeader`; child themes that omit it inherit the parent's list |
+| Cover title overflows the slide's right edge / band narrower than title | Cover `h1`/`h2` with `width: 100%` + horizontal `padding` need `box-sizing: border-box` — headings default to `content-box` |
+| Thin white line between two adjacent cover colour blocks | Sub-pixel seam under scaled rendering; give the lower block `margin-top: calc(-1 * var(--cover-seam))` |
+| `<!-- fit -->`-enlarged cover title overlaps the subtitle | Cover `h1`/`h2` must stay in normal flow — do not absolutely position them or give each a fixed `top` percentage. See the cover layout model in [themes/marp_basic.md](themes/marp_basic.md) |
 | Same global directive repeated | Marp uses the **last** value only |
 | Emoji in Mermaid label → `Syntax error in text` | Remove emoji from labels; twemoji replacement injects `alt="…"` quotes before Mermaid parses |
 | Mermaid node text not vertically centered after fontSize change | Mermaid line-height measure/render mismatch — apply post-render label-centering script (see `P_Marp for VS Code.md`) |

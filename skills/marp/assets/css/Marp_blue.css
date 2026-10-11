@@ -12,12 +12,10 @@
 :root {
   /* neutrals / surfaces */
   --color-main: #1a1f36;
-  --color-code-bg: #eef0fa;
   --color-footer: #6f7587;
 
   /* accent — headings, markers, rules, colour blocks */
   --color-much: #3949ab;
-  --color-few: #7e57c2;
   --color-underline: #3949ab;
 
   /* emphasis */

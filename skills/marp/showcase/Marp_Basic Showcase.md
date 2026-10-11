@@ -21,9 +21,9 @@ style: |
 <!-- _footer: "" -->
 <!-- _paginate: "" -->
 
-# Marp Basic Showcase
+# Cusotm Marp Showcase 
 
-## Marp_basic / Marp_blue 主题布局与样式演示
+## 自定义 Marp 主题布局与样式演示
 
 | 汇报人：| 吕小布 |
 |:--:|:--:|
@@ -182,9 +182,9 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | `--font-size-2-3` | 30px | `h2` |
 | `--font-size-h3` | 25px | `h3` |
 | `--font-size-code` | 14px | `pre code` |
-| `--font-size-cover-title` | `max(52px, --font-size-1 * 1.2)` | 封面主标题（cover_a–e） |
-| `--font-size-cover-body` | `max(22px, --font-size-main * 1.08)` | 封面正文 / cover_a 信息表 |
-| `--foot-size-subtitle` | 兼容别名（见 `:root`） | 封面副标题（cover_a–e / lastpage） |
+| `--font-size-cover-title` | `max(58px, --font-size-1 * 1.5)` | 封面主标题（cover_a–f） |
+| `--font-size-cover-subtitle` | `max(36px, --font-size-1 * 0.95)` | 封面副标题（cover_a–f / lastpage） |
+| `--font-size-cover-body` | `max(24px, --font-size-main)` | 封面正文 / cover_a 信息表 |
 | `--color-strong` | `#dc143c` | `**粗体**` |
 | `--color-em` | `#20b2aa` | `*斜体*` |
 | `--color-blockquote-bg` / `-border` | `--color-quote` / `--color-much` | 引用框底色 / 左边框 |
@@ -305,7 +305,7 @@ mail@example.com
 
 # cover_e
 
-## 副标题示例（header + footer 均可放 logo）
+## 副标题示例（header + footer 均可放 logo）<!-- fit -->
 
 @Xiaobu
 学科：组织管理系

@@ -52,6 +52,11 @@ Traditional covers `cover_a`–`cover_e` use the slate gradient endpoint
 not the parent's red. Titles are white on `cover_a`–`cover_d`; `cover_e` uses the
 teal accent on its white title area.
 
+The inherited cover layout model (h1/h2 in normal flow so `<!-- fit -->` pushes the
+subtitle down; colour band = the title block's own background; `--gap-cover-title` /
+`--gap-cover-body` / `--cover-seam`) is documented in
+[marp_basic.md](marp_basic.md#封面布局模型cover_a--cover_b--cover_e).
+
 ## Standard Frontmatter
 
 ```yaml
