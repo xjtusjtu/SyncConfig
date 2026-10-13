@@ -16,7 +16,7 @@
     /* 字体族 */
     --font-family-main: "Times New Roman", "LXGW WenKai", "Noto Sans CJK SC", Arial, sans-serif, 楷体;
     --font-family-title: "Times New Roman", "LXGW WenKai", "Noto Sans CJK SC", Arial, sans-serif, 楷体;
-    --font-family-table: "Times New Roman", Arial, "黑体", serif;
+    --font-family-table: "Times New Roman", Arial, "Noto Sans CJK SC", serif;
 
     /* 字号（section 根字号 = --font-size-main，供 em/rem 参照）
        以 --font-size-main 为基准，各级标题按倍数推导；round() 取整到 1px，
@@ -202,6 +202,243 @@ h5 {
 
 h4::before {
     content: "🍀";
+    font-size: 0.5em;
+    vertical-align: 0.4em;
+}
+
+/* --- fancyhead_* — opt-in 精美标题样式集（仅普通页面；不改字号 / 字体，
+   只用边框、线、::before / ::after 装饰）。
+   用法：在 section 上加 class，例如 Markdown 中 `<!-- _class: fancyhead_1 -->`。
+   因选择器限定为 section.fancyhead_*，cover_* 等页面不受影响。 --- */
+
+/* fancyhead_1 — 一整套 h1–h6 装饰：
+     h1 居中 + 文字下方红色下划线（宽 = 文字宽度的 60%，随文字缩放）
+     h2 左侧 `#` 前缀 + 整行下划线（线色比前缀淡）
+     h3 左侧红色竖条
+     h4 文字外红色方框（上边框比其余三边粗，覆盖全局 🍀 前缀）
+     h5 / h6 前置灰色级别标签
+   所有颜色取主题令牌，子主题自动跟随；装饰色统一用 --color-strong。 */
+
+/* h1：标题文字下方一条红色下划线，宽 = 文字宽度的 60%（居中）。
+   做法参考 AS_basic 的 h2::after：h1 收缩到文字宽度（width: fit-content），
+   块级 ::after 的百分比宽度即相对文字宽度，随标题长短 / 字号动态缩放。
+   改比例只需调 --fancyhead-underline-width。 */
+section.fancyhead_1 h1 {
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    --fancyhead-underline-width: 60%;
+}
+
+section.fancyhead_1 h1::after {
+    content: "";
+    display: block;
+    width: var(--fancyhead-underline-width);
+    height: 4px;
+    margin: 0.16em auto 0;
+    background: var(--color-strong);
+    border-radius: 2px;
+}
+
+/* h2：左侧红色 `#` 前缀 + 整行下划线（线色比 `#` 前缀淡）。
+   线色不新增令牌，用 color-mix() 由「强调色 + 页面底色」现调：
+   60% 强调色 + 40% 底色，子主题换色 / 换底色时自动跟随；
+   想更淡 / 更深只需改这里的百分比（越大越接近 --color-strong）。 */
+section.fancyhead_1 h2 {
+    border-bottom: 2px solid
+        color-mix(in srgb, var(--color-strong) 60%, var(--color-bg));
+    padding-bottom: 0.12em;
+}
+
+section.fancyhead_1 h2::before {
+    content: "#";
+    color: var(--color-strong);
+    margin-right: 0.35em;
+}
+
+/* h3：左侧红色竖条 */
+section.fancyhead_1 h3 {
+    border-left: 8px solid var(--color-strong);
+    padding-left: 0.4em;
+    line-height: 1.1;
+}
+
+/* h4：文字外红色方框（上边框比其余三边粗；取消全局 🍀 前缀） */
+section.fancyhead_1 h4 {
+    width: fit-content;
+    border: 2px solid var(--color-strong);
+    border-top-width: 4px;
+    padding: 0.1em 0.4em;
+}
+
+section.fancyhead_1 h4::before {
+    content: none;
+}
+
+/* h5 / h6：前置灰色级别标签 */
+section.fancyhead_1 h5::before,
+section.fancyhead_1 h6::before {
+    font-family: Arial, sans-serif;
+    font-size: 0.6em;
+    font-weight: normal;
+    color: var(--color-footer);
+    margin-right: 0.1em;
+    vertical-align: 0.1em;
+}
+
+section.fancyhead_1 h5::before {
+    content: "H5";
+}
+
+section.fancyhead_1 h6::before {
+    content: "H6";
+}
+
+section.fancyhead_1 :is(h5, h6) {
+    font-size: 0.9em
+}
+
+/* fancyhead_2 — 极简风，只装饰 h1–h3，全部靠左（h4 及以下保持全局样式）：
+     h1 粗下划线（宽 = 文字宽度的 60%，随文字缩放，与文字同样左对齐）
+     h2 整行极淡细线
+     h3 左侧实心圆点前缀
+   颜色不写死，h1 线 / h3 圆点取 --color-strong，h2 淡线用 color-mix() 由
+   「强调色 + 页面底色」现调，子主题换色 / 换底色时自动跟随。 */
+
+/* h1：左对齐 + 下方粗下划线。
+   width: fit-content 使 h1 收缩到文字宽度，块级 ::after 的百分比宽度
+   即相对文字宽度；下划线随文字靠左（margin-right: auto，不做水平居中）。 */
+section.fancyhead_2 h1 {
+    width: fit-content;
+    margin-left: 0;
+    margin-right: auto;
+    text-align: left;
+    --fancyhead-underline-width: 60%;
+}
+
+section.fancyhead_2 h1::after {
+    content: "";
+    display: block;
+    width: var(--fancyhead-underline-width);
+    height: 5px;
+    margin: 0.16em 0 0;
+    background: var(--color-strong);
+    border-radius: 2px;
+}
+
+/* h2：整行一条极淡细线（1px；混色比例越小越淡，
+   改动此百分比即可调深浅，无需新增令牌）。 */
+section.fancyhead_2 h2 {
+    border-bottom: 1px solid
+        color-mix(in srgb, var(--color-strong) 25%, var(--color-bg));
+    padding-bottom: 0.18em;
+}
+
+/* h3：左侧实心圆点前缀（用空 content + border-radius 画出，
+   尺寸随字号缩放；颜色取强调色） */
+section.fancyhead_2 h3::before {
+    content: "";
+    display: inline-block;
+    width: 0.3em;
+    height: 0.3em;
+    margin-right: 0.45em;
+    background: var(--color-strong);
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+/* --- fancyhead_1r — 相对级别标题装饰（按页面「起始级别」自动分档，装饰三档）：
+     页面有 h2        → h2 / h3 / h4 依次为 第 1 / 2 / 3 级；
+     页面无 h2（以 h3 起）→ h3 / h4 / h5 依次为 第 1 / 2 / 3 级。
+   方法：用 :has(h2) / :not(:has(h2)) 两个守卫让两分支互斥，不再靠特异性裁决；
+   未出现的那支选择器不会命中，因此「哪一级用哪套装饰」一眼可读。
+   注意：
+     ① 选择器必须带 `section.` 前缀。marpit 会给不带 section 的选择器加一层后代关系，
+       而该 class 就在 <section> 本身上 → 不加前缀会永远匹配不上。
+     ② 只在「级别连续」时严格成立（假定 h2→h3→h4 或 h3→h4→h5 逐级出现）；
+       若某页跳级（如有 h3 无 h4），后面的标题会落到上一档而非按实际序数递推。
+     ③ :has() 会统计 header / footer 里的标题，用顶栏导航时避开标题语法。
+   只改装饰、不改字体字号；装饰色统一 --color-strong，子主题自动跟随。 --- */
+
+/* 第 1 级：靠左 + 文字下方粗下划线（宽 = 文字宽度的 60%，随文字缩放）。
+   与 fancyhead_2 的 h1 同一套做法：标题收缩到文字宽度（width: fit-content），
+   块级 ::after 的百分比宽度即相对文字宽度。改比例调 --fancyhead-underline-width。 */
+section.fancyhead_1r:has(h2) h2,
+section.fancyhead_1r:not(:has(h2)) h3 {
+    width: fit-content;
+    margin-left: 0;
+    margin-right: auto;
+    text-align: left;
+    --fancyhead-underline-width: 30%;
+}
+
+section.fancyhead_1r:has(h2) h2::after,
+section.fancyhead_1r:not(:has(h2)) h3::after {
+    content: "";
+    display: block;
+    width: var(--fancyhead-underline-width);
+    height: 5px;
+    margin: 0.16em 0 0;
+    background: var(--color-strong);
+    border-radius: 2px;
+}
+
+/* 第 2 级：左侧竖条（颜色取强调色；竖条随标题行高伸缩） */
+section.fancyhead_1r:has(h2) h3,
+section.fancyhead_1r:not(:has(h2)) h4 {
+    border-left: 8px solid var(--color-strong);
+    padding-left: 0.4em;
+    line-height: 1.1;
+}
+
+/* 第 3 级：文字外方框（上边框比其余三边粗） */
+section.fancyhead_1r:has(h2) h4,
+section.fancyhead_1r:not(:has(h2)) h5 {
+    width: fit-content;
+    border: 2px solid var(--color-strong);
+    border-top-width: 4px;
+    padding: 0.1em 0.4em;
+}
+
+/* 取消全局 🍀 前缀：h4 既可能是第 2 级（竖条）也可能是第 3 级（方框），两者都不需要它 */
+section.fancyhead_1r h4::before {
+    content: none;
+}
+
+/* --- fadehead — 标题颜色随层级渐淡（opt-in，仅普通页面）：
+     h1 用最深的标题基准色，往下每级都向页面底色多混一档 → h2…h6 依次变淡。
+   颜色不写死：以 --fadehead-base（默认 = --color-h1，即主题深色）为最深端，
+   与 --color-bg（页面底色）做 color-mix()，子主题换色 / 换底色时自动跟随。
+   只改颜色，不动字号 / 字体 / 装饰，可与 fancyhead_* 叠加（一方管线条边框、一方管颜色）；
+   封面 / trans 页未挂该 class，且自带 h1 / h2 配色规则，颜色不受影响。
+   想更平缓就整体上调下面这组百分比（95/85/75/65/55），想对比更强调就拉大级差。 --- */
+
+section.fadehead {
+    --fadehead-base: var(--color-h1);
+}
+
+section.fadehead h1 {
+    color: var(--fadehead-base);
+}
+
+section.fadehead h2 {
+    color: color-mix(in srgb, var(--fadehead-base) 90%, var(--color-bg));
+}
+
+section.fadehead h3 {
+    color: color-mix(in srgb, var(--fadehead-base) 80%, var(--color-bg));
+}
+
+section.fadehead h4 {
+    color: color-mix(in srgb, var(--fadehead-base) 70%, var(--color-bg));
+}
+
+section.fadehead h5 {
+    color: color-mix(in srgb, var(--fadehead-base) 60%, var(--color-bg));
+}
+
+section.fadehead h6 {
+    color: color-mix(in srgb, var(--fadehead-base) 50%, var(--color-bg));
 }
 
 p {

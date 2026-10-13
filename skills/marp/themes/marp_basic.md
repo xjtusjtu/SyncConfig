@@ -76,6 +76,10 @@ cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* (+ fglass) → scrollbox-y
 - 封面字号入口：主标题 `--font-size-cover-title`、正文 `--font-size-cover-body`、副标题 `--font-size-cover-subtitle`（`cover_a`–`cover_f` 共用，子主题可覆盖）
 - Opt-in 变体：`th_fill` 表头填充主题强调色；`quote_mark` 引用框改回「引号装饰」样式（默认引用框为浅底 + 左侧强调色粗边框）
 - `zebra_bar`：顶部 9px 主题强调色条（`--color-much`）；三套主题默认均不显示，可与其他布局 class 组合
+- `fancyhead_1`：一整套 `h1`–`h6` 装饰（h1 居中下划线（宽 = 文字宽度 60%，`--fancyhead-underline-width` 可调） / h2 `#` 前缀 + 整行淡红下划线（`color-mix()` 由强调色 + 页面底色现调，不新增令牌） / h3 左侧竖条 / h4 方框（上边框 4px、其余 2px） / h5、h6 级别标签）；**只改装饰、不改字体字号**，装饰色统一 `--color-strong`，仅作用于 section.fancyhead_1（封面等不受影响）
+- `fancyhead_2`：极简风，**只装饰 h1–h3 且全部靠左**（h1 粗下划线 5px，宽 = 文字宽度 60%，随文字缩放并左对齐 / h2 整行极淡细线 1px（`color-mix()` 现调，比例越小越淡） / h3 左侧实心圆点前缀）；h4 及以下保持全局样式，同样**只改装饰、不改字体字号**
+- `fancyhead_1r`：**相对级别**标题装饰，按页面起始级别自动分档——有 h2 时 `h2/h3/h4` = 第 1/2/3 级，无 h2 时 `h3/h4/h5` 顶上（第 1 级 = 靠左 + 文字宽度 60% 粗下划线 / 第 2 级 = 左侧竖条 / 第 3 级 = 方框且上边框 4px、其余 2px）；用 `:has(h2)` 与 `:not(:has(h2))` 两个守卫使分支互斥。要求标题**级别连续**、`header`/`footer` 内不放标题；仅作用于 `section.fancyhead_1r`，需 `section.` 前缀（否则 marpit 会加后代关系导致永不匹配）
+- `fadehead`：**标题颜色随层级渐淡**——h1 用最深端 `--fadehead-base`（默认 = `--color-h1`），h2–h6 逐级与 `--color-bg` 做 `color-mix()`（90/80/70/60/50%）。**只改颜色**，不动字号 / 字体 / 装饰，可与 `fancyhead_*` 叠加（一方管颜色、一方管线条边框）；未挂该 class 的封面 / `trans` 页不受影响，配色随子主题自动跟随。想更平缓就整体上调那组百分比
 - **h1 颜色**：非封面页取 `--color-h1`（默认 = 主题强调色 `--color-much`，可单独调）；
   封面 `cover_a`–`cover_d` / `cover_f` 及 `trans` 页的 h1 落在色块 / 深色底上，改用浅色 `--color-title`；
   `cover_e` 的 h1 在白色一侧，用 `--color-h1`
@@ -84,7 +88,7 @@ cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* (+ fglass) → scrollbox-y
 
 | 令牌 | 默认值 | 用途 |
 |:-----|:-------|:-----|
-| `--color-h1` | `var(--color-much)` | 非封面页 `h1` 颜色（封面 / `trans` 另用 `--color-title`） |
+| `--color-h1` | `var(--color-much)` | 非封面页 `h1` 颜色（封面 / `trans` 另用 `--color-title`）；也是 `fadehead` 的默认最深端 |
 | `--color-title` | `#fff` | 深色 / 彩色底块上的浅色文字（封面、表头、`trans` 等） |
 | `--color-much` | `#864248` | 主题强调色：`h2`/`h3`、标记、`zebra_bar`、`--color-h1` 默认值 |
 

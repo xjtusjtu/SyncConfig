@@ -41,6 +41,7 @@ style: |
 - [启用主题](#启用主题)
 - [类名速查](#类名速查)
 - [设计令牌与全局样式](#设计令牌与全局样式)
+- [标题样式](#标题样式)
 - [封面页](#封面页)
 - [目录页](#目录页)
 - [分栏与分区](#分栏与分区)
@@ -139,6 +140,8 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | `th_fill` | 表头填充主题强调色 |
 | `quote_mark` | 引用框改回「引号装饰」样式 |
 | `zebra_bar` | 顶部 9px 主题强调色条（默认无） |
+| `fadehead` | 标题颜色随层级渐淡（h1 最深 → h6 最淡），仅普通页面 |
+| `fancyhead_1` / `fancyhead_2` / `fancyhead_1r` | opt-in 精美标题装饰（`h1`–`h6` 全套 / 仅 `h1`–`h3` 靠左 / `h2`–`h5` 按页面起始级别相对分档） |
 
 ---
 
@@ -231,6 +234,99 @@ style: |
 | `blockquote` | 浅底 + 左侧强调色粗边框（默认） |
 | `quote_mark`（class） | 引用框改为「引号装饰」样式 |
 | `zebra_bar`（class） | 顶部 9px 色条，颜色为 `--color-much`；三套主题默认均无 |
+
+---
+
+<!-- AGENT: layout=section-intro | 章节说明页 -->
+<!-- _footer: "" -->
+<!-- _paginate: "" -->
+
+## 标题样式
+
+`fancyhead_1` 为一整套 `h1`–`h6` 装饰（h1 居中下划线 / h2 `#` 前缀 + 整行淡线 / h3 竖条 / h4 方框 / h5、h6 级别标签）；
+`fancyhead_2` 为极简风，**只装饰 `h1`–`h3` 且全部靠左**（h1 粗下划线 / h2 极淡细线 / h3 圆点前缀）。
+`fancyhead_1r` 则**按页面的起始级别自动分档**：有 h2 时 h2/h3/h4 为第 1/2/3 级，无 h2 时 h3/h4/h5 顶上。
+三者都**只改装饰、不改字体字号**；在 section 上加 `<!-- _class: fancyhead_* -->` 即可启用，
+装饰色取主题令牌，随主题（本稿为 `Marp_slate`）变化。
+只管颜色的 `fadehead` 让标题由深到浅分档（h1 最深 → h6 最淡），可与上面的装饰类叠加。
+
+#### 原：四级标题
+
+---
+
+<!-- AGENT: layout=fancyhead_1 | 精美标题 h1–h6 -->
+<!-- _class: fancyhead_1 -->
+<!-- _footer: "" -->
+
+# fancyhead_1 一级标题
+
+## 二级标题（`#` 前缀 + 整行下划线）
+
+### 三级标题（左侧竖条）
+
+#### 四级标题（方框）
+
+##### 五级标题
+
+###### 六级标题
+
+---
+
+<!-- AGENT: layout=fancyhead_2 | 极简标题 h1–h3（全部靠左） -->
+<!-- _class: fancyhead_2 -->
+<!-- _footer: "" -->
+
+# fancyhead_2 一级标题
+
+## 二级标题（整行极淡细线）
+
+### 三级标题（实心圆点前缀）
+
+`h4` 及以下保持全局样式。
+
+---
+
+<!-- AGENT: layout=fancyhead_1r | 相对级别标题（本页有 h2 → h2/h3/h4 为 1/2/3 级） -->
+<!-- _class: fancyhead_1r -->
+<!-- _footer: "" -->
+
+## 本页有 h2：h2 = 第 1 级（靠左 + 文字宽度 30% 下划线）
+
+### h3 = 第 2 级（左侧竖条）
+
+#### h4 = 第 3 级（方框，上边框更粗）
+
+---
+
+<!-- AGENT: layout=fancyhead_1r-no-h2 | 相对级别标题（本页无 h2 → 整体上移一档） -->
+<!-- _class: fancyhead_1r -->
+<!-- _footer: "" -->
+
+### 本页无 h2：h3 = 第 1 级（靠左 + 文字宽度 30% 下划线）
+
+#### h4 = 第 2 级（左侧竖条）
+
+##### h5 = 第 3 级（方框，上边框更粗）
+
+---
+
+<!-- AGENT: layout=fadehead | 标题颜色随层级渐淡（仅普通页面） -->
+<!-- _class: fadehead -->
+<!-- _footer: "" -->
+
+# H1：最深（标题基准色 `--color-h1`）
+
+## H2：与页面底色混 10%
+
+### H3：混 20%
+
+#### H4：混 30%
+
+##### H5：混 40%
+
+###### H6：混 50%（最淡）
+
+只改颜色，字号 / 字体 / 装饰不变，可与 `fancyhead_*` 叠加；未挂该 class 的封面、`trans` 页不受影响。
 
 ---
 
@@ -1011,8 +1107,10 @@ scroll 不生效时检查内容高度与 `scrollbox-y` 在 slide 内的顺序。
 
 </div>
 
-<script src="https://unpkg.com/mermaid@11.15.0/dist/mermaid.min.js"></script>
-<script>mermaid.initialize({
-  startOnLoad: true,
-  themeVariables: { fontSize: "18px" }
-});</script>
+<!-- Put this script at the end of Markdown file. -->
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+mermaid.initialize({ startOnLoad: true });
+window.addEventListener('vscode.markdown.updateContent', function() { mermaid.init() });
+</script>
+ 
