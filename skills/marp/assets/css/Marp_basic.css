@@ -45,6 +45,12 @@
        --gap-cover-body 标题块↔正文，各封面按自身设计覆盖此值 */
     --gap-cover-title: 0.6em;
     --gap-cover-body: 3.5em;
+    /* cover_a 顶部色块固定高度（占版心高度的百分比）：色块大小不随主标题
+       字号 / 副标题有无而变，主副标题作为一个整体在色块内垂直居中 */
+    --cover-a-band: 62%;
+    /* lastpage 中部色带高度（占幻灯片高度）：色带上下等分留白 → 色带本身
+       居中于页面，标题在色带内居中 → 标题落在页面垂直中心 */
+    --lastpage-band: 40%;
     /* 相邻色块间的重叠量：h1/h2 各自带背景时，两盒边界在缩放渲染下
        会出现亚像素白缝，用负 margin 让两者重叠几个像素即可消除 */
     --cover-seam: 3px;
@@ -1178,16 +1184,28 @@ section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) {
     width: 100%;
 }
 
-/* cover_a：色块 = 标题块自身的背景（h1+h2），随标题高度伸缩，
-   标题被 <!-- fit --> 放大时色块同步变高，永远与标题匹配 */
+/* cover_a：划分为「标题区」与「信息区」两块。
+   标题区 = 顶部固定高度色块（--cover-a-band），由 section 背景渐变绘制；
+   色块高度固定，与主标题字号、副标题有无都无关。h1(+h2) 作为一个整体在
+   色块内垂直居中：r1 / r4 是色块内上下两段等分留白（同为 1fr → 等分），
+   r2 / r3 放主标题 / 副标题，r5 是下方信息区（table），在剩余高度内居中。 */
 section.cover_a {
-    background: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows:
+        minmax(0, 1fr)                                  /* r1 色块上留白 */
+        auto                                            /* r2 主标题 */
+        auto                                            /* r3 副标题 */
+        minmax(0, 1fr)                                  /* r4 色块下留白 */
+        minmax(0, calc(100% - var(--cover-a-band)));     /* r5 信息区 */
+    align-items: center;
+    justify-items: center;
     padding: 0;
-    --gap-cover-body: 4em;
+    background: linear-gradient(
+        to bottom,
+        var(--color-coverbg) 0 var(--cover-a-band),
+        white var(--cover-a-band)
+    );
 }
 
 section.cover_c {
@@ -1257,26 +1275,29 @@ section:is(.cover_a, .cover_b, .cover_c, .cover_d, .cover_e) a::after {
     content: "";
 }
 
-/* --- cover_a: 标题 + table 个人信息 ---
-   h1/h2 走正常文档流：h1 被放大时把 h2 挤下去；两者自带色块背景 */
+/* --- cover_a: 标题区（色块内居中）+ 下方 table 信息区 ---
+   色块由 section 背景承担，h1/h2 不再自带背景；两者在 r2/r3 中作为一组，
+   由 r1/r4 等分留白实现整体垂直居中。 */
 section.cover_a h1 {
+    grid-row: 2;
     position: static;
     width: 100%;
     margin: 0;
-    padding: 150px 6% 0;
+    padding: 0 6%;
     text-align: center;
-    background-color: var(--color-coverbg);
+    background: none;
     color: var(--color-title);
     vertical-align: middle;
 }
 
 section.cover_a h2 {
+    grid-row: 3;
     position: static;
     width: 100%;
-    margin: calc(-1 * var(--cover-seam)) 0 0;
-    padding: var(--gap-cover-title) 6% 24px;
-    text-align: right;
-    background-color: var(--color-coverbg);
+    margin: var(--gap-cover-title) 0 0;
+    padding: 0 6%;
+    text-align: center;
+    background: none;
     color: var(--color-title);
 }
 
@@ -1285,15 +1306,19 @@ section.cover_a strong {
 }
 
 section.cover_a > p {
+    grid-row: 5;
+    align-self: center;
     position: static;
     width: 100%;
-    margin: var(--gap-cover-body) 0 0;
+    margin: 0;
 }
 
 section.cover_a table {
+    grid-row: 5;
+    align-self: center;
     border-collapse: collapse;
     position: static;
-    margin: var(--gap-cover-body) auto 0;
+    margin: 0;
     width: auto;
     max-width: 90%;
     table-layout: auto;
@@ -1745,35 +1770,34 @@ section.toc_b img {
    12. Last page & navbar
    ========================================================================== */
 
+/* 致谢页：中部为固定高度的色带（--lastpage-band），位于页面上半部分
+   （上方留白 : 下方留白 = 1 : 2 → 色带落在 20%–60%，中心约 40%）。
+   标题在色带内 flex 居中 → 「谢谢」与色带中线对齐。联系方式单独放在
+   下方留白区底部。 */
 section.lastpage {
     width: 100%;
     padding: 0;
-    background: linear-gradient(
-        to bottom,
-        white 20%,
-        var(--color-coverbg) 20% 60%,
-        white 55%
-    );
+    background: white;
     display: grid;
-    grid-template-rows: 1fr auto;
-    grid-template-columns: auto;
-    grid-template-areas:
-        "heading"
-        "icons";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows:
+        minmax(0, 1fr)                 /* 色带上方留白（1 份） */
+        var(--lastpage-band)           /* 色带（2 行，标题） */
+        minmax(0, 2fr);                /* 色带下方留白 + 联系方式（2 份） */
 }
 
 section.lastpage h2 {
-    grid-area: heading;
-    display: grid;
-    width: 100%;
-    height: 100%;
-    align-content: center;
+    grid-row: 2;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    width: 100%;
+    margin: 0;
     text-align: center;
     font-family: var(--font-family-title);
     font-size: var(--font-size-1);
     color: var(--color-title);
+    background-color: var(--color-coverbg);
 }
 
 section.lastpage a::after,
@@ -1784,8 +1808,14 @@ section.lastpage::after {
     color: white;
 }
 
+/* 联系方式：仍在页面底部（与旧版一致），但改为按内容宽度水平居中
+   （grid 列已是满宽，若不显式居中，文字会贴到幻灯左边缘） */
+section.lastpage > p,
+section.lastpage > ul,
 section.lastpage .icons {
-    grid-area: icons;
+    grid-row: 3;
+    justify-self: center;
+    align-self: end;
 }
 
 section.lastpage div > ul {

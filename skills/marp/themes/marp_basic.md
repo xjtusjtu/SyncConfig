@@ -75,6 +75,7 @@ cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* + list-cols-2 (+ fglass) �
 - Old `info` → use `cover_a`
 - Transition slide → `trans`
 - **封面副标题用 `##`（h2，勿用 `######`）** — `cover_*` / `lastpage` 已按 h2 定型；这样作为普通 Markdown 打开时层级也合理
+- `lastpage`（致谢页）：中部固定高度色带 —— 高度 `--lastpage-band`（默认 `40%`），按「上方留白 1 份 : 下方留白 2 份」分布，色带落在 20%–60%（中心约 40%，略高于页面中线）；标题（`##`）在色带内垂直居中，联系方式贴页面底部居中
 - `cover_f` = 左对齐深色渐变封面 / 章节过渡页（配色令牌 `--color-cover-*`）
 - 封面字号入口：主标题 `--font-size-cover-title`、正文 `--font-size-cover-body`、副标题 `--font-size-cover-subtitle`（`cover_a`–`cover_f` 共用，子主题可覆盖）
 - Opt-in 变体：`th_fill` 表头填充主题强调色；`quote_mark` 引用框改回「引号装饰」样式（默认引用框为浅底 + 左侧强调色粗边框）
@@ -97,18 +98,26 @@ cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* + list-cols-2 (+ fglass) �
 
 ## 封面布局模型（cover_a / cover_b / cover_e）
 
-封面遵循三条不变量：
+`cover_a` 采用 **区域模型**（固定色块 + 居中标题 + 独立信息区）：
+
+1. **色块固定高度** — 顶部色块由 section 背景渐变绘制，高度固定为 `--cover-a-band`
+   （默认 `62%`）。加/删副标题、`<!-- fit -->` 放大主标题都不会改变色块大小。
+2. **标题区** — `h1`（+ `h2`）作为一个整体在色块内 **垂直居中**（grid 上下两段等分留白，
+   随主标题高度自动重新等分）。
+3. **信息区** — 下方 `table` 独立占据剩余高度并在其中居中，不受标题增减影响。
+
+`cover_b` / `cover_e` 采用 **匹配模型**（色块随标题伸缩）：
 
 1. **主标题放大时能挤动副标题** — `h1` / `h2` 走正常文档流（`position: static`），
    不使用各自的绝对定位或固定百分比行。`<!-- fit -->` 把 h1 撑高时，h2 自然下移。
 2. **标题↔正文的间距由各封面自行决定** — `--gap-cover-body` 在 `:root` 给默认值
-   （`3.5em`），`cover_a` 覆盖为 `4em`、`cover_b` / `cover_e` 覆盖为 `3em`。
+   （`3.5em`），`cover_b` / `cover_e` 覆盖为 `3em`。
 3. **色块必须与标题匹配** — 色块不是固定高度的装饰层，而是 **h1 / h2 自身的
    `background-color` + `padding`**。标题多高，色块就多高，任何 `<!-- fit -->` 缩放
    都不会露出白边或错位。
 
 标题↔副标题的间距统一由 `--gap-cover-title`（`0.6em`）控制，全封面一致。
-相邻两个色块之间用 `--cover-seam`（`3px`）负 margin 轻微重叠，
+`cover_b` 相邻两个色块之间用 `--cover-seam`（`3px`）负 margin 轻微重叠，
 消除缩放渲染下两盒边界处的亚像素白缝。
 
 `cover_c` / `cover_d` 仍为 grid 布局（行高固定），其色块由 section 背景渐变承担，
