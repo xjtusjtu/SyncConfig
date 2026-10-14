@@ -701,8 +701,9 @@ section:has(:is(img, .mermaid > svg):not(.as-no-peek):active) {
     overflow: visible !important;
 }
 
+/* 会裁切放大图的容器统统放开（.gallery 见 5.2） */
 section:has(:is(img, .mermaid > svg):not(.as-no-peek):active)
-    :is(.scrollbox, .scrollbox-x, .scrollbox-y, .ldiv, .rdiv, .mdiv, .tdiv, .bdiv) {
+    :is(.gallery, .scrollbox, .scrollbox-x, .scrollbox-y, .ldiv, .rdiv, .mdiv, .tdiv, .bdiv) {
     overflow: visible !important;
 }
 
@@ -733,6 +734,99 @@ section :is(img, .mermaid > svg):not(.as-no-peek):not(header img, footer img):ac
     cursor: zoom-out;
     -webkit-user-drag: none;
     user-select: none;
+}
+
+/* ==========================================================================
+   5.2 gallery — 长廊：img / .mermaid / svg / iframe / video 横排成一条，容器横滚。
+     与 scrollbox 系列独立：不做高度链、不做 sticky，只负责「一排块 + 横向滚动」。
+     标题、说明等其他内容写在容器外（.gallery 之前 / 之后），与 cols-* 的用法一致。
+
+     挂载（需 enableHtml: true）：section 内用 HTML 容器
+       <div class="gallery">
+
+       ![](a.png)
+       ![w:400](b.png)
+
+       </div>
+     Marp 会把该 div 内的 markdown 渲染进这个 div；若同一段里连续多行图片，
+     会合并成一个 <p>（图片之间插 <br>），故下方 > p 规则把段落本身也变成 flex 行。
+
+     宽高由作者控制（`![w:600]` / `![w:600 h:400]` 或行内 style），只给一边时另一边
+     保持 auto，不做非等比拉伸；图片过高时自行限制高度或改用 scrollbox-y。
+   ========================================================================== */
+
+section .gallery {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0.25rem 0;
+    overflow-x: auto;
+    /* overflow-y 与 overflow-x: auto 混用时 visible 会退化为 auto（CSS 规定），
+       所以按住放大（5.1）时由那里的 overflow: visible !important 放开裁切 */
+    overflow-y: visible;
+}
+
+section .gallery
+    > :is(
+        img,
+        figure,
+        .mermaid,
+        svg,
+        iframe,
+        video,
+        p:has(> img:only-child),
+        p:has(> .mermaid)
+    ) {
+    flex: 0 0 auto;
+    align-self: center;
+    min-width: 0;
+    margin: 0;
+}
+
+/* 段内多图（<p><img><br><img></p>）：段落本身也取 flex 行，图片横排 + gap 间距；
+   <br> 在 flex 容器里不应产生换行，隐去（长廊里没有需要内部换行的场景） */
+section .gallery > p {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+section .gallery br {
+    display: none;
+}
+
+/* 宽高交给作者：解除全局 section :is(img, svg) 的 max-width 上限，
+   宽图 / 宽 mermaid 可超出容器宽度 → 触发容器横向滚动 */
+section .gallery :is(img, iframe, video, .mermaid > svg) {
+    max-width: none;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    object-position: center;
+}
+
+section .gallery > .mermaid,
+section .gallery > p > .mermaid {
+    flex: 0 0 auto;
+    overflow: visible;
+}
+
+section .gallery > .mermaid > svg,
+section .gallery > p > .mermaid > svg {
+    display: block;
+    margin: 0;
 }
 
 /* ==========================================================================
@@ -890,101 +984,124 @@ section:is(
 }
 
 /* ==========================================================================
-   8. Migrated layouts — multi-column lists (cols2_*)
-   两列按「先填满左列」分列（1–3 左，4–6 右），不用 grid 行优先。
-   Markdown 有序列表 ol → 大方块序号；无序列表 ul → 小色块。
+   8. List styles — cols2_ol_sq / cols2_ol_ci / cols2_ul_sq / cols2_ul_ci
+   只定义「列表长什么样」：有序列表 ol → 大方块序号；无序列表 ul → 小色块。
+   是否拆成两栏由 8.1 的 list-cols-2 决定；不加该 class 时列表按正常单列
+   自上而下排列。两类 class 正交，可任意组合。
    ========================================================================== */
 
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci)
-    > :is(h2, h3) {
-    align-self: flex-start;
-    margin-left: -2%;
-    text-align: left;
-}
-
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) p {
+/* 段落左边界交给列表 padding-left 统一控制：序号块已绝对定位，若再保留
+   负 margin-left 会让首行/续行文字左移并与序号块重叠。 */
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) p,
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) p {
     padding-bottom: 1%;
-    margin-left: -1.5%;
+    margin-left: 0;
 }
 
-/* 分列：column-count 使条目纵向先占满第一列 */
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul) {
-    left: 1%;
-    width: 98%;
-    position: relative;
+/* 自定义属性统一列表缩进：列表默认 52px；fglass 用 60px 覆盖，并让序号块
+   相对卡片左右留 10px，不再用 li 宽度的百分比（单列宽时会把序号甩到卡片外）。 */
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul),
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul) {
+    --cols2-indent: 52px;
+    --cols2-inset: 10px;
     margin: 0;
-    padding: 0 0 0 1.5em;
+    padding: 0 0 0 var(--cols2-indent);
     list-style-type: none;
-    column-count: 2;
-    column-gap: 3em;
 }
 
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul) > li {
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul) > li,
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) :is(ol, ul) > li {
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
     margin-bottom: 0.7em;
     line-height: 1.4rem;
+    position: relative;
 }
 
-/* 有序列表序号块（仅 ol）：_sq 方形，_ol_ci 圆形（对齐 am_template） */
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li::before {
-    margin: 0 20px 0 0;
-    width: 30px;
-    height: 30px;
+/* 有序列表序号块（仅 ol）：_sq 方形，_ol_ci 圆形（对齐 am_template）
+   绝对定位到列表左侧。序号字号与正文一致（--font-size-main），色块仅比
+   字号大 2px（--cols2-mark-size），使色块边缘与数字边缘不重合；line-height:1
+   让数字在色块内真正垂直居中。top 用「行高一半 - 块高一半」让色块中线与
+   首行文字中线对齐。首行 <p> 保持 block，因此首行与续行左边界一致，不会因
+   Markdown 换行空白在 inline 排版中生成额外空格而错位。 */
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li::before,
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li::before {
+    --cols2-mark-size: calc(var(--font-size-main) + 2px);
+    margin: 0;
+    position: absolute;
+    top: calc((1.4rem - var(--cols2-mark-size)) / 2);
+    left: calc(var(--cols2-inset) - var(--cols2-indent));
+    width: var(--cols2-mark-size);
+    height: var(--cols2-mark-size);
     display: inline-flex;
-    position: relative;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: var(--font-size-main);
+    line-height: 1;
     font-family: var(--font-family-title);
     background-color: var(--color-much);
     color: white;
-    margin-left: -8%;
     border-radius: 0;
 }
 
-section.cols2_ol_sq ol {
+/* Markdown 会把加粗首行包在 <p> 里；保持 block 使首行与续行左边界一致，
+   序号块则由上面的绝对定位与首行同行显示。 */
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li > p:first-child,
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li > p:first-child {
+    display: block;
+}
+
+section.cols2_ol_sq ol,
+.cols2_ol_sq ol {
     counter-reset: cols2_ol_sq;
 }
 
-section.cols2_ol_sq ol > li {
+section.cols2_ol_sq ol > li,
+.cols2_ol_sq ol > li {
     counter-increment: cols2_ol_sq;
 }
 
-section.cols2_ol_sq ol > li::before {
+section.cols2_ol_sq ol > li::before,
+.cols2_ol_sq ol > li::before {
     content: counter(cols2_ol_sq);
 }
 
-section.cols2_ol_ci ol {
+section.cols2_ol_ci ol,
+.cols2_ol_ci ol {
     counter-reset: cols2_ol_ci;
 }
 
-section.cols2_ol_ci ol > li {
+section.cols2_ol_ci ol > li,
+.cols2_ol_ci ol > li {
     counter-increment: cols2_ol_ci;
 }
 
-section.cols2_ol_ci ol > li::before {
+section.cols2_ol_ci ol > li::before,
+.cols2_ol_ci ol > li::before {
     content: counter(cols2_ol_ci);
     border-radius: 50%;
 }
 
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li:hover::before {
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li:hover::before,
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ol > li:hover::before {
     transition: all 0.7s ease-out;
     transform: rotate(360deg);
 }
 
 /* 无序列表：小色块（ul；方形为默认，仅 cols2_ul_ci 为圆点） */
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li {
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li,
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li {
     display: block;
     position: relative;
 }
 
-section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li::before {
+section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li::before,
+:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li::before {
     content: "";
     display: inline-flex;
     position: absolute;
     top: 1.2em;
-    left: -30px;
+    left: calc(var(--cols2-inset) - var(--cols2-indent));
     margin-top: -0.9em;
     background-color: var(--color-much);
     height: 10px;
@@ -992,8 +1109,33 @@ section:is(.cols2_ol_sq, .cols2_ol_ci, .cols2_ul_sq, .cols2_ul_ci) ul > li::befo
     border-radius: 0;
 }
 
-section.cols2_ul_ci ul > li::before {
+section.cols2_ul_ci ul > li::before,
+.cols2_ul_ci ul > li::before {
     border-radius: 50%;
+}
+
+/* ==========================================================================
+   8.1 List column layout — list-cols-2
+   把列表拆成两栏（column-count 使条目纵向先填满左列：1–3 左，4–6 右）。
+   与 8 的列表样式正交：`cols2_ol_sq list-cols-2` = 两栏方形序号列表；
+   只写 `cols2_ol_sq` 则为正常单列。
+   ========================================================================== */
+
+section.list-cols-2 :is(ol, ul),
+.list-cols-2 :is(ol, ul) {
+    left: 1%;
+    width: 98%;
+    position: relative;
+    column-count: 2;
+    column-gap: 3em;
+}
+
+/* 标题左对齐并左移，与分栏后列表的左边缘对齐 */
+section.list-cols-2 > :is(h2, h3),
+.list-cols-2 > :is(h2, h3) {
+    align-self: flex-start;
+    margin-left: -2%;
+    text-align: left;
 }
 
 /* ==========================================================================
@@ -1665,11 +1807,13 @@ section.navbar header {
     background-color: var(--color-navbar-bg);
     width: 100%;
     height: 5%;
-    padding: 6px 0 3px;
+    padding: 0;
     left: 0;
     top: 0;
     right: auto;
     display: flex;
+    align-items: center;
+    line-height: 1;
     justify-content: space-between;
     color: var(--color-navbar-font);
     white-space: pre;
@@ -1687,7 +1831,8 @@ section.navbar header > em > strong {
 section.navbar header > strong {
     border: 1px solid white;
     border-radius: 12px;
-    padding: 0 15px 5px;
+    line-height: 1;
+    padding: 2.5px 15px;
     background-color: white;
 }
 
@@ -1698,24 +1843,24 @@ section.navbar header > em > strong {
     margin-left: -20px;
 }
 
+section.navbar header a {
+    color: var(--color-navbar-font);
+    text-decoration: none;
+}
+
 section.navbar header::before,
 section.navbar header::after {
     content: "";
-}
-
-section.navbar
-    > :is(h1, h2, h3, h4, h5, h6, p, ul, ol, table, blockquote, pre, div):not(
-        header
-    ):not(footer) {
-    margin-top: 36px;
 }
 
 /* ==========================================================================
    13. fglass & trans (am_template)
    ========================================================================== */
 
-section.fglass :is(ul, ol) {
-    padding: 20px 20px 20px 60px;
+section.fglass :is(ul, ol),
+.fglass :is(ul, ol) {
+    --cols2-indent: 60px;
+    padding: 20px 20px 20px var(--cols2-indent);
     margin-left: -25px;
     border-radius: 0 0 20px 20px;
     border-top: 8px solid var(--color-navbar-font);

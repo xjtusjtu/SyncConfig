@@ -85,7 +85,7 @@ style: |
 
 > 回退：若 raw 失败（MIME 被拒），改用 jsDelivr 镜像 `https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/marp/assets/css/Marp_basic.css`。
 
-`cols-*`、面板 `div`、`scrollbox-*`、Mermaid 均需 `enableHtml: true`。
+`cols-*`、面板 `div`、`scrollbox-*`、`gallery`、Mermaid 均需 `enableHtml: true`。
 
 ---
 
@@ -133,7 +133,8 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | `cols-2` / `cols-3` | 1:1 / 三栏 |
 | `cols-2-73` / `64` / `37` / `46` | 比例双栏 |
 | `rows-2` / `rows-1-2` / `rows-2-1` | 上下分区 |
-| `cols2_ol_sq` / `ol_ci` / `ul_sq` / `ul_ci` | 两列列表 |
+| `cols2_ol_sq` / `ol_ci` / `ul_sq` / `ul_ci` | 列表样式（方块序号 / 小色块，单列） |
+| `list-cols-2` | 把列表拆成两栏（与 `cols2_*` 联用） |
 | `fglass` | 列表装饰（与 `cols2_*` 联用） |
 | `fixedtitleB` / `footnote` | 固定标题 / 脚注 |
 | `navbar` / `lastpage` / `trans` | 顶栏 / 致谢 / 过渡页 |
@@ -153,10 +154,14 @@ section / div / img 常用 class 一览；检索 `<!-- AGENT: layout=` 可定位
 | 类 | 作用域 | 说明 |
 |:---|:-------|:-----|
 | `ldiv` / `mdiv` / `rdiv` | div | 左中右内容区 |
+| `cols2_ol_sq` / `ol_ci` / `ul_sq` / `ul_ci` | section, div | 列表样式，也可写在局部 div 上 |
+| `list-cols-2` | section, div | 列表拆两栏，也可写在局部 div 上 |
+| `fglass` | section, div | 列表卡片装饰，也可写在局部 div 上 |
 | `tdiv` / `bdiv` | div | 上下区 |
 | `limg` / `mimg` / `rimg` / `timg` / `bimg` | div | 图片面板（自动居中） |
 | `.div` | div | `fixedtitleB` 正文区 |
 | `scrollbox` / `scrollbox-x` / `scrollbox-y` | div | 双向 / 横 / 纵滚动 |
+| `gallery` | div | 长廊：img / Mermaid / iframe 横排成一条 + 容器横滚 |
 | `alt` 以 `C` 结尾 | img | 块级居中 |
 
 写法：`<!-- _class: cols-2-64 -->` + `<div class="ldiv">` / `rdiv`。
@@ -682,16 +687,23 @@ mail@example.com
 
 ## 列表分列
 
-两列列表 `cols2_*`（先填满左列：1–3 左、4–6 右）；`cols2_ol_sq` / `cols2_ol_ci` 为有序列表（方形 / 圆形序号），`cols2_ul_*` 为无序小色块；常配合 `fglass`。
+列表样式与分栏是两个**正交**的 class：
+
+- `cols2_ol_sq` / `cols2_ol_ci` / `cols2_ul_sq` / `cols2_ul_ci` 只定义列表长什么样（有序列表方形 / 圆形序号块；无序列表小色块），**默认单列自上而下**。
+- `list-cols-2` 负责把列表拆成两栏（`column-count`，先填满左列：1–3 左、4–6 右）。
+
+两者组合即为两栏列表；只写 `cols2_*` 就是普通单列。常配合 `fglass`（列表卡片装饰）。
+
+> `cols2_*`、`list-cols-2`、`fglass` 既可写在页面 `<!-- _class: -->` 上，也可作为局部 `div` 的 class 使用（作用于该 div 内的列表）。
 
 ---
 
 <!-- AGENT: layout=cols2_ol_sq | 有序列表两列方形序号 -->
-<!-- _class: cols2_ol_sq fglass -->
+<!-- _class: cols2_ol_sq list-cols-2 fglass -->
 
-## cols2_ol_sq
+## cols2_ol_sq + list-cols-2
 
-`<!-- _class: cols2_ol_sq fglass -->`
+`<!-- _class: cols2_ol_sq list-cols-2 fglass -->`
 
 1. 列表项 1
 2. 列表项 2
@@ -703,13 +715,13 @@ mail@example.com
 ---
 
 <!-- AGENT: layout=cols2_ol_ci | 有序列表两列圆形序号 -->
-<!-- _class: cols2_ol_ci fglass -->
+<!-- _class: cols2_ol_ci list-cols-2 fglass -->
 
-## cols2_ol_ci
+## cols2_ol_ci + list-cols-2
 
 有序列表为**圆形**序号块（`ol_ci`）；无序列表小色块为方形。对比 `cols2_ol_sq` 的方形序号。
 
-`<!-- _class: cols2_ol_ci fglass -->`
+`<!-- _class: cols2_ol_ci list-cols-2 fglass -->`
 
 1. 章节 A
 2. 章节 B
@@ -721,11 +733,11 @@ mail@example.com
 ---
 
 <!-- AGENT: layout=cols2_ul_ci | 无序列表两列圆形色块 -->
-<!-- _class: cols2_ul_ci fglass -->
+<!-- _class: cols2_ul_ci list-cols-2 fglass -->
 
-## cols2_ul_ci
+## cols2_ul_ci + list-cols-2
 
-`<!-- _class: cols2_ul_ci fglass -->`
+`<!-- _class: cols2_ul_ci list-cols-2 fglass -->`
 
 - 模块 A
 - 模块 B
@@ -737,11 +749,11 @@ mail@example.com
 ---
 
 <!-- AGENT: layout=cols2_ul_sq | 无序列表两列方形色块 -->
-<!-- _class: cols2_ul_sq fglass -->
+<!-- _class: cols2_ul_sq list-cols-2 fglass -->
 
-## cols2_ul_sq
+## cols2_ul_sq + list-cols-2
 
-`<!-- _class: cols2_ul_sq fglass -->`
+`<!-- _class: cols2_ul_sq list-cols-2 fglass -->`
 
 - 模块 A
 - 模块 B
@@ -1003,6 +1015,26 @@ flowchart LR
 | 普通 slide / grid | `width: 100%` | 单元格换行，不撑破列宽 |
 
 全页宽表可直接写 Markdown 表格，无需 scrollbox。
+
+---
+
+<!-- AGENT: layout=gallery | 长廊：媒体横排 + 容器横滚 -->
+<!-- _footer: "" -->
+
+## gallery（长廊）
+
+`gallery` 把 img / Mermaid / iframe / video 横排成一条，超出宽度由容器横向滚动；标题写在容器外。
+
+<div class="gallery">
+
+![width:360px](https://dummyimage.com/360x200/cccccc/333333&text=A)
+![width:360px](https://dummyimage.com/360x200/cccccc/333333&text=B)
+![width:360px](https://dummyimage.com/360x200/cccccc/333333&text=C)
+![width:360px](https://dummyimage.com/360x200/cccccc/333333&text=D)
+
+</div>
+
+尺寸用 `![width:360px]` 由作者控制（只给一边时另一边保持 auto）；容器内可继续写 Markdown，图片按住可放大（同 hold-to-peek）。
 
 ---
 

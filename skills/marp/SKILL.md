@@ -124,7 +124,7 @@ Do not use horizontal rules inside slide content unless intentional.
 
 ### Step 4: Per-slide directives
 
-HTML comments at the top of a slide override global settings for **that page only**. Prefix with `_`:
+HTML comments at the top of a slide set per-slide directives. Prefix with `_` to scope them to **that page only** (spot directives):
 
 ```markdown
 <!-- _class: cover_f -->
@@ -142,7 +142,14 @@ HTML comments at the top of a slide override global settings for **that page onl
 | `_paginate` | Current slide | `false` or `""` to hide page number |
 | `_backgroundColor` | Current slide | Slide background color |
 
-Without `_` prefix, directives apply from current slide **onward** (spot directives).
+The underscore prefix makes a **spot directive** (this page only). The same names **without** `_` are still *local* directives but **continue** from the current slide onward until re-set:
+
+```markdown
+<!-- class: cols-2 -->   <!-- this page and every page after it -->
+<!-- _class: cover_f -->  <!-- this page only -->
+```
+
+`_class` wins over `class` on the same page (it does not merge), and a later `_class` does **not** cancel an earlier `class` for subsequent pages. See `Marpit Markdown_Directives.md` in the vault.
 
 ### Step 5: Slide content
 
@@ -218,6 +225,7 @@ Inline: `$E = mc^2$` — Block: `$$...$$`
 | Thin white line between two adjacent cover colour blocks | Sub-pixel seam under scaled rendering; give the lower block `margin-top: calc(-1 * var(--cover-seam))` |
 | `<!-- fit -->`-enlarged cover title overlaps the subtitle | Cover `h1`/`h2` must stay in normal flow — do not absolutely position them or give each a fixed `top` percentage. See the cover layout model in [themes/marp_basic.md](themes/marp_basic.md) |
 | Same global directive repeated | Marp uses the **last** value only |
+| `class` + `_class` on the same slide | `_class` (spot) overrides `class` for that page — they do not merge; the earlier `class` still continues on later pages |
 | Emoji in Mermaid label → `Syntax error in text` | Remove emoji from labels; twemoji replacement injects `alt="…"` quotes before Mermaid parses |
 | Mermaid node text not vertically centered after fontSize change | Mermaid line-height measure/render mismatch — apply post-render label-centering script (see `P_Marp for VS Code.md`) |
 
@@ -234,6 +242,6 @@ Workflow:
 
 1. Write deck using this skill (Marp syntax, frontmatter, directives, `---` pagination)
 2. When user specifies `theme: Marp_basic` or asks for Marp_basic layout → **Read** [themes/marp_basic.md](themes/marp_basic.md), then lazy-load vault docs it points to
-3. Apply theme-specific section classes, panel divs, and scroll containers from those references
+3. Apply theme-specific section classes, panel divs, and scroll / `gallery` containers from those references
 
 Future themes follow the same pattern: add `marp/themes/<theme>.md` and register here.

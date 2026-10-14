@@ -36,7 +36,7 @@ Local alternative: copy `assets/css/` into the vault and use a vault-relative pa
 
 > Fallback: if raw GitHub fails (MIME type rejected), switch to the jsDelivr mirror `https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/marp/assets/css/Marp_basic.css`.
 
-`enableHtml` is required for `cols-*`, panel divs, `scrollbox-*`, and Mermaid HTML blocks.
+`enableHtml` is required for `cols-*`, panel divs, `scrollbox-*`, `gallery`, and Mermaid HTML blocks.
 
 ## Standard Frontmatter
 
@@ -64,10 +64,13 @@ Traditional cover color blocks (`cover_a`–`cover_e`) use
 ## Layout Selection
 
 ```
-cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* (+ fglass) → scrollbox-y/x → navbar → lastpage
+cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* + list-cols-2 (+ fglass) → scrollbox-y/x → gallery → navbar → lastpage
 ```
 
 - Section class via `<!-- _class: cols-2-64 -->`; content in `<div class="ldiv">` / `rdiv` / etc.
+- **列表样式与分栏正交**：`cols2_ol_sq` / `cols2_ol_ci` / `cols2_ul_sq` / `cols2_ul_ci` 只定义列表长什么样（有序列表方形 / 圆形序号块，无序列表小色块），**默认单列自上而下**；`list-cols-2` 负责拆成两栏（`column-count`，先填满左列 1–3 / 4–6）。两者组合 = 两栏列表，只写 `cols2_*` = 普通单列
+- `navbar` 只做顶部导航条（`header` 内写 `***左标题***　**当前**　*其他*`），**正文部分与普通页完全一致**，可与 `cols-2-64` / `cols2_*` / `list-cols-2` / `th_fill` 等任意组合；不再对正文元素加 `margin-top` 偏移
+- `gallery`：**长廊容器**（div 类，非 section 类）—— img / Mermaid / iframe / video 横排成一条，超出宽度横向滚动；图片尺寸由作者用 `![w:600]` 控制，标题与说明写在容器外
 - Left image + right text → `cols-2` + `limg` + `rdiv`
 - Old `info` → use `cover_a`
 - Transition slide → `trans`
@@ -126,6 +129,8 @@ cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* (+ fglass) → scrollbox-y
 | 封面 h1/h2 两个色块之间有细白线 | 两个相邻背景盒在缩放渲染下有亚像素缝；给下面那个加 `margin-top: calc(-1 * var(--cover-seam))` |
 | `<!-- fit -->` 放大主标题后压住副标题 | 封面 h1/h2 不要各自绝对定位或写死 `top` 百分比；保持正常文档流，让 h2 被自然挤下去 |
 | Hold-to-peek on decorative images | 按住正文 `img` / `.mermaid > svg` 可放大预览；装饰图加 `class="as-no-peek"`（header/footer 图默认不触发） |
+| 两栏列表变成单列 | 给该页加上 `list-cols-2`：`<!-- _class: cols2_ol_sq list-cols-2 fglass -->`（`cols2_*` 本身只管列表样式） |
+| `navbar` 页上下留白异常 / 正文与普通页位置不同 | 不要给 navbar 正文加 `margin-top` 偏移；`navbar` 的 `header` 是 `position: absolute`，不占正文流，正文应与普通页一样在 section 内居中 |
 
 Per-slide directives (`_header`, `_footer`, etc.) → see [SKILL.md](../SKILL.md).
 
