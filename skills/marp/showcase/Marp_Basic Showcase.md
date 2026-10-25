@@ -1121,6 +1121,21 @@ scroll 不生效时检查内容高度与 `scrollbox-y` 在 slide 内的顺序。
 
 ---
 
+<!-- AGENT: layout=lastpage-multi-p | 尾页正文多段落（三行来源信息），验证色带满宽 -->
+<!-- _class: lastpage -->
+<!-- _paginate: "" -->
+<!-- _footer: "" -->
+
+## 来源
+
+分析日志 `日志.md`
+
+脚本 `demo.py`
+
+结果 `output/`
+
+---
+
 <!-- AGENT: layout=lastpage | 致谢联系方式 -->
 <!-- _class: lastpage -->
 <!-- _footer: "" -->

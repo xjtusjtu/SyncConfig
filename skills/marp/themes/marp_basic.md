@@ -75,7 +75,7 @@ cover_a~f → toc_a/b → cols-2/3/rows-* → cols2_* + list-cols-2 (+ fglass) �
 - Old `info` → use `cover_a`
 - Transition slide → `trans`
 - **封面副标题用 `##`（h2，勿用 `######`）** — `cover_*` / `lastpage` 已按 h2 定型；这样作为普通 Markdown 打开时层级也合理
-- `lastpage`（致谢页）：中部固定高度色带 —— 高度 `--lastpage-band`（默认 `40%`），按「上方留白 1 份 : 下方留白 2 份」分布，色带落在 20%–60%（中心约 40%，略高于页面中线）；标题（`##`）在色带内垂直居中，联系方式贴页面底部居中
+- `lastpage`（致谢页）：中部固定高度色带 —— 高度 `--lastpage-band`（默认 `40%`），按「上方留白 1 份 : 下方留白 2 份」分布，色带落在 20%–60%（中心约 40%，略高于页面中线）；标题（`##`）在色带内垂直居中，联系方式贴页面底部居中。**正文子元素数量不限**（多个 `p` / `ul` 会纵向堆叠，色带始终满宽；内部用 flex 列实现，不要改回 grid）
 - `cover_f` = 左对齐深色渐变封面 / 章节过渡页（配色令牌 `--color-cover-*`）
 - 封面字号入口：主标题 `--font-size-cover-title`、正文 `--font-size-cover-body`、副标题 `--font-size-cover-subtitle`（`cover_a`–`cover_f` 共用，子主题可覆盖）
 - Opt-in 变体：`th_fill` 表头填充主题强调色；`quote_mark` 引用框改回「引号装饰」样式（默认引用框为浅底 + 左侧强调色粗边框）

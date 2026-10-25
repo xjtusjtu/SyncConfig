@@ -1773,26 +1773,44 @@ section.toc_b img {
 /* 致谢页：中部为固定高度的色带（--lastpage-band），位于页面上半部分
    （上方留白 : 下方留白 = 1 : 2 → 色带落在 20%–60%，中心约 40%）。
    标题在色带内 flex 居中 → 「谢谢」与色带中线对齐。联系方式单独放在
-   下方留白区底部。 */
+   下方留白区底部。
+
+   注意：这里**不能用 grid**。旧写法把「上留白 / 色带 / 下留白」写成三行单列，
+   又给每个正文子元素写 `grid-row: 3`；页面有多个 <p>（如「来源」页三行）时，
+   同一行的多个 item 无法共格 → grid 自动换列，隐式列按 max-content 定宽，
+   第 1 列（含 h2 色带）被 1fr 压缩到半宽，色带看起来只占一半。
+   改用 flex 列：子元素数量变化只影响纵向堆叠，色带始终满宽。 */
 section.lastpage {
     width: 100%;
     padding: 0;
     background: white;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows:
-        minmax(0, 1fr)                 /* 色带上方留白（1 份） */
-        var(--lastpage-band)           /* 色带（2 行，标题） */
-        minmax(0, 2fr);                /* 色带下方留白 + 联系方式（2 份） */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 }
 
+/* 色带上方留白：(100% - 色带) / 3 → 与下方留白保持 1 : 2 的比例。
+   百分比高度按 section 的确定高度解析（Marpit 固定 720px）。 */
+section.lastpage::before {
+    content: "";
+    flex: none;
+    width: 100%;
+    height: calc((100% - var(--lastpage-band)) / 3);
+}
+
+/* margin-bottom: auto 吃掉全部剩余高度 → 后续联系方式被推到页面底部；
+   box-sizing: border-box 让 40% 的 flex-basis 含内边距，
+   否则 h2 自带的 padding-bottom 会把色带撑高、中线偏移 7px */
 section.lastpage h2 {
-    grid-row: 2;
+    flex: 0 0 var(--lastpage-band);
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin: 0;
+    margin: 0 0 auto;
+    padding: 0;
     text-align: center;
     font-family: var(--font-family-title);
     font-size: var(--font-size-1);
@@ -1808,14 +1826,25 @@ section.lastpage::after {
     color: white;
 }
 
-/* 联系方式：仍在页面底部（与旧版一致），但改为按内容宽度水平居中
-   （grid 列已是满宽，若不显式居中，文字会贴到幻灯左边缘） */
+/* 联系方式：仍在页面底部（由 h2 的 margin-bottom: auto 推下去），
+   按内容宽度水平居中。多个 <p> 会自然纵向堆叠，不再并排挤成一列。 */
 section.lastpage > p,
 section.lastpage > ul,
 section.lastpage .icons {
-    grid-row: 3;
-    justify-self: center;
-    align-self: end;
+    flex: none;
+    align-self: center;
+    margin-top: 0;
+}
+
+/* 底部留白 24px：section 的 padding 为 0，否则末行贴到 720 边缘。
+   用 padding 而非 margin（Marpit 内置 `section > :last-child { margin-bottom:
+   0 !important }` 会吃掉 margin），也不用 ::after（本页关了分页，Marpit 会
+   display:none）。按「每种标签各自最后一个」定位，因为 deck 末尾可能跟着
+   <script>，`:last-child` 会落到 script 上。 */
+section.lastpage > p:last-of-type,
+section.lastpage > ul:last-of-type,
+section.lastpage > div:last-of-type {
+    padding-bottom: 24px;
 }
 
 section.lastpage div > ul {
