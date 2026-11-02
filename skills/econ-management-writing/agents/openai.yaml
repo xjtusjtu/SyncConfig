@@ -1,4 +1,4 @@
 interface:
   display_name: "经管论文写作与修改"
   short_description: "Structure, polish, and expand economics and management papers"
-  default_prompt: "使用 $econ-management-writing，按我指定的全局或局部范围修改论文，保留研究内容和引用归属，并标明需要补充的证据。"
+  default_prompt: "使用 $econ-management-writing，先读取项目的 WRITING_CONVENTIONS.md 写作约定，再按我指定的全局或局部范围修改论文，正文以不懂技术背景的审稿人能读懂为准，保留研究内容和引用归属，并标明需要补充的证据。"
