@@ -1,6 +1,6 @@
 # 来源、审读范围与设计取舍
 
-审读日期：2026-10-09。下列判断基于实际获取的仓库正文，不是星数、README 宣传或效果证明。分支会变化，复核请使用所列 commit。
+审读日期：2026-10-09（第 1～5 节）、2026-11-08（第 6 节）。下列判断基于实际获取的仓库正文，不是星数、README 宣传或效果证明。分支会变化，复核请使用所列 commit。
 
 本 skill 的中文规范、例子和检查器独立撰写，没有复制第三方脚本或大段正文。借鉴的是工作思路，并保留下列来源供核对；不将候选 skill 自报的语料规模或测试成绩当作已独立验证的效果。
 
@@ -72,3 +72,39 @@
 - **不采纳**：不新增固定句长、每段句数或「禁用括号」的机械配额；不要求每个句子都写成四段式（四段式仅针对方法／流程类步骤叙述）；不改变现有「局限集中放在最后部分」的规则（用户确认以现有规则为准，仅强化正文少用括号与防御性限定）。
 - **命名不区分内部／外部名称**：统一裁决标准是读者能否快速理解其指代及在研究中承担的作用，而非名称来源。
 - **验证边界**：两份新规范为写作判断，不由 `scripts/check_protected_fields.py` 验证；该脚本仍只做词面清单差异。
+
+## 6. 学术志 skills 并入（2026-11-08 新增）
+
+本次新增四份规范：[文献综述](literature-review.md)、[标题、摘要与关键词](title-abstract-keywords.md)、[中文期刊规范](zh-journal-conventions.md)、[英文期刊规范](en-journal-conventions.md)。来源与取舍如下。
+
+### 来源与版本
+
+- 仓库：`yipng05-max/-skills`（学术志公开 skills 仓库）。本地副本：`C:\Users\Xiaobu\Desktop\-skills-main`。
+- 该副本**不是 git clone**（无 `.git`），无法给 commit。版本参照：文件时间 2026-04-15，`CHANGELOG.md` 最新条目 2026-04-09。
+- 仓库共 37 个 skill 目录（含一个裸 `.skill` 文件与两个协调器），逐个读过 description，写作相关者细读正文。
+- 许可：MIT License, Copyright (c) 2026 一平博士 / 学术志。
+
+### 采用
+
+- **`literature-review-writer`**：结构模式（漏斗型／理论驱动型／争论型）、综合式与串珠式的对比、四类综合技术、批判性评价三层面、研究空白识别方式、引文密度经验值、顶刊综述与博士论文综述的差异表。
+- **`paper-title-abstract-keywords`**：标题四角度、摘要三结构、关键词两策略的多方案交付机制，以及 C刊／SSCI 在篇幅（字 vs 词）、结构偏好与关键词策略上的语言差异。
+
+### 不采用
+
+- **WebSearch 自动检索 + `literature-verifier` 强制核查流程**：本 skill 定位明写“不替代系统文献检索”（见 frontmatter description），且引用归属已有规则（[证据、引用与实质修改](evidence-and-integrity.md) 第 3 节）。仅并入写作知识；文献检索与真实性核查仍由外部流程或作者负责。
+- **`generate_docx.py` 与 Word 生成**：本 skill 不替代排版。排版规格仅以文字记在[英文期刊规范](en-journal-conventions.md) 第 8 节，并显式注明不生成文件。
+- **`ta-research-AFP` / `ta-research-AFP-auto` 12 检查点协调器**：它们是全流程编排器，会调用上述被剔除的检索与核查能力，且面向 TA 定性研究。
+- **三步硬停止交互**：原 skill 要求标题→摘要→关键词逐轮强制确认；本 skill 改为默认一次交付多方案（与 SKILL.md “不要为了开始修改而逐项询问完整问卷”一致），仅用户明确要求时逐轮。
+
+### 未收录的其余 35 个及理由
+
+- **非写作阶段工具（按用户判定排除）**：`argument-auditor` 是成稿后的论证逻辑审查，`counterfactual-reasoning` 是分析阶段的结论压力测试，均不属写作环节。
+- **定性社会学导向**：`introduction-writer`、`ta-framework-builder/-writer`、`ta-methods-writer`、`ta-findings-writer`、`ta-discussion-writer`、`thematic-analysis`、`grounded-coding`、`analytic-memo`、`memo-coach`、`negative-case-finder`、`design-coherence-check`、`concept-clarifier`、`theory-fit-assessment`、`problematization`、`conceptual-framework-builder` —— 均以社会学与质性方法为默认场景，与本 skill 的定量与识别导向框架不兼容。
+- **排版与评阅**：`paper-formatter`（按范文排版）、`paper-reviewer`、`feishu-paper-reviewer`（依赖飞书）。
+- **检索、数据与元工具**：`cnki-advanced-search`、`foreign-literature-search`、`cjournal-analyzer`、`literature-verifier`、`pdf-bib-import`、`paper-analyzer`、`text-to-excel`、`skill-installer`、`top-journals-methods-scout`。
+- **非学术场景**：`strategy-maker`（企业战略制定）。
+- **学位论文专用**：`phd-literature-review`（约两万字、百科式覆盖，与期刊综述的选文策略相反）。
+
+### 验证边界
+
+四份新规范均为写作判断，不由 `scripts/check_protected_fields.py` 验证。篇幅数字（摘要 250～350 字 / 150～200 words）标为经验值，两份语言规范均要求期刊适配时核对该刊最新投稿须知；未对 AMJ、ASQ、SMJ、MISQ、OS、JCR、JMR 逐一核对官方 author guidelines，不将本文件当作投稿要求。
