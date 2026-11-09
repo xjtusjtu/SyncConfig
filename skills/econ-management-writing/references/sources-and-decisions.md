@@ -108,3 +108,50 @@
 ### 验证边界
 
 四份新规范均为写作判断，不由 `scripts/check_protected_fields.py` 验证。篇幅数字（摘要 250～350 字 / 150～200 words）标为经验值，两份语言规范均要求期刊适配时核对该刊最新投稿须知；未对 AMJ、ASQ、SMJ、MISQ、OS、JCR、JMR 逐一核对官方 author guidelines，不将本文件当作投稿要求。
+
+## 7. K-Dense scientific-agent-skills 并入（2026-11-08 新增）
+
+本次新增两份规范：[表格与图形](tables-and-figures.md)、[期刊政策记录](journal-policy-record.md)，并在 [证据、引用与实质修改](evidence-and-integrity.md)（新增第 6、7 节）、[全局修改](global-editing.md)（G2 新增跳节审计）、[标题、摘要与关键词](title-abstract-keywords.md)（新增镜像与同一分析集规则）以及 SKILL.md 的 description、§2 与 §5 接入。
+
+### 来源与版本
+
+- 仓库：K-Dense `scientific-agent-skills`（arXiv:2609.00065）。本地副本：`C:\Users\Xiaobu\Desktop\scientific-agent-skills-main`。
+- 该副本**不是 git clone**（无 `.git` 目录），无法给 commit。版本参照：`README.md` 标 Version 2.72.0，文件时间 2026-11-02。
+- 仓库共 177 个 skill，按 README 的分类目录与 description 逐个筛选，仅细读与写作相关的 3 个（`scientific-writing`、`venue-templates`、`research-grants`）及 `peer-review` 的参考文件。
+- 许可：MIT（`LICENSE.md`）。
+
+### 采用
+
+- **`scientific-writing/references/writing_principles.md`**：分析类型三分标注（确认性／探索性／描述性）、post hoc 不得改写为预设、数字与单位清单、零与缺失的五种含义不得混用，以及“不为流畅度改精度或加强论断”的否定规则。
+- **`scientific-writing/references/imrad_structure.md`**：仅取其“跳节一致性审计”内核（目标↔结局↔结果↔结论；方法↔结果；摘要↔正文↔表图；注册↔稿件；引用↔参考文献表），**不引入 IMRaD 章节命名**——章节结构仍由 [学科与章节规范](discipline-and-sections.md) 的六类范式与章节任务表决定。
+- **`scientific-writing/references/figures_tables.md`**：正文／表／图的形式选择、不得三处重复、表格与图形核查清单、题注自足要求、不得据截图重造数据。
+- **`scientific-writing/references/journal_policies.md`**：带日期的政策快照清单、初投与生产阶段分开、不猜测缺失政策。
+- **`venue-templates/references/venue_writing_styles.md`**：“不设句长／引文密度／近期文献占比／图表数量配额”的立场，以及“we observed”类证据语言的区别；后者已存在于本 skill 的 [局部修改](local-editing.md)，仅作交叉印证。
+
+### 不采用
+
+- **IMRaD 作为章节模板**：经管论文不用 IMRaD，与现有六类范式表冲突。
+- **生物医学报告规范整套**（CONSORT 2025、PRISMA 2020、STROBE、STARD、TRIPOD+AI、CARE、ARRIVE 2.0、SQUIRE 2.0、ICMJE、CRediT）：不适用于经管；且[第 3 节](#3-官方材料核对)已确立“期刊规则须现查”的立场。
+- **证据 ID 注册表与 claim marker 机制**（`[claim:C001] [evidence:E001]`、五份 JSON/CSV 模板）：粒度与本 skill 不符，且要求维护独立注册表，不适合以改稿为主的场景。
+- **8 个 Python 审计脚本**（`audit_claims.py`、`check_consistency.py` 等）：沿用本 skill 不带脚本的定位；`check_protected_fields.py` 仍只做词面清单差异。
+- **回应审稿意见与改投适配**：`venue-templates/references/reviewer_expectations.md` 的 rebuttal 契约与五段式应答、以及改投适配 6 步，本次按用户范围决定不纳入（回复信严格说不属 paper 写作）。
+- **基金写作**：`research-grants/references/writing_principles.md` 的叙事与说服框架面向基金申请，非期刊论文体裁。
+
+### 明确一项阴性结论：本仓库无社会学 skill
+
+这是纯自然科学／生物医学库，“社会学的 skill 按内容判断是否纳入”在本仓库**无对象可判**。核查方式：全库搜 `sociolog`，唯一命中是 `paper-lookup/references/semantic-scholar.md` 中的学科枚举列表（`Sociology`、`Business`、`Economics` 与 `Art`、`History` 并列），不是 skill；`qualitative research` 仅作为 SRQR/COREQ 报告规范的条目名出现。此结论供日后复核，避免误判为漏检。
+
+### 未收录的其余 skill 与理由
+
+- **文献检索**：`literature-review`、`citation-management`、`paper-lookup`、`research-lookup`、`paperzilla`、`bgpt-paper-search`、`paperclip`、`open-notebook`、`pyzotero`——用户明确排除（与第 6 节立场一致）。
+- **研究方法**：`statistical-analysis`、`statsmodels`、`statistical-power`、`experimental-design`、`scikit-learn`、`scikit-survival`、`shap`、`uncertainty-and-units`、`exploratory-data-analysis` 及全部科学计算包——用户明确排除。
+- **出图与演示**：`scientific-visualization`、`scientific-schematics`、`infographics`、`generate-image`、`scientific-slides`、`latex-posters`、`pptx-posters`、`markdown-mermaid-writing`——呈现与出图，非写作。
+- **审稿与评级**：`peer-review`、`scholar-evaluation`、`scientific-critical-thinking`——评审他人工作，非写作；仅 `peer-review` 的 `common_issues.md` 被参阅以校核主张—证据对齐的表述。
+- **构思与分析**：`hypothesis-generation`、`scientific-brainstorming`、`what-if-oracle`、`consciousness-council`、`dhdna-profiler`、`hypogenic`、`arbor`——构思与决策，非写作。
+- **非期刊论文体裁**：`research-grants`、`market-research-reports`、`clinical-reports`、`treatment-plans`、`clinical-decision-support`、`protocolsio-integration`。
+- **文档处理与基础设施**：`liteparse`、`markitdown`、`datalad`、`modal`、`get-available-resources`、`autoskill`、`pi-agent` 等——工具链。
+- **`venue-templates` 本体**：仅取两份 reference 的知识，不取 LaTeX 骨架与模板脚本。
+
+### 验证边界
+
+两份新规范为写作判断，不由 `scripts/check_protected_fields.py` 验证。源仓库的 U.S. ／生物医学期刊体例未逐一核对，不将 `journals_formatting.md` 的具体数字当经管期刊要求；`journal-policy-record.md` 本身即要求核对官方须知并记录访问日期，而非提供任何上限值。
