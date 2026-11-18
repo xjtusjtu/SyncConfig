@@ -1,10 +1,10 @@
 /* AS_basic.css — Slides Extended basic layout & structure.
-   Load first via frontmatter `remoteCSS:` (GitHub raw URLs — any vault can use them;
-   remote URLs go in remoteCSS:, not css:):
+   Load first via frontmatter `remoteCSS:` using jsDelivr URLs (remote URLs go in
+   remoteCSS:, not css:; raw.githubusercontent.com may return text/plain and fail):
      remoteCSS:
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_red.css   OR  .../AS_blue.css
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_red.css   OR  .../AS_blue.css
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
 
    Architecture
    ------------
@@ -80,17 +80,23 @@
     --list-flex-gap: 40px;
     --list-flex-justify: center;
     --list-item-flex: 1;
-    --list-item-min-width: auto;
-    --list-item-bg: var(--r-grid-bg-front-color);
+    --list-item-min-width: 0;
+    --list-item-bg: color-mix(in srgb, var(--r-main-color2) 8%, var(--r-background-color));
     --list-item-border-width: 5px;
-    --list-item-border-block-start: var(--list-item-border-width) solid var(--r-border-color);
+    --list-item-border-block-start: none;
     --list-item-border-block-end: none;
-    --list-item-direction: row;
-    --list-item-align: center;
+    --list-item-direction: column;
+    --list-item-align: stretch;
     --list-item-justify: center;
-    --list-item-padding: 0;
-    --list-item-font-size: 0.8em;
-    --list-item-inner-gap: 0;
+    --list-item-padding: calc(var(--r-main-font-size) * 1.1) calc(var(--r-main-font-size) * 0.8);
+    --list-item-font-size: calc(var(--r-main-font-size) * 1.8);
+    --list-item-inner-gap: calc(var(--r-main-font-size) * 0.25);
+    --list-title-font-size: clamp(calc(var(--r-main-font-size) * 1.1), 12cqw, var(--list-item-font-size));
+    --list-title-align: center;
+    --list-title-color: var(--r-main-color2);
+    --list-body-font-size: var(--r-main-font-size);
+    --list-body-align: center;
+    --list-body-color: var(--r-main-color);
     --list-fragment-color: var(--r-accent-color);
     /* list-card-grid + list-card-grid--{2|3} + list-card-grid--* */
     --list-card-columns: repeat(2, minmax(0, 1fr));
@@ -168,7 +174,6 @@ center {
     color: var(--text-faint);
     text-align: center;
     background: transparent !important;
-    background-color: transparent !important;
 }
 
 /* Caption / <center> under center:false — same as display math (§5):
@@ -183,7 +188,6 @@ center {
     max-width: 100%;
     box-sizing: border-box;
     background: transparent !important;
-    background-color: transparent !important;
 }
 
 /* 题注紧邻图/表：只收紧相贴边；无题注的图/表仍用自身 margin 与正文隔开 */
@@ -322,13 +326,17 @@ center {
 
 /* ---------- 纯文本分栏样式 ---------- */
 
-.reveal .slides .two-columns {
+.reveal .slides .two-columns,
+.reveal .slides div.g-columns {
     display: grid !important;
     grid-template-columns: repeat(2, 1fr);
-    grid-gap: 20px;
     width: 100%;
     align-content: center;
     justify-items: center;
+}
+
+.reveal .slides .two-columns {
+    grid-gap: 20px;
 }
 
 /* ---------- 针对列表的分栏样式 ----------
@@ -339,12 +347,7 @@ center {
    ---------- */
 
 .reveal .slides div.g-columns {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    width: 100%;
-    align-content: center;
-    justify-items: center;
 }
 
 /* ==========================================================================
@@ -622,74 +625,95 @@ center {
 .reveal .slides section.list-grid--2-1-1 { --list-grid-columns: 2fr 1fr 1fr; }
 .reveal .slides section.list-grid--4 { --list-grid-columns: repeat(4, 1fr); }
 
-/* Flex row — direct-child ul (element- or section-level) */
-.reveal .slides .list-flex-row > ul,
-.reveal .slides section.list-flex-row > div > ul,
-.reveal .slides section.list-flex-row > div > .block > ul {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: var(--list-flex-direction);
-    justify-content: var(--list-flex-justify);
-    gap: var(--list-flex-gap);
-    margin: 0;
-    padding: 0;
-
-    & > li {
-        flex: var(--list-item-flex);
-        flex-wrap: wrap;
-        min-width: var(--list-item-min-width);
-        margin: 0;
-        padding: var(--list-item-padding);
-        background-color: var(--list-item-bg);
-        border-block-start: var(--list-item-border-block-start);
-        border-block-end: var(--list-item-border-block-end);
+/* Flex cards — direct-child lists only, including template / nav body slots */
+.reveal .slides :is(.list-flex-row, .list-flex-col) {
+    & > ul,
+    & > div > ul,
+    & > div > .block > ul,
+    & div.as-body > ul {
         display: flex;
-        flex-direction: var(--list-item-direction);
-        align-items: var(--list-item-align);
-        justify-content: var(--list-item-justify);
-        gap: var(--list-item-inner-gap);
-        font-size: var(--list-item-font-size);
-
-        &:is(.current-fragment, :has(.current-fragment)) {
-            color: var(--list-fragment-color);
-            font-weight: 600;
-        }
-    }
-}
-
-/* Flex col — descendant ul paths */
-.reveal .slides .list-flex-col ul,
-.reveal .slides section.list-flex-col > div ul,
-.reveal .slides section.list-flex-col > div > .block ul {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    flex-direction: var(--list-flex-direction);
-    justify-content: var(--list-flex-justify);
-    gap: var(--list-flex-gap);
-    margin: 0;
-    padding: 0;
-
-    & > li {
-        flex: var(--list-item-flex);
-        flex-wrap: wrap;
-        min-width: var(--list-item-min-width);
+        width: 100%;
+        height: auto;
+        flex: 0 0 auto;
+        flex-direction: var(--list-flex-direction);
+        align-items: stretch;
+        justify-content: var(--list-flex-justify);
+        gap: var(--list-flex-gap);
         margin: 0;
-        padding: var(--list-item-padding);
-        background-color: var(--list-item-bg);
-        border-block-start: var(--list-item-border-block-start);
-        border-block-end: var(--list-item-border-block-end);
-        display: flex;
-        flex-direction: var(--list-item-direction);
-        align-items: var(--list-item-align);
-        justify-content: var(--list-item-justify);
-        gap: var(--list-item-inner-gap);
-        font-size: var(--list-item-font-size);
+        padding: 0;
+        list-style: none;
+        box-sizing: border-box;
 
-        &:is(.current-fragment, :has(.current-fragment)) {
-            color: var(--list-fragment-color);
+        & > li {
+            flex: var(--list-item-flex);
+            min-width: var(--list-item-min-width);
+            margin: 0;
+            padding: var(--list-item-padding);
+            background-color: var(--list-item-bg);
+            border-block-start: var(--list-item-border-block-start);
+            border-block-end: var(--list-item-border-block-end);
+            display: flex;
+            flex-direction: var(--list-item-direction);
+            align-items: var(--list-item-align);
+            justify-content: var(--list-item-justify);
+            gap: var(--list-item-inner-gap);
+            container-type: inline-size;
+            box-sizing: border-box;
+            font-size: var(--list-item-font-size);
             font-weight: 600;
+            line-height: 1.2;
+            color: var(--list-title-color);
+            text-align: var(--list-title-align);
+            overflow-wrap: anywhere;
+
+            & > :is(strong, p) {
+                display: block;
+                width: 100%;
+                min-width: 0;
+                margin: 0;
+                font-size: var(--list-title-font-size);
+                font-weight: inherit;
+                color: inherit;
+
+                & > strong {
+                    font-size: inherit;
+                    font-weight: inherit;
+                    color: inherit;
+                }
+            }
+
+            & :is(ul, ol) {
+                display: block;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                box-sizing: border-box;
+                font-size: var(--list-body-font-size);
+                font-weight: 400;
+                line-height: 1.45;
+                color: var(--list-body-color);
+                text-align: var(--list-body-align);
+
+                & > li {
+                    display: block;
+                    margin: 0;
+                    padding: 0;
+                    font-size: inherit;
+                    font-weight: inherit;
+                    line-height: inherit;
+                    text-align: inherit;
+                    list-style: none;
+                }
+
+                & p {
+                    margin: 0;
+                }
+            }
+
+            &:is(.current-fragment, :has(.current-fragment)) {
+                color: var(--list-fragment-color);
+            }
         }
     }
 }
@@ -697,27 +721,692 @@ center {
 /* Token hosts — only deltas from :root */
 .list-flex-col {
     --list-flex-direction: column;
-    --list-item-bg: var(--r-background-color);
-    --list-item-border-block-start: none;
-    --list-item-border-block-end: 5px solid var(--r-border-color);
+    --list-item-flex: 0 0 auto;
     --list-fragment-color: var(--r-main-color2);
 }
 
-/* flex-row nested sub-list */
-.reveal .slides :is(.list-flex-row) {
-    & > ul > li > ul,
-    & > div > ul > li > ul,
-    & > div > .block > ul > li > ul {
+.list-title-left { --list-title-align: left; }
+.list-title-center { --list-title-align: center; }
+.list-body-left { --list-body-align: left; }
+.list-body-center { --list-body-align: center; }
+
+:root {
+    --as-list-display: grid;
+    --as-list-columns: minmax(0, 1fr);
+    --as-list-direction: column;
+    --as-list-item-flex: 1 1 0;
+    --as-list-gap: 36px;
+    --as-card-padding-block: 30px;
+    --as-card-padding-inline: 28px;
+    --as-card-content-gap: 10px;
+    --as-card-background: transparent;
+    --as-card-edge: 0 solid transparent;
+    --as-card-top-edge: 0 solid transparent;
+    --as-card-radius: 0px;
+    --as-card-body-size: var(--list-body-font-size, var(--r-main-font-size));
+    --as-card-heading-size: var(--list-title-font-size, clamp(33px, 12cqw, 54px));
+    --as-card-marker-size: 64px;
+    --as-card-marker-font-size: initial;
+    --as-card-marker-scale: 1;
+    --as-card-marker-gap: 12px;
+    --as-card-root-size: var(--as-card-body-size);
+    --as-card-root-weight: revert;
+    --as-card-root-color: var(--as-card-text, var(--r-main-color));
+    --as-card-root-align: var(--list-body-align, center);
+    --as-card-root-position: static;
+    --as-card-root-display: inline;
+    --as-card-root-width: auto;
+    --as-card-root-height: auto;
+    --as-card-root-transform: none;
+    --as-card-root-background: transparent;
+    --as-card-root-border: 0 solid transparent;
+    --as-card-root-radius: 0px;
+    --as-card-normal-content-display: block;
+    --as-card-first-size: var(--as-card-body-size);
+    --as-card-first-weight: 400;
+    --as-card-first-color: var(--as-card-text, var(--r-main-color));
+    --as-card-first-align: var(--list-body-align, center);
+    --as-card-text-body-gap: var(--as-card-content-gap);
+    --as-card-first-gap: 0px;
+    --as-card-body-list-style: none;
+    --as-card-structure: card-body;
+}
+
+:where(.list-cards) {
+    --list-title-font-size: clamp(calc(var(--r-main-font-size) * 1.1), 12cqw, var(--list-item-font-size));
+    --list-title-align: left;
+    --list-body-align: left;
+    --as-card-content-layout: inline;
+    --as-card-content-align: center;
+    --as-card-marker-inline-space: 0px;
+}
+
+:where(.list-layout-row) {
+    --as-list-display: flex;
+    --as-list-direction: row;
+    --as-list-item-flex: 1 1 0;
+}
+:where(.list-layout-col) {
+    --as-list-display: flex;
+    --as-list-direction: column;
+    --as-list-item-flex: 0 0 auto;
+}
+:where(.list-layout-grid) {
+    --as-list-display: grid;
+    --as-list-columns: repeat(2, minmax(0, 1fr));
+}
+:where(.list-cols-2) { --as-list-columns: repeat(2, minmax(0, 1fr)); }
+:where(.list-cols-3) { --as-list-columns: repeat(3, minmax(0, 1fr)); }
+:where(.list-cols-4) { --as-list-columns: repeat(4, minmax(0, 1fr)); }
+
+:where(.card-tint) {
+    --as-card-surface-scheme: light;
+    --as-card-background: var(--as-card-surface-tint, color-mix(in srgb, var(--r-main-color2) 8%, var(--r-background-color)));
+    --as-card-edge: 0 solid transparent;
+    --as-card-top-edge: 0 solid transparent;
+}
+:where(.card-top) {
+    --as-card-surface-scheme: light;
+    --as-card-background: var(--as-card-surface-tint, color-mix(in srgb, var(--r-main-color2) 8%, var(--r-background-color)));
+    --as-card-edge: 0 solid transparent;
+    --as-card-top-edge: 6px solid var(--as-card-border-strong, var(--r-main-color2));
+}
+:where(.card-outline) {
+    --as-card-surface-scheme: initial;
+    --as-card-background: transparent;
+    --as-card-edge: 2px solid var(--as-card-border, var(--r-main-color2));
+    --as-card-top-edge: var(--as-card-edge);
+}
+:where(.card-plain) {
+    --as-card-surface-scheme: initial;
+    --as-card-background: transparent;
+    --as-card-edge: 0 solid transparent;
+    --as-card-top-edge: 0 solid transparent;
+}
+:where(.card-rounded) { --as-card-radius: 8px; }
+:where(.card-square) { --as-card-radius: 0px; }
+
+:where(.card-title-body, .card-body, .card-custom-title-body, .card-custom-body) {
+    --as-card-first-size: var(--as-card-body-size, var(--r-main-font-size));
+    --as-card-first-weight: 400;
+    --as-card-first-color: var(--as-card-text, var(--r-main-color));
+    --as-card-first-align: var(--list-body-align, center);
+    --as-card-first-gap: 0px;
+}
+:where(.card-title-body, .card-body) {
+    --as-card-forced-active: initial;
+    --as-card-forced-native: initial;
+    --as-card-forced-content: initial;
+    --as-card-forced-list-style: initial;
+    --as-card-root-size: var(--as-card-body-size, var(--r-main-font-size));
+    --as-card-root-weight: revert;
+    --as-card-root-color: var(--as-card-text, var(--r-main-color));
+    --as-card-root-align: var(--list-body-align, center);
+    --as-card-root-position: static;
+    --as-card-root-display: inline-block;
+    --as-card-root-width: auto;
+    --as-card-root-height: auto;
+    --as-card-root-transform: none;
+    --as-card-root-background: transparent;
+    --as-card-root-border: 0 solid transparent;
+    --as-card-root-radius: 0px;
+    --as-card-normal-content-display: block;
+    --as-card-normal-first-display: list-item;
+    --as-card-text-body-gap: var(--as-card-content-gap, 10px);
+    --as-card-root-current-color: var(--as-card-root-color);
+}
+:where(.card-title-body) {
+    --as-card-structure: card-title-body;
+    --as-card-marker-reference-size: var(--list-title-font-size);
+    --as-card-root-size: var(--as-card-heading-size, var(--list-title-font-size));
+    --as-card-root-weight: 600;
+    --as-card-root-color: var(--as-card-title, var(--r-main-color2));
+    --as-card-root-align: var(--list-title-align, center);
+}
+:where(.card-body) { --as-card-structure: card-body; }
+:where(.card-custom-body) { --as-card-structure: card-custom-body; }
+:where(.card-body, .card-custom-body) {
+    --as-card-marker-reference-size: var(--list-body-font-size, var(--r-main-font-size));
+}
+:where(.card-custom-title-body, .card-custom-body) {
+    --as-card-forced-active: 1;
+    --as-card-forced-native: 0;
+    --as-card-forced-content: none;
+    --as-card-forced-list-style: none;
+    --as-card-root-size: var(--as-card-marker-font-size, calc(var(--list-title-font-size) * var(--as-card-marker-scale, 1)));
+    --as-card-root-weight: 600;
+    --as-card-root-color: var(--as-card-marker, var(--r-link-color));
+    --as-card-root-align: center;
+    --as-card-root-position: initial;
+    --as-card-root-display: initial;
+    --as-card-root-width: initial;
+    --as-card-root-height: initial;
+    --as-card-root-transform: initial;
+    --as-card-root-background: initial;
+    --as-card-root-border: initial;
+    --as-card-root-radius: initial;
+    --as-card-normal-content-display: initial;
+    --as-card-normal-first-display: initial;
+    --as-card-text-body-gap: 0px;
+    --as-card-root-current-color: var(--as-card-accent, var(--r-accent-color));
+}
+:where(.card-custom-title-body) {
+    --as-card-structure: card-custom-title-body;
+    --as-card-marker-reference-size: var(--list-title-font-size);
+    --as-card-first-size: var(--as-card-heading-size, var(--list-title-font-size));
+    --as-card-first-weight: 600;
+    --as-card-first-color: var(--as-card-title, var(--r-main-color2));
+    --as-card-first-align: var(--list-title-align, center);
+    --as-card-first-gap: var(--as-card-content-gap, 10px);
+}
+
+:where(.list-marker-native) {
+    --as-card-native-active: 1;
+    --as-card-auto-active: 0;
+    --as-card-auto-content: none;
+    --as-card-list-style: initial;
+}
+:where(.list-marker-auto) {
+    --as-card-native-active: 0;
+    --as-card-auto-active: 1;
+    --as-card-auto-content: counter(list-item, decimal-leading-zero);
+    --as-card-list-style: none;
+}
+:where(.list-marker-none) {
+    --as-card-native-active: 0;
+    --as-card-auto-active: 0;
+    --as-card-auto-content: none;
+    --as-card-list-style: none;
+}
+:where(.marker-side, .marker-inline) {
+    --as-card-content-layout: inline;
+    --as-card-marker-scheme: initial;
+    --as-card-marker-line-box: initial;
+    --as-card-marker-transform: none;
+    --as-card-marker-inline-space: 0px;
+    --as-card-marker-block-space: 0px;
+    --as-card-marker-outset: 0px;
+    --as-card-marker-background: transparent;
+    --as-card-marker-border: 0 solid transparent;
+    --as-card-marker-radius: 0px;
+}
+:where(.marker-side) {
+    --as-card-inline-marker-space: 0px;
+    --as-card-marker-position: absolute;
+    --as-card-marker-left: var(--as-card-padding-inline, 28px);
+    --as-card-marker-top: var(--as-card-padding-block, 30px);
+    --as-card-content-display: block;
+}
+:where(.marker-inline) {
+    --as-card-inline-marker-space: calc(var(--as-card-marker-size, 64px) + 10px);
+    --as-card-marker-position: static;
+    --as-card-marker-left: auto;
+    --as-card-marker-top: auto;
+    --as-card-content-display: inline;
+}
+:where(.marker-badge) {
+    --as-card-content-layout: badge;
+    --as-card-marker-size: 84px;
+    --as-card-marker-scheme: light;
+    --as-card-marker-line-box: var(--as-card-marker-size);
+    --as-card-inline-marker-space: 0px;
+    --as-card-marker-position: absolute;
+    --as-card-marker-left: 50%;
+    --as-card-marker-top: 0px;
+    --as-card-marker-transform: translate(-50%, -50%);
+    --as-card-marker-inline-space: 0px;
+    --as-card-marker-block-space: calc(var(--as-card-marker-size, 64px) * 0.5);
+    --as-card-marker-outset: calc(var(--as-card-marker-size, 64px) * 0.5);
+    --as-card-marker-background: var(--as-card-badge-surface, var(--r-background-color));
+    --as-card-marker-border: 3px solid var(--as-card-badge-border, var(--r-main-color2));
+    --as-card-marker-radius: 50%;
+    --as-card-content-display: block;
+}
+:where(.list-body-markers-native) { --as-card-body-list-style: initial; }
+:where(.list-body-markers-none) { --as-card-body-list-style: none; }
+
+:where(.card-layout-center, .card-layout-side, .card-layout-inline, .card-layout-stack) {
+    --as-card-content-align: center;
+    --as-card-marker-outset: 0px;
+    --as-card-marker-block-space: 0px;
+    --as-card-marker-inline-space: 0px;
+    --as-card-inline-marker-space: 0px;
+}
+:where(.card-layout-center) {
+    --as-card-content-layout: center;
+    --as-card-content-align: center;
+    --list-title-align: center;
+    --list-body-align: center;
+}
+:where(.card-layout-side) {
+    --as-card-content-layout: side;
+    --as-card-marker-inline-space: calc(var(--as-card-marker-size) + var(--as-card-marker-gap));
+}
+:where(.card-layout-inline) {
+    --as-card-content-layout: inline;
+}
+:where(.card-layout-stack) {
+    --as-card-content-layout: stack;
+}
+:where(.card-align-center) {
+    --as-card-content-centered: 1;
+    --as-card-content-text-align: center;
+    --as-card-content-align: center;
+    --list-title-align: center;
+    --list-body-align: center;
+}
+:where(.card-align-left) {
+    --as-card-content-centered: 0;
+    --as-card-content-text-align: left;
+    --as-card-content-align: center;
+    --list-title-align: left;
+    --list-body-align: left;
+}
+:where(.card-border-marker) {
+    --as-card-surface-scheme: initial;
+    --as-card-background: transparent;
+    --as-card-edge: 2px solid var(--as-card-border, var(--r-main-color2));
+    --as-card-top-edge: var(--as-card-edge);
+    --as-card-content-layout: badge;
+    --as-card-marker-position: absolute;
+    --as-card-marker-left: 50%;
+    --as-card-marker-top: -1px;
+    --as-card-marker-transform: translate(-50%, -50%);
+    --as-card-marker-inline-space: 0px;
+    --as-card-marker-block-space: calc(var(--as-card-marker-size, 64px) * 0.5);
+    --as-card-marker-outset: calc(var(--as-card-marker-size, 64px) * 0.5);
+    --as-card-inline-marker-space: 0px;
+    --as-card-marker-layer: 1;
+}
+:where(.card-marker-large) { --as-card-marker-scale: 1.15; }
+:where(.card-marker-normal) { --as-card-marker-scale: 1; }
+
+.reveal .slides .list-cards {
+    &:is(ul),
+    & > ul,
+    & > div:not(.header):not(.footer):not(:has(.as-body)) > ul,
+    & > div:not(.header):not(.footer) > .block > ul,
+    & .as-body > ul {
+        --as-card-auto-active: 0;
+        --as-card-auto-content: none;
+    }
+
+    &:is(ul, ol),
+    & > :is(ul, ol),
+    & > div:not(.header):not(.footer):not(:has(.as-body)) > :is(ul, ol),
+    & > div:not(.header):not(.footer) > .block > :is(ul, ol),
+    & .as-body > :is(ul, ol) {
+        display: var(--as-list-display);
+        flex-direction: var(--as-list-direction);
+        grid-template-columns: var(--as-list-columns);
+        align-items: stretch;
+        gap: var(--as-list-gap);
+        flex: 0 0 auto;
         width: 100%;
+        min-width: 0;
+        height: auto;
+        margin: 0;
         padding: 0;
+        box-sizing: border-box;
+        list-style-type: revert;
+        overflow: visible;
 
         & > li {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            margin: 0;
-            font-size: 0.8em;
+            --as-card-effective-active: var(--as-card-forced-active, var(--as-card-auto-active, 0));
+            --as-card-effective-native: var(--as-card-forced-native, var(--as-card-native-active, 1));
+            --as-card-native-marker-room: calc(max(var(--as-card-marker-size), var(--list-title-font-size) * 1.25) + var(--as-card-marker-gap));
+            --as-card-body-size: var(--list-body-font-size, var(--r-main-font-size));
+            --as-card-first-line-size: max(calc(var(--list-title-font-size) * 1.2), var(--as-card-marker-line-box, 0px));
+            color-scheme: var(--as-card-surface-scheme, var(--as-card-context-scheme, light));
+            position: relative;
+            display: list-item;
+            flex: var(--as-list-item-flex);
+            min-width: 0;
+            min-block-size: var(--as-card-min-height, 0px);
+            align-content: var(--as-card-content-align, normal);
+            margin: calc(var(--as-card-effective-active) * var(--as-card-marker-outset, 0px)) 0 0;
+            padding-block: var(--as-card-padding-block);
+            padding-block-start: calc(var(--as-card-padding-block) + var(--as-card-effective-active) * var(--as-card-marker-block-space, 0px));
+            padding-inline: var(--as-card-padding-inline);
+            padding-inline-start: calc(var(--as-card-padding-inline) + var(--as-card-effective-active) * var(--as-card-marker-inline-space, calc(var(--as-card-marker-size) + var(--as-card-marker-gap))));
+            box-sizing: border-box;
+            container-type: inline-size;
+            border: var(--as-card-edge);
+            border-block-start: var(--as-card-top-edge);
+            border-radius: var(--as-card-radius);
+            background: var(--as-card-background);
+            font-size: var(--as-card-body-size);
+            font-weight: 400;
+            line-height: var(--as-card-first-line-size);
+            color: var(--as-card-text, var(--r-main-color));
+            text-align: var(--as-card-content-text-align, var(--as-card-root-align));
+            list-style-type: var(--as-card-forced-list-style, var(--as-card-list-style, inherit));
+            list-style-position: inside;
+            overflow-wrap: anywhere;
+
+            &[value] {
+                counter-set: list-item attr(value type(<integer>));
+            }
+
+            &::marker {
+                color: var(--as-card-marker, var(--r-link-color));
+                font-size: var(--as-card-marker-font-size, calc(var(--as-card-marker-reference-size, var(--list-title-font-size)) * var(--as-card-marker-scale, 1)));
+                font-weight: 600;
+            }
+
+            &::before {
+                color-scheme: var(--as-card-marker-scheme, inherit);
+                content: var(--as-card-forced-content, var(--as-card-auto-content, none));
+                position: var(--as-card-marker-position, absolute);
+                z-index: var(--as-card-marker-layer, auto);
+                inset-inline-start: var(--as-card-marker-left, var(--as-card-padding-inline));
+                top: var(--as-card-marker-top, var(--as-card-padding-block));
+                transform: var(--as-card-marker-transform, none);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: var(--as-card-marker-size);
+                height: var(--as-card-marker-size);
+                box-sizing: border-box;
+                border: var(--as-card-marker-border, 0 solid transparent);
+                border-radius: var(--as-card-marker-radius, 0px);
+                background: var(--as-card-marker-background, transparent);
+                font-size: var(--as-card-marker-font-size, calc(var(--as-card-marker-reference-size, var(--list-title-font-size)) * var(--as-card-marker-scale, 1)));
+                font-weight: 600;
+                line-height: 1;
+                color: var(--as-card-marker, var(--r-link-color));
+
+                @container style(--as-card-content-layout: side) {
+                    position: absolute;
+                    inset-inline-start: var(--as-card-padding-inline);
+                    top: 50%;
+                    transform: translateY(-50%);
+                    height: var(--as-card-marker-size);
+                }
+
+                @container style(--as-card-content-layout: inline) {
+                    position: static;
+                    float: inline-start;
+                    transform: none;
+                    height: var(--as-card-first-line-size);
+                    min-height: 0;
+                    margin-inline-end: var(--as-card-marker-gap);
+                    line-height: 1.2;
+
+                    @container style(--as-card-content-centered: 1) {
+                        float: none;
+                        vertical-align: top;
+                    }
+                }
+
+                @container style(--as-card-content-layout: center) or style(--as-card-content-layout: stack) {
+                    position: static;
+                    inset: auto;
+                    float: none;
+                    display: flex;
+                    transform: none;
+                    margin: 0 auto var(--as-card-marker-gap);
+                }
+
+                @container style(--as-card-content-layout: stack) {
+                    width: var(--as-card-marker-line-box, max-content);
+                    margin-inline: 0;
+
+                    @container style(--as-card-content-centered: 1) {
+                        margin-inline: auto;
+                    }
+                }
+            }
+
+            & > :is(p, strong, span):first-child {
+                position: var(--as-card-root-position, var(--as-card-marker-position, absolute));
+                z-index: var(--as-card-marker-layer, auto);
+                display: var(--as-card-root-display, inline-flex);
+                inset-inline-start: var(--as-card-marker-left, var(--as-card-padding-inline));
+                top: var(--as-card-marker-top, var(--as-card-padding-block));
+                transform: var(--as-card-root-transform, var(--as-card-marker-transform, none));
+                align-items: center;
+                justify-content: center;
+                width: var(--as-card-root-width, var(--as-card-marker-size));
+                height: var(--as-card-root-height, var(--as-card-marker-size));
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                border: var(--as-card-root-border, var(--as-card-marker-border, 0 solid transparent));
+                border-radius: var(--as-card-root-radius, var(--as-card-marker-radius, 0px));
+                background: var(--as-card-root-background, var(--as-card-marker-background, transparent));
+                font-size: var(--as-card-root-size);
+                font-weight: var(--as-card-root-weight);
+                line-height: 1.2;
+                color: var(--as-card-root-color);
+                text-align: var(--as-card-root-align);
+
+                @container style(--as-card-structure: card-title-body) or style(--as-card-structure: card-body) {
+                    display: inline-block;
+                    width: calc(100% - var(--as-card-effective-active) * var(--as-card-inline-marker-space, 0px));
+
+                    @container style(--as-card-content-layout: inline) {
+                        width: calc(100% - var(--as-card-effective-active) * (var(--as-card-marker-size) + var(--as-card-marker-gap)));
+                        line-height: var(--as-card-first-line-size);
+                    }
+
+                    @container style(--as-card-effective-native: 1) {
+                        float: inline-end;
+                        width: calc(100% - var(--as-card-native-marker-room));
+                        line-height: var(--as-card-first-line-size);
+                    }
+
+                    @container style(--as-card-content-centered: 1) {
+                        float: none;
+                        width: max-content;
+                        max-width: calc(100% - var(--as-card-effective-active) * (var(--as-card-marker-size) + var(--as-card-marker-gap)));
+                        vertical-align: top;
+                    }
+                }
+
+                @container style(--as-card-structure: card-title-body) {
+                    font-size: var(--list-title-font-size);
+                    color: var(--as-card-title, var(--r-main-color2));
+                    text-align: var(--list-title-align, center);
+                }
+
+                @container style(--as-card-structure: card-body) {
+                    font-size: var(--as-card-body-size);
+                    color: var(--as-card-text, var(--r-main-color));
+                    text-align: var(--list-body-align, center);
+                }
+
+                @container style(--as-card-structure: card-custom-title-body) or style(--as-card-structure: card-custom-body) {
+                    color-scheme: var(--as-card-marker-scheme, inherit);
+                    color: var(--as-card-marker, var(--r-link-color));
+                    font-size: var(--as-card-marker-font-size, calc(var(--as-card-marker-reference-size, var(--list-title-font-size)) * var(--as-card-marker-scale, 1)));
+
+                    @container style(--as-card-content-layout: side) {
+                        position: absolute;
+                        inset-inline-start: var(--as-card-padding-inline);
+                        top: 50%;
+                        transform: translateY(-50%);
+                        height: var(--as-card-marker-size);
+                    }
+
+                    @container style(--as-card-content-layout: inline) {
+                        position: static;
+                        inset: auto;
+                        float: inline-start;
+                        display: flex;
+                        transform: none;
+                        width: var(--as-card-marker-line-box, max-content);
+                        height: var(--as-card-first-line-size);
+                        min-height: 0;
+                        margin: 0 var(--as-card-marker-gap) 0 0;
+                        line-height: 1.2;
+
+                        @container style(--as-card-content-centered: 1) {
+                            float: none;
+                            display: inline-flex;
+                            vertical-align: top;
+                        }
+                    }
+
+                    @container style(--as-card-content-layout: center) or style(--as-card-content-layout: stack) {
+                        position: static;
+                        inset: auto;
+                        float: none;
+                        display: flex;
+                        transform: none;
+                        margin: 0 auto var(--as-card-marker-gap);
+                    }
+
+                    @container style(--as-card-content-layout: stack) {
+                        width: var(--as-card-marker-line-box, max-content);
+                        margin-inline: 0;
+
+                        @container style(--as-card-content-centered: 1) {
+                            margin-inline: auto;
+                        }
+                    }
+                }
+
+                & > strong {
+                    font-size: inherit;
+                    font-weight: inherit;
+                    color: inherit;
+                }
+            }
+
+            & :is(ul, ol) {
+                display: block;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-size: var(--as-card-body-size);
+                font-weight: 400;
+                line-height: 1.45;
+                color: var(--as-card-text, var(--r-main-color));
+                text-align: var(--list-body-align, center);
+                list-style-type: var(--as-card-body-list-style, revert);
+                list-style-position: inside;
+
+                & > li {
+                    display: list-item;
+                    margin: 0;
+                    padding: 0;
+                    font-size: inherit;
+                    line-height: inherit;
+                    color: inherit;
+                    text-align: inherit;
+                    list-style-type: inherit;
+                }
+
+                & p {
+                    margin: 0;
+                }
+
+                & strong {
+                    font-size: inherit;
+                    color: inherit;
+                }
+            }
+
+            & > :is(ul, ol) {
+                display: var(--as-card-normal-content-display, var(--as-card-content-display, block));
+                margin-block-start: var(--as-card-text-body-gap);
+                width: auto;
+
+                @container style(--as-card-effective-native: 1) {
+                    clear: both;
+                    margin-inline-start: var(--as-card-native-marker-room);
+                }
+
+                @container style(--as-card-content-layout: side) or style(--as-card-content-layout: inline) or style(--as-card-content-layout: center) or style(--as-card-content-layout: stack) {
+                    display: block;
+                }
+
+                @container style(--as-card-content-layout: inline) {
+                    @container style(--as-card-structure: card-title-body) or style(--as-card-structure: card-body) {
+                        clear: both;
+                        margin-inline-start: calc(var(--as-card-effective-active) * (var(--as-card-marker-size) + var(--as-card-marker-gap)) + var(--as-card-effective-native) * var(--as-card-native-marker-room));
+
+                        @container style(--as-card-content-centered: 1) {
+                            margin-inline-start: 0;
+                        }
+                    }
+
+                    @container style(--as-card-structure: card-custom-title-body) or style(--as-card-structure: card-custom-body) {
+                        display: flow-root;
+                        margin-block-start: 0;
+                        margin-inline-start: 0;
+                        min-block-size: var(--as-card-first-line-size);
+
+                        & > li + li, & > li:first-child > :is(ul, ol) {
+                            clear: both;
+                        }
+
+                        @container style(--as-card-content-centered: 1) {
+                            display: inline-block;
+                            width: max-content;
+                            max-width: calc(100% - var(--as-card-marker-size) - var(--as-card-marker-gap));
+                            vertical-align: top;
+                        }
+                    }
+                }
+
+                & > li:first-child {
+                    display: var(--as-card-normal-first-display, var(--as-card-content-display, list-item));
+                    font-size: var(--as-card-first-size);
+                    font-weight: var(--as-card-first-weight);
+                    color: var(--as-card-first-color);
+                    text-align: var(--as-card-first-align);
+
+                    @container style(--as-card-content-layout: inline) {
+                        line-height: var(--as-card-first-line-size);
+                    }
+
+                    @container not style(--as-card-structure: card-custom-title-body) {
+                        font-size: var(--as-card-body-size);
+                        color: var(--as-card-text, var(--r-main-color));
+                        text-align: var(--list-body-align, center);
+                    }
+
+                    @container style(--as-card-structure: card-custom-title-body) {
+                        font-size: var(--list-title-font-size);
+                        color: var(--as-card-title, var(--r-main-color2));
+                        text-align: var(--list-title-align, center);
+                        list-style-type: none;
+
+                        @container style(--as-card-content-layout: side) or style(--as-card-content-layout: inline) or style(--as-card-content-layout: center) or style(--as-card-content-layout: stack) {
+                            display: list-item;
+                            line-height: 1.2;
+                        }
+
+                        @container style(--as-card-content-layout: inline) {
+                            line-height: var(--as-card-first-line-size);
+                        }
+                    }
+
+                    &:has(~ li) {
+                        margin-block-end: var(--as-card-first-gap);
+                    }
+
+                    & > :is(ul, ol) {
+                        margin-block-start: var(--as-card-first-gap);
+                    }
+                }
+            }
+
+            &:is(.current-fragment, :has(.current-fragment)) {
+                &::marker, &::before {
+                    color: var(--as-card-accent, var(--r-accent-color));
+                }
+
+                & > :is(p, strong, span):first-child {
+                    @container style(--as-card-structure: card-custom-title-body) or style(--as-card-structure: card-custom-body) {
+                        color: var(--as-card-accent, var(--r-accent-color));
+                    }
+                }
+            }
         }
     }
 }
@@ -1218,48 +1907,30 @@ center {
 
 /* both + 2 columns — odd rows primary, even rows alt (4n cycle) */
 .reveal .slides section.list-card-grid--accent-odd.list-card-grid--accent-even.list-card-grid:not(.list-card-grid--3) {
-    & > div > :is(ul, ol) > li:nth-child(4n + 1),
-    & > div > :is(ul, ol) > li:nth-child(4n + 2),
-    & > div > .block > :is(ul, ol) > li:nth-child(4n + 1),
-    & > div > .block > :is(ul, ol) > li:nth-child(4n + 2),
-    & div.as-body > :is(ul, ol) > li:nth-child(4n + 1),
-    & div.as-body > :is(ul, ol) > li:nth-child(4n + 2) {
+    & > div > :is(ul, ol) > li:is(:nth-child(4n + 1), :nth-child(4n + 2)),
+    & > div > .block > :is(ul, ol) > li:is(:nth-child(4n + 1), :nth-child(4n + 2)),
+    & div.as-body > :is(ul, ol) > li:is(:nth-child(4n + 1), :nth-child(4n + 2)) {
         --list-card-accent-color: var(--r-main-color2);
     }
 
-    & > div > :is(ul, ol) > li:nth-child(4n + 3),
-    & > div > :is(ul, ol) > li:nth-child(4n),
-    & > div > .block > :is(ul, ol) > li:nth-child(4n + 3),
-    & > div > .block > :is(ul, ol) > li:nth-child(4n),
-    & div.as-body > :is(ul, ol) > li:nth-child(4n + 3),
-    & div.as-body > :is(ul, ol) > li:nth-child(4n) {
+    & > div > :is(ul, ol) > li:is(:nth-child(4n + 3), :nth-child(4n)),
+    & > div > .block > :is(ul, ol) > li:is(:nth-child(4n + 3), :nth-child(4n)),
+    & div.as-body > :is(ul, ol) > li:is(:nth-child(4n + 3), :nth-child(4n)) {
         --list-card-accent-color: var(--list-card-accent-alt);
     }
 }
 
 /* both + 3 columns — odd rows primary, even rows alt (6n cycle) */
 .reveal .slides section.list-card-grid--accent-odd.list-card-grid--accent-even.list-card-grid--3 {
-    & > div > :is(ul, ol) > li:nth-child(6n + 1),
-    & > div > :is(ul, ol) > li:nth-child(6n + 2),
-    & > div > :is(ul, ol) > li:nth-child(6n + 3),
-    & > div > .block > :is(ul, ol) > li:nth-child(6n + 1),
-    & > div > .block > :is(ul, ol) > li:nth-child(6n + 2),
-    & > div > .block > :is(ul, ol) > li:nth-child(6n + 3),
-    & div.as-body > :is(ul, ol) > li:nth-child(6n + 1),
-    & div.as-body > :is(ul, ol) > li:nth-child(6n + 2),
-    & div.as-body > :is(ul, ol) > li:nth-child(6n + 3) {
+    & > div > :is(ul, ol) > li:is(:nth-child(6n + 1), :nth-child(6n + 2), :nth-child(6n + 3)),
+    & > div > .block > :is(ul, ol) > li:is(:nth-child(6n + 1), :nth-child(6n + 2), :nth-child(6n + 3)),
+    & div.as-body > :is(ul, ol) > li:is(:nth-child(6n + 1), :nth-child(6n + 2), :nth-child(6n + 3)) {
         --list-card-accent-color: var(--r-main-color2);
     }
 
-    & > div > :is(ul, ol) > li:nth-child(6n + 4),
-    & > div > :is(ul, ol) > li:nth-child(6n + 5),
-    & > div > :is(ul, ol) > li:nth-child(6n),
-    & > div > .block > :is(ul, ol) > li:nth-child(6n + 4),
-    & > div > .block > :is(ul, ol) > li:nth-child(6n + 5),
-    & > div > .block > :is(ul, ol) > li:nth-child(6n),
-    & div.as-body > :is(ul, ol) > li:nth-child(6n + 4),
-    & div.as-body > :is(ul, ol) > li:nth-child(6n + 5),
-    & div.as-body > :is(ul, ol) > li:nth-child(6n) {
+    & > div > :is(ul, ol) > li:is(:nth-child(6n + 4), :nth-child(6n + 5), :nth-child(6n)),
+    & > div > .block > :is(ul, ol) > li:is(:nth-child(6n + 4), :nth-child(6n + 5), :nth-child(6n)),
+    & div.as-body > :is(ul, ol) > li:is(:nth-child(6n + 4), :nth-child(6n + 5), :nth-child(6n)) {
         --list-card-accent-color: var(--list-card-accent-alt);
     }
 }
@@ -1378,14 +2049,18 @@ center {
     display: none !important;
 }
 
+.reveal .slides .callout[data-type*="blank"],
+.reveal .slides .callout[data-type*="noborder"],
+.reveal .slides .callout[data-type*="noborder"] .callout-content {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 /* --- blank: transparent shell --- */
 .reveal .slides .callout[data-type*="blank"] {
     max-width: 100%;
     margin: 0;
-    background: transparent !important;
-    background-color: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
 }
 
 .reveal .slides .callout[data-type*="blank"] .callout-content {
@@ -1397,25 +2072,9 @@ center {
 }
 
 /* --- noborder: no left bar / fill / shadow --- */
-.reveal .slides .callout[data-type*="noborder"] {
-    border: none !important;
-    border-left: none !important;
-    background: transparent !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
-}
-
 .reveal .slides .callout[data-type*="noborder"] .callout-title {
     background-color: transparent !important;
     border: none !important;
-}
-
-.reveal .slides .callout[data-type*="noborder"] .callout-content {
-    border: none !important;
-    border-left: none !important;
-    background: transparent !important;
-    background-color: transparent !important;
-    box-shadow: none !important;
 }
 
 /* ==========================================================================
@@ -2354,7 +3013,6 @@ center {
     position: static;
     z-index: auto;
     background: transparent !important;
-    background-color: transparent !important;
     width: auto;
     max-width: 100%;
 }
@@ -3140,6 +3798,16 @@ center {
     table-layout: auto;
     background: transparent;
 
+    &:has(tr > :nth-child(2)):not(:has(tr > :nth-child(3))) {
+        width: 90%;
+        table-layout: fixed;
+
+        & :is(th, td):first-child {
+            box-sizing: border-box;
+            width: 50%;
+        }
+    }
+
     & :is(tr, thead, tbody) {
         background: transparent;
     }
@@ -3312,6 +3980,7 @@ center {
     .reveal .slides section.on-dark-bg,
     .reveal .slides section .on-dark-bg
 ) {
+    --as-card-context-scheme: dark;
     color: var(--as-text-on-dark);
 
     :is(h1, h2, h3, h4, h5, h6) {
@@ -3408,6 +4077,7 @@ center {
     .reveal .slides section.on-light-bg,
     .reveal .slides section .on-light-bg
 ) {
+    --as-card-context-scheme: light;
     color: var(--as-text-on-light);
 
     :is(h1, h2, h3, h4, h5, h6) {

@@ -1,9 +1,9 @@
 /* AS_red.css — Slides Extended red color tokens.
-   Load after AS_basic.css (mutually exclusive with AS_blue.css):
+   Load after AS_basic.css via frontmatter `remoteCSS:` (jsDelivr URLs):
      remoteCSS:
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_red.css
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_red.css
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
 */
 
 :root {

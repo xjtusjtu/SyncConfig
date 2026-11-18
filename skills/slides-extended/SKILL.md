@@ -21,11 +21,11 @@ Apply when the user explicitly requests:
 
 ## Output Conventions
 
-Follow vault `AGENTS.md` presentation rules:
+Follow the host Vault or project conventions when available:
 
 | Item | Convention |
 |:-----|:-----------|
-| Location | `Spaces/Presentation/`, `Calendar/`, or project directories |
+| Location | A presentation or project directory chosen by the user / host project |
 | Naming | `*pre.md`, `*presentation.md`, or project-specific names |
 | Frontmatter | `width`, `height`, `theme`, slide options — **not** `marp: true` |
 | Avoid | UID, `[toc]`, `up`/`Related`, agent-note template fields |
@@ -34,19 +34,20 @@ Follow vault `AGENTS.md` presentation rules:
 
 - Original **Advanced Slides** (MSzturc) is discontinued; use **Slides Extended** (ebullient fork).
 - Slides Extended adds **Theme Directory** (vault path for custom themes/CSS — files must live **inside** the vault) and **Center content** toggle (`center: true/false` frontmatter).
-- Two frontmatter keys for extra CSS: `css:` (vault-local files, resolved inside the vault) and `remoteCSS:` (remote URLs loaded as-is — GitHub raw works from any vault).
+- Two frontmatter keys for extra CSS: `css:` (vault-local files, resolved inside the vault) and `remoteCSS:` (remote URLs loaded as-is). For remotely hosted CSS, use jsDelivr URLs; `raw.githubusercontent.com` can return `text/plain`, which may be rejected as a stylesheet.
 - Syntax is largely compatible with Advanced Slides; brand name changed to "Slides Extended".
-- Fork-specific notes (Windows custom theme 404, `center: false` grid bug): see `Sources/Equipments/PPT/Advanced Slides/P_obsidian-slides-extended.md`.
+- Fork-specific details (Theme Directory, Windows custom-theme issue, remote CSS): see [references/P_obsidian-slides-extended.md](references/P_obsidian-slides-extended.md).
 
 ## Lazy-Load References
 
-**Before writing advanced syntax**, read [references.md](references.md) to locate the vault note, then `Read` that file. Do not invent syntax from memory.
+**Before writing advanced syntax**, read [references.md](references.md) to locate the skill-local reference, then read that file. Do not invent syntax from memory.
 
 | Need | Start here |
 |:-----|:-----------|
 | Full syntax index | [references.md](references.md) |
 | AS_basic / SJTU / nav / scrollbox / gallery / CSS classes | [themes/as_basic.md](themes/as_basic.md) |
-| All vault docs | `Sources/Equipments/PPT/Advanced Slides/` directory |
+| Native section nav bar (`<nav>` + slide `id` anchors) | [AS_Section Nav Bar.md](references/AS_Section%20Nav%20Bar.md) |
+| Plugin-specific details | [references/P_obsidian-slides-extended.md](references/P_obsidian-slides-extended.md) |
 
 ## Creation Workflow
 
@@ -90,7 +91,7 @@ Common options (full table → `AS_Frontmatter Options.md` in references):
 | `highlightTheme` | Code highlight theme | `zenburn` |
 | `center` | Vertical centering | `true` / `false` |
 | `css` | Extra CSS files — vault-relative paths (vault-local files) | See [Theme Extensions](#theme-extensions) |
-| `remoteCSS` | Extra CSS files — **GitHub raw URLs** (any vault) | See [Theme Extensions](#theme-extensions) |
+| `remoteCSS` | Extra CSS files — remote CSS URLs; prefer jsDelivr for hosted files | See [Theme Extensions](#theme-extensions) |
 | `transition` | Slide transition | `slide`, `fade`, `zoom` |
 | `defaultTemplate` | Template applied to all slides | wikilink to template file |
 | `separator` | Horizontal slide regex | Slides Extended default: `\r?\n---\r?\n` |
@@ -188,7 +189,24 @@ For **SJTU nav decks**, load `AS_basic.css` + `AS_red.css` or `AS_blue.css` + `A
 
 ### Step 7: Unfamiliar features
 
-Consult [references.md](references.md) or [themes/as_basic.md](themes/as_basic.md), then `Read` the vault note. Never guess syntax for templates, animations, plugins, or custom CSS.
+Consult [references.md](references.md) or [themes/as_basic.md](themes/as_basic.md), then read the relevant skill-local reference. Never guess syntax for templates, animations, plugins, or custom CSS.
+
+## Native Section Nav Bar
+
+A lightweight chapter navigation bar placed **inside the slide body** — no `AS_basic.css`, no `ASTp-nav-*` template needed. Give the target slides an `id`, then put an HTML `<nav>` above the slide title:
+
+```markdown
+<!-- slide id="discovery" -->
+
+<nav style="font-size: 0.65em; color: #1769aa; margin-bottom: 28px;"><strong>Discovery</strong> / <a href="#evaluation">Evaluation</a> / <a href="#results">Results</a></nav>
+
+## Module I: iterative situation-tactic discovery
+```
+
+- Current section → `<strong>`; other sections → `<a href="#<id>">`.
+- reveal.js intercepts `a[href^="#"]` and resolves the hash to the slide whose element carries that `id` — both `#id` and the officially documented `#/id` work.
+- **Inside the `<nav>` block only raw HTML works** — `<nav>` is a block-level tag, so Markdown inside it is *not* parsed: `[d](#discovery)` renders as literal text. Use `<a href="#discovery">d</a>` and `<strong>` instead.
+- Details, variants, and pitfalls → [references/AS_Section Nav Bar.md](references/AS_Section%20Nav%20Bar.md).
 
 ## Images and Embeds
 
@@ -224,6 +242,7 @@ reveal.js uses MathJax/KaTeX via plugin settings. For rendering issues (line bre
 | Plain note frontmatter on deck | Remove UID, `[toc]`, agent-note fields |
 | Mermaid text off-center / clipped after fontSize change | Measure/render divergence — fontSize via YAML/`%%{init}%%` only (never CSS), keep `overflow: visible`; see `AS_Mermaid.md` 使用日志 |
 | Confusing with Marp | This skill is **not** Marp — no `marp: true`, no `_class` directives |
+| Chapter nav link does nothing | `href` id must match a slide `id` exactly, and the id must sit on the slide element (`<!-- slide id="…" -->`) — see `AS_Section Nav Bar.md` |
 | AS_basic / SJTU / nav / list-* / scrollbox / gallery theme issues | See [themes/as_basic.md](themes/as_basic.md) **Key Pitfalls** |
 
 ## Relationship to Marp
@@ -249,22 +268,22 @@ Custom CSS stacks add layout classes and SJTU styling on top of standard Slides 
 | AS_basic / SJTU (blue) | [themes/as_basic.md](themes/as_basic.md) | `AS_basic.css` + `AS_blue.css` + `AS_SJTU.css` (optional) |
 | AS_basic only | [themes/as_basic.md](themes/as_basic.md) | `AS_basic.css` |
 
-Load these via the frontmatter `remoteCSS:` array using **GitHub raw URLs** (any vault can use them). Remote URLs go in `remoteCSS:`; the `css:` array is for vault-local files. This skill ships its CSS at [`assets/css/`](assets/css/):
+Load these via the frontmatter `remoteCSS:` array. Remote URLs go in `remoteCSS:`; the `css:` array is for vault-local files. **Use jsDelivr URLs for this CSS**: the corresponding `raw.githubusercontent.com` URLs return `Content-Type: text/plain` and may not render as stylesheets in Obsidian's WebView. This skill ships its CSS at [`assets/css/`](assets/css/):
 
 ```yaml
 remoteCSS:
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_blue.css
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_blue.css
 ```
 
 Local alternative: copy `assets/css/` into the vault and use the `css:` array with vault-relative paths instead.
 
-> Fallback: if raw GitHub fails (MIME type rejected), switch to the jsDelivr mirror `https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css` (returns `Content-Type: text/css`).
+> If remote loading fails, copy `assets/css/` into the vault and use the `css:` array with vault-relative paths instead.
 
 Workflow:
 
 1. Write deck using this skill (frontmatter, separators, annotations, templates)
-2. When user specifies SJTU theme, `AS_basic`, nav header/footer, or `academia`/`scrollbox`/`gallery` classes → **Read** [themes/as_basic.md](themes/as_basic.md), then lazy-load vault docs it points to
+2. When user specifies SJTU theme, `AS_basic`, nav header/footer, or `academia`/`scrollbox`/`gallery` classes → **Read** [themes/as_basic.md](themes/as_basic.md), then lazy-load the skill-local references it points to
 3. Apply theme-specific slide classes, `ASTp-nav-*` templates, and CSS load order from the companion
 
 ## Antai Layout Templates

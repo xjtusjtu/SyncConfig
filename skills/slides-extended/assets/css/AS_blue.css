@@ -1,52 +1,75 @@
 /* AS_blue.css — Slides Extended blue color tokens + background tint.
-   Load after AS_basic.css (mutually exclusive with AS_red.css):
+   Load after AS_basic.css via frontmatter `remoteCSS:` (jsDelivr URLs):
      remoteCSS:
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_blue.css
-       - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_blue.css
+       - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_SJTU.css   (optional — auto SJTU backgrounds)
 
    Background SVG URLs stay in AS_SJTU.css; this file tints red SVGs blue via filter.
    Tune --as-bg-filter* in Obsidian preview if needed.
 */
 
 :root {
+    --as-palette-primary: #14566B;
+    --as-palette-secondary: #49899E;
+    --as-palette-accent: #AD8732;
+    --as-palette-surface: #D3E6EC;
+    --as-palette-border: #C5D9DF;
+    --as-palette-white: #FFFFFF;
+    --as-palette-text: #222222;
+    --as-palette-muted: #636C76;
+
     /* --- reveal.js core colors --- */
-    --r-background-color: #fff;
-    --r-background-color2: #F2F2F2;
-    --r-main-color: #222;
-    --r-heading-color: #222;
-    --r-link-color: #2E75D3;
-    --r-link-color-dark: #002C5F;
-    --r-link-color-hover: #6ca0e8;
-    --r-selection-background-color: #98bdef;
-    --r-selection-color: #fff;
-    --r-main-color2: #004098;
-    --r-strong-color: #2E75D3;
-    --r-em-color: #FFC000;
+    --r-background-color: var(--as-palette-white);
+    --r-background-color2: var(--as-palette-surface);
+    --r-main-color: var(--as-palette-text);
+    --r-heading-color: var(--r-main-color);
+    --r-link-color: var(--as-palette-secondary);
+    --r-link-color-dark: var(--r-main-color2);
+    --r-link-color-hover: var(--r-main-color2);
+    --r-selection-background-color: var(--r-main-color2);
+    --r-selection-color: var(--as-palette-white);
+    --r-main-color2: var(--as-palette-primary);
+    --r-strong-color: var(--r-main-color2);
+    --r-em-color: var(--as-palette-secondary);
     --r-progress-background-color: var(--r-selection-color);
     --r-progress-text-color: var(--r-main-color2);
-    --r-light-color: #B9975B;
-    --r-accent-color: #B9975B;
+    --r-light-color: var(--r-accent-color);
+    --r-accent-color: var(--as-palette-accent);
 
     /* --- layout color tokens (used by column/grid step lists) --- */
-    --r-grid-bg-front-color: #fff;
+    --r-grid-bg-front-color: var(--r-background-color);
     --r-border-color: var(--r-main-color2);
 
+    --as-card-surface: var(--r-background-color);
+    --as-card-surface-tint: var(--r-background-color2);
+    --as-card-surface-hover: var(--as-card-surface-tint);
+    --as-card-border: light-dark(var(--as-palette-secondary), var(--as-faint-on-dark));
+    --as-card-border-strong: light-dark(var(--r-main-color2), var(--as-strong-on-dark));
+    --as-card-title: light-dark(var(--r-main-color2), var(--as-heading-on-dark));
+    --as-card-text: light-dark(var(--r-main-color), var(--as-text-on-dark));
+    --as-card-text-muted: light-dark(var(--as-text-faint), var(--as-faint-on-dark));
+    --as-card-marker: light-dark(var(--r-link-color), var(--as-link-on-dark));
+    --as-card-badge-surface: var(--r-background-color);
+    --as-card-badge-border: var(--r-main-color2);
+    --as-card-accent: var(--r-accent-color);
+    --as-card-focus: var(--r-link-color);
+
     /* --- theme colors (blue palette) --- */
-    --as-text-faint: #636c76;
-    --as-code-color: #002C5F;
-    --as-math-inline: #00b050;
-    --as-table-stripe: #ebecf1;
-    --as-table-hover: #e8eef5;
-    --as-table-border: #000;
-    --as-blockquote-border: #d0d7de;
-    --as-mark-bg: #D9D9D9;
-    --as-sup-bg: #f0f0f0;
-    --as-footer-odd-bg: hsl(211deg 55% 45%);
-    --as-image-border: #ccc;
-    --as-fglass-shadow: rgb(215, 224, 235);
-    --as-on-accent-color: #fff;
-    --as-sup-hover-color: #000;
+    --as-text-faint: var(--as-palette-muted);
+    --as-code-color: var(--r-main-color2);
+    --as-math-inline: var(--r-main-color2);
+    --as-table-stripe: var(--r-background-color2);
+    --as-table-hover: var(--as-table-stripe);
+    --as-table-border: var(--r-main-color);
+    --as-blockquote-border: var(--as-image-border);
+    --as-mark-bg: var(--r-background-color2);
+    --as-sup-bg: var(--r-background-color2);
+    --as-footer-odd-bg: var(--r-link-color);
+    --as-image-border: var(--as-palette-border);
+    --as-fglass-shadow: var(--as-image-border);
+    --as-on-accent-color: var(--as-palette-white);
+    --as-sup-hover-color: var(--r-main-color);
 
     /* --- adaptive text (has-light/dark-background, on-*-bg) --- */
     --as-text-on-light: var(--r-main-color);
@@ -62,27 +85,27 @@
     --as-blockquote-border-on-light: var(--as-blockquote-border);
     --as-mark-bg-on-light: var(--as-mark-bg);
 
-    --as-text-on-dark: #fff;
-    --as-heading-on-dark: #fff;
-    --as-strong-on-dark: #98bdef;
-    --as-em-on-dark: #ffd966;
-    --as-link-on-dark: #a8c8f8;
-    --as-link-hover-on-dark: #cce0ff;
-    --as-faint-on-dark: rgba(255, 255, 255, 0.75);
-    --as-code-on-dark: #cce0ff;
-    --as-math-on-dark: #7dcea0;
-    --as-heading-rule-on-dark: rgba(255, 255, 255, 0.85);
-    --as-blockquote-border-on-dark: rgba(255, 255, 255, 0.4);
-    --as-mark-bg-on-dark: rgba(255, 255, 255, 0.25);
+    --as-text-on-dark: var(--as-palette-white);
+    --as-heading-on-dark: var(--as-text-on-dark);
+    --as-strong-on-dark: var(--as-text-on-dark);
+    --as-em-on-dark: var(--as-palette-border);
+    --as-link-on-dark: var(--as-em-on-dark);
+    --as-link-hover-on-dark: var(--as-text-on-dark);
+    --as-faint-on-dark: var(--as-palette-border);
+    --as-code-on-dark: var(--as-link-on-dark);
+    --as-math-on-dark: var(--as-text-on-dark);
+    --as-heading-rule-on-dark: var(--as-palette-border);
+    --as-blockquote-border-on-dark: var(--as-palette-border);
+    --as-mark-bg-on-dark: var(--r-main-color2);
 
     /* --- header on dark bar (bg-with-dark-color; rules in AS_basic.css §9) --- */
-    --as-header-title-on-dark-bar: #fff;
-    --as-header-nav-on-dark-bar: #fff;
-    --as-header-nav-hover-on-dark-bar: #cce0ff;
+    --as-header-title-on-dark-bar: var(--as-text-on-dark);
+    --as-header-nav-on-dark-bar: var(--as-text-on-dark);
+    --as-header-nav-hover-on-dark-bar: var(--as-link-on-dark);
 
     /* --- cover / transition (rules in AS_basic.css §15–§16) --- */
     --as-cover-title-color: var(--r-main-color2);
-    --as-cover-subtitle-color: #333;
+    --as-cover-subtitle-color: var(--r-main-color);
     --as-cover-meta-color: var(--as-text-faint);
     --as-trans-divider-color: var(--r-main-color2);
     --as-trans-accent: var(--r-main-color2);

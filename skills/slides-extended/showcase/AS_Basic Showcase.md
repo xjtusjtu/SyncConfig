@@ -3,10 +3,7 @@ width: 1920
 height: 1080
 theme: white
 center: false
-css: []
-remoteCSS:
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_blue.css
+css: ["Extras/SyncConfig/skills/slides-extended/assets/css/AS_basic.css", "Extras/SyncConfig/skills/slides-extended/assets/css/AS_blue.css"]
 slideNumber: true
 ---
 
@@ -771,14 +768,17 @@ CSS：`cols-*` 分栏行=`auto`（等高=最高内容）；`rows-*` 的 bottom �
 
 ## 列表与卡片
 
-以下均为 **slide class**（可无模板）。`list-grid` 列比 modifier、`fancy-ol-*` / `fglass`、`list-flex-*`、`list-card-grid`。任意内容两列见专项里的 `g-columns`。
+卡片用 `list-cards` 启用，排列、外观、圆角、内容结构和符号分别选择。class 可放在 slide、列表外层 block 或列表本身；单个首级 `li` 可覆盖结构、外观和圆角。详见 [[css_AS列表横向、纵向逐步显示]]。
 
-| 族 | class | 要点 |
+| 控制项 | class | 要点 |
 |:---|:------|:-----|
-| 分列 | `list-grid` + `--1-2` / `--3` / … | 列表项进 CSS Grid 列 |
-| 花式序号 | `fancy-ol-sq` / `fancy-ol-ci` | 方/圆序号；可与 list-grid、`fglass` 组合 |
-| Flex | `list-flex-row` / `list-flex-col` / `list-flex-step` | 横/纵卡片；step=有序步骤图 |
-| 卡片 | `list-card-grid` + `--icon` / `--ordered` / … | R×C 卡片矩阵 |
+| 排列 | `list-layout-row` / `list-layout-col` / `list-layout-grid` | 横排 / 纵排 / 网格；不改变外观 |
+| 列数 | `list-cols-2` / `list-cols-3` / `list-cols-4` | 仅用于网格，行数随条目数产生 |
+| 外观 | `card-tint` / `card-top` / `card-outline` / `card-plain` | 浅蓝底 / 顶边 / 描边 / 透明 |
+| 圆角 | `card-rounded` / `card-square` | 独立选择；默认直角 |
+| 结构 | `card-title-body` / `card-custom-title-body` / `card-custom-body` / `card-body` | 决定哪层是符号、标题、正文 |
+| 符号 | `list-marker-native` / `list-marker-auto` / `list-marker-none` | 原生 / 有序自动编号 / 隐藏 |
+| 卡内排列 | `card-layout-center` / `card-layout-side` / `card-layout-inline` / `card-layout-stack` | 居中堆叠 / 侧边居中 / 标题同行 / 三行堆叠 |
 
 ---
 
@@ -827,152 +827,353 @@ CSS：`cols-*` 分栏行=`auto`（等高=最高内容）；`rows-*` 的 bottom �
 
 嵌套子列表时序号与首行标题应**同行**（`AS_basic.css` §13）。
 
-1. **测量缺口**
-	- 连续量表尚未建立
-	- ➔ 需要 PIS
-2. **结果缺口**
-	- Conversion / Engagement 方向异效未检
-3. **机制缺口**
-	- 注意力 vs 抗拒双路径并行
-4. **场域缺口**
-	- 短视频注意力稀缺放大效应
+1. **明确目标**
+	- 说明要解决的问题
+	- 确定完成标准
+2. **准备材料**
+	- 整理输入与约束
+3. **执行方案**
+	- 按步骤记录过程
+4. **检查结果**
+	- 根据反馈进行修订
 
 ---
 
-## Flex 列表
+## 卡片的组合方式
 
-`list-flex-row` / `list-flex-col`：横/纵弹性卡片（见 [[css_AS列表横向、纵向逐步显示]]）。`list-flex-step`：横排有序步骤，`01`/`02` 与首行标题分离。
+每组只选一种；未声明时为单列、透明、直角、正文模式、原生符号。自定义符号模式自动关闭该卡的原生或自动编号。
 
----
+```markdown
+<!-- slide class="list-cards list-layout-row card-tint card-rounded card-title-body list-marker-none" -->
 
-<!-- slide class="list-flex-row" -->
+- **输入**
+	- 整理已有材料
+- **处理**
+	- 选择合适的方法
+- **输出**
+	- 检查交付结果
+```
 
-### list-flex-row
-
-- 输入 <!-- element class="fragment" -->
-- 处理 <!-- element class="fragment" -->
-- 输出 <!-- element class="fragment" -->
-
-
----
-
-<!-- slide class="list-flex-col" -->
-
-### list-flex-col
-
-- 问题界定 <!-- element class="fragment" -->
-- 方案比选 <!-- element class="fragment" -->
-- 落地验证 <!-- element class="fragment" -->
+`**文字**` 提供可单独排版的包装，结构角色由模式 class 决定；不按粗体、数字或 emoji 猜测标题。
 
 ---
 
-<!-- slide class="list-flex-step" -->
+<!-- slide class="list-cards list-layout-grid list-cols-4 card-title-body list-marker-none" -->
 
-### list-flex-step
+## 四种外观 · 直角
 
-1. 需求确认
-	1. 拆成可执行的输入、输出和约束
-2. 方案设计
-	1. 每一步放进同一行，宽度均分
-3. 结果交付
-	1. 编号与首行文字分开控制
+只改变背景和边框；内容、字号、排列与圆角相同。
+
+- <!-- element class="card-tint" -->
+	**输入**
+	- 整理已有材料
+	- `card-tint`
+- <!-- element class="card-top" -->
+	**输入**
+	- 整理已有材料
+	- `card-top`
+- <!-- element class="card-outline" -->
+	**输入**
+	- 整理已有材料
+	- `card-outline`
+- <!-- element class="card-plain" -->
+	**输入**
+	- 整理已有材料
+	- `card-plain`
 
 ---
 
-## 卡片矩阵
+<!-- slide class="list-cards list-layout-grid list-cols-4 card-rounded card-title-body list-marker-none" -->
 
-`list-card-grid` + 列数 / 样式 modifier（`AS_basic.css` ~494–947）。行数由项数自动换行。
+## 四种外观 · 圆角
 
-| class | 效果 |
+整页添加 `card-rounded`，四类外观均采用 8px 圆角；局部 `card-square` 可恢复直角。
+
+- <!-- element class="card-tint" -->
+	**输入**
+	- 整理已有材料
+	- `card-tint`
+- <!-- element class="card-top" -->
+	**输入**
+	- 整理已有材料
+	- `card-top`
+- <!-- element class="card-outline" -->
+	**输入**
+	- 整理已有材料
+	- `card-outline`
+- <!-- element class="card-plain" -->
+	**输入**
+	- 整理已有材料
+	- `card-plain`
+
+---
+
+<!-- slide class="list-cards list-layout-row card-tint card-title-body list-marker-none" -->
+
+## 横排 · 整卡逐步出现
+
+`list-layout-row` 均分可用宽度；fragment 注解放在首级条目的第一行，文字换行缩进。
+
+- <!-- element class="fragment" -->
+	**输入**
+	- 整理已有材料
+- <!-- element class="fragment" -->
+	**处理**
+	- 选择合适的方法
+- <!-- element class="fragment" -->
+	**输出**
+	- 检查交付结果
+
+---
+
+<!-- slide class="list-cards list-layout-col card-top card-title-body list-marker-none list-title-left list-body-left" -->
+
+## 纵排 · 标题与正文靠左
+
+`list-layout-col` 只改变排列，嵌套正文不会再次变成卡片。
+
+- **输入**
+	- 整理已有材料
+- **处理**
+	- 选择合适的方法
+- **输出**
+	- 检查交付结果
+
+---
+
+<!-- slide class="list-cards list-layout-grid list-cols-2 card-outline card-title-body list-marker-none" -->
+
+## 网格 · 2 列 × 2 行
+
+`list-layout-grid list-cols-2`；行数由条目数自动产生。
+
+- **目标**
+	- 明确完成标准
+- **材料**
+	- 记录来源与范围
+- **方法**
+	- 说明处理步骤
+- **结果**
+	- 检查输出与反馈
+
+---
+
+<!-- slide class="list-cards list-layout-grid list-cols-3 card-tint card-title-body list-marker-auto marker-inline" -->
+
+## 网格 · 3 列 × 2 行
+
+`list-cols-3` + `list-marker-auto marker-inline`；第 10 项显示 `10`，不会额外拼接 `0`。
+
+9. **输入**
+	- 整理已有材料
+10. **处理**
+	- 选择合适的方法
+11. **输出**
+	- 检查交付结果
+12. **记录**
+	- 保存关键步骤
+13. **反馈**
+	- 汇总检查意见
+14. **修订**
+	- 更新下一版内容
+
+---
+
+## 四种结构模式
+
+模式可用于整页、列表外层 block、`ul` / `ol` 或当前首级 `li`。优先级：当前 `li` > 最近列表或宿主 > section > 默认正文模式；同一宿主只选一种模式。
+
+| 模式 | 首级主文字 | 直接子列表 |
+|:--|:--|:--|
+| `card-title-body` | 标题 | 全部是正文；可省略 |
+| `card-custom-title-body` | 自定义符号 | 第一项是标题，其余是正文 |
+| `card-custom-body` | 自定义符号 | 全部是正文，无标题 |
+| `card-body` | 正文 | 全部是正文，无标题 |
+
+自定义符号模式的标题可以再带下一级正文。层级由选定模式解释，正文加粗不会自动变成标题。
+
+---
+
+<!-- slide class="list-cards list-layout-grid list-cols-3 card-tint list-marker-none marker-side" -->
+
+## 六种内容组合
+
+- <!-- element class="card-title-body" -->
+	**只有标题**
+- <!-- element class="card-body" -->
+	**只有正文，保持正文字号。**
+- <!-- element class="card-title-body" -->
+	**标题与正文**
+	- 正文说明输入与约束
+- <!-- element class="card-custom-title-body" -->
+	**A**
+	- **符号与标题**
+- <!-- element class="card-custom-body" -->
+	**B**
+	- **符号与正文，没有标题。**
+- <!-- element class="card-custom-title-body" -->
+	**C**
+	- **符号与标题**
+	- 正文说明检查标准
+
+---
+
+<!-- slide class="list-cards list-layout-row card-outline card-custom-title-body marker-side card-layout-inline" -->
+
+## 列表默认 · 单个 li 覆盖
+
+整页为 `card-custom-title-body card-layout-inline`：先让标题与正文整体垂直居中，再让符号与标题同行对齐。中间一项只改为 `card-custom-body`：无标题，符号与首行正文同字号、同行垂直居中。水平方向默认靠左。
+
+- **A**
+	- **输入**
+	- 整理已有材料
+- <!-- element class="card-custom-body" -->
+	**B**
+	- **这是一段加粗正文。**
+	- 本卡没有标题
+- **C**
+	- **输出**
+		- 检查交付结果
+			- 更深一层仍为正文字号
+
+---
+
+<!-- slide class="list-cards list-layout-grid list-cols-2 card-outline card-custom-title-body marker-side list-title-left list-body-left" -->
+
+## 卡内排列 · 四种独立预设
+
+结构模式、卡内排列、符号形状分别选择；预设可放整列表或当前 `li`。符号默认跟随标题字号，没有标题时跟随正文。水平方向默认靠左；垂直方向按排列方式居中相应内容组。
+
+- <!-- element class="card-layout-center marker-badge" -->
+	**A**
+	- **全居中**
+	- 符号、标题、正文逐行居中；符号与标题同字号
+- <!-- element class="card-layout-side" -->
+	**B**
+	- **侧边居中**
+	- 先让标题与正文整体垂直居中，再居中左侧符号
+- <!-- element class="card-layout-inline" -->
+	**C**
+	- **标题同行**
+	- 标题与正文整体垂直居中，符号对齐首行标题
+- <!-- element class="card-layout-stack" -->
+	**D**
+	- **三行堆叠**
+	- 符号、标题、正文合为一组垂直居中；水平靠左
+
+---
+
+<!-- slide class="list-cards list-layout-row card-top card-title-body list-marker-auto marker-side" -->
+
+## 自动编号 · 单项改用自定义符号
+
+列表为 `card-title-body list-marker-auto`；局部自定义模式关闭该卡的自动编号，不产生双符号。
+
+1. **输入**
+	- 整理已有材料
+2. <!-- element class="card-custom-title-body card-rounded card-tint" -->
+	**A**
+	- **处理**
+	- 选择合适的方法
+3. **输出**
+	- 检查交付结果
+
+---
+
+<!-- slide class="list-cards list-layout-row card-outline card-title-body list-marker-native list-body-markers-native" -->
+
+## 原生符号 · 正文符号独立控制
+
+`list-marker-native` 保留真正的列表标记，字号跟随标题；`list-body-markers-native` 单独开启正文标记，其位置与标题左边界对齐。
+
+9. **输入**
+	- 整理已有材料
+	- 说明材料范围
+10. **处理**
+	- 选择合适的方法
+11. **输出**
+	- 检查交付结果
+
+---
+
+<!-- slide class="list-cards list-layout-row card-tint card-title-body list-marker-native list-title-left list-body-left" -->
+
+## 原生无序项目符号
+
+使用 Markdown 无序列表；无需手写符号。`marker-inline` / `marker-side` / `marker-badge` 用于自动编号或自定义符号，原生 marker 保留自身排版。
+
+- **输入**
+	- 整理已有材料
+- **处理**
+	- 选择合适的方法
+- **输出**
+	- 检查交付结果
+
+---
+
+<!-- slide class="list-cards list-layout-row card-plain card-title-body list-marker-auto marker-badge card-layout-center" -->
+
+## 徽章 · 自动编号与自定义符号
+
+三项依次展示 `card-outline`、`card-border-marker`、`card-top`。只有中间一项让上边框穿过符号中心；两侧保留 `marker-badge card-layout-center` 的流式徽章。第三项加 `card-marker-large`，显式放大 15%。
+
+1. <!-- element class="fragment" -->
+    **准备**
+    1. 做好心理准备
+2. <!-- element class="fragment card-outline" -->
+	**输入**
+	- 整理已有材料
+3. <!-- element class="fragment card-custom-title-body card-border-marker card-rounded" -->
+	**A**
+	- **处理**
+	- 选择合适的方法
+4. <!-- element class="fragment card-top card-marker-large" -->
+	**输出**
+	- 检查交付结果
+
+---
+
+<!-- slide class="list-cards list-layout-grid list-cols-2 card-tint card-title-body list-marker-none" -->
+
+## 标题与正文 · 独立对齐
+
+标题随每张卡片的内容宽度缩放，正文保持主题字号。两级默认靠左，以下示例分别显式调整；长标题达到最小字号后正常换行。
+
+- <!-- element class="list-title-left list-body-left" -->
+	**标题靠左**
+	- 正文也靠左
+- <!-- element class="list-title-center list-body-left" -->
+	**标题居中**
+	- 正文靠左
+- <!-- element class="list-title-left list-body-center" -->
+	**标题靠左**
+	- 正文居中
+- <!-- element class="list-title-center list-body-center" -->
+	**标题居中**
+	- 正文也居中
+
+---
+
+## 常用调节与旧接口
+
+| 变量或 class | 作用 |
 |:--|:--|
-| `list-card-grid` | base，默认 2 列 |
-| `--3` / `--4` | 显式列数 |
-| `--icon` | 无序；符号行后空一行，次级粗体标题 |
-| `--ordered` | 有序，左侧 01/02 |
-| `--tint` | pastel 底色循环 |
-| `--inline` | 序号与标题同行 |
-| `--badge` | 顶边空心圆环徽章 |
-| `--accent-odd` + `--accent-even` | 顶栏按行交替（配 `--2`/`--3`） |
+| `--as-list-gap` | 卡片之间的间距 |
+| `card-border-marker` | 2px 描边，上边框穿过符号中心并位于符号下层；用于自动编号或自定义符号 |
+| `--as-card-radius` | 卡片圆角；默认 0，`card-rounded` 为 8px |
+| `--list-title-font-size` | 标题自适应表达式，也可设固定字号 |
+| `--list-item-font-size` | 标题字号上限，默认正文的 1.8 倍 |
+| `--list-body-font-size` | 所有深度的正文字号 |
+| `--as-card-marker-scale` | 符号与首行标题 / 正文的字号比例，默认 1 |
+| `card-marker-large` / `card-marker-normal` | 显式设为 1.15 倍 / 恢复 1 倍；支持列表默认与单项覆盖 |
+| `--as-card-marker-font-size` | 显式指定符号字号，优先于比例 |
+| `card-align-center` / `card-align-left` | 水平整体居中 / 恢复水平靠左；不取消默认垂直居中 |
+| `--as-card-content-align` | 内容组的垂直对齐，默认 `center`；同行 / 侧边居中文字组，堆叠居中完整内容组 |
+| `--as-card-marker-gap` | 符号与文字间距，默认 12px；普通自定义符号按实际文字宽度占位 |
+| `list-body-markers-none` / `list-body-markers-native` | 正文项目符号；默认隐藏 |
+| `--as-card-*` 配色变量 | AS_blue 的蓝、白、中性色与少量金色强调 |
 
----
-
-<!-- slide class="list-card-grid list-card-grid--icon" -->
-
-### 无序 2×2（icon）
-
-- ✓
-
-	- **可用性**
-	- 用户能否完成核心任务？
-- ✓
-
-	- **可靠性**
-	- 高频使用下是否稳定？
-- ✓
-
-	- **安全合规**
-	- 权限是否最小化？
-- 🙂
-
-	- **运营闭环**
-	- 反馈是否能进入迭代？
-
----
-
-<!-- slide class="list-card-grid list-card-grid--ordered list-card-grid--tint" -->
-
-### 有序 + tint
-
-1. **说清业务场景**
-	- 用户是谁？痛点是什么？
-2. **定义输入输出**
-	- 需要哪些数据？
-3. **拆出功能模块**
-	- 页面、按钮、规则
-4. **标注优先级**
-	- MVP 先交付什么？
-
----
-
-<!-- slide class="list-card-grid list-card-grid--3 list-card-grid--ordered list-card-grid--inline list-card-grid--accent-odd list-card-grid--accent-even" -->
-
-### 有序 2×3（inline + accent）
-
-1. **投研风控**
-	- 公告 / 新闻 → 风险提示
-2. **知识库问答**
-	- 内部文档检索
-3. **合规审查**
-	- 条款自动比对
-4. **客户服务**
-	- 工单分类与回复
-5. **数据分析**
-	- 自然语言出图
-6. **流程自动化**
-	- 跨系统编排
-
----
-
-<!-- slide class="list-card-grid list-card-grid--4 list-card-grid--badge" -->
-
-### 徽章卡片（4 列）
-
-- :disappointed:
-
-	- **01.输入**
-	- 正文一句
-- :cat:
-
-	- **02.处理**
-	- 正文一句
-- :rocket:
-
-	- **03.输出**
-	- 正文一句
-- :white_check_mark:
-
-	- **04.闭环**
-	- 正文一句
+原有 `list-grid`、`fancy-ol-*`、`list-flex-*`、`list-card-grid*` 接口继续保留；新示例使用 `list-cards`，不与旧卡片布局类叠加。
 
 ---
 

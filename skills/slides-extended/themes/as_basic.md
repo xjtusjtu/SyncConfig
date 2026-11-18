@@ -15,20 +15,18 @@ Then **lazy-load** the vault references below for full docs and copy-paste examp
 
 ## CSS Load Order
 
-Register in the frontmatter `remoteCSS:` array. Use the **GitHub raw URLs** below — they work from any vault. (Remote URLs go in `remoteCSS:`; the `css:` array is for vault-local files only.)
+Register in the frontmatter `remoteCSS:` array. Use the **jsDelivr URLs** below. The corresponding `raw.githubusercontent.com` URLs return `Content-Type: text/plain` and did not render as stylesheets in Obsidian's WebView in testing. (Remote URLs go in `remoteCSS:`; the `css:` array is for vault-local files only.)
 
 **Red theme** — use `AS_red.css`; **blue** — swap in `AS_blue.css` (**not both**).
 
 ```yaml
 remoteCSS:
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_red.css    # OR .../AS_blue.css
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css   # optional — auto SJTU backgrounds
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_red.css    # OR .../AS_blue.css
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_SJTU.css   # optional — auto SJTU backgrounds
 ```
 
-Local alternative: copy `assets/css/` into the vault and use the `css:` array with vault-relative paths instead.
-
-> Fallback: if raw GitHub fails (MIME type rejected), switch to the jsDelivr mirror `https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css` (returns `Content-Type: text/css`).
+Local alternative: copy `assets/css/` into the vault and use the `css:` array with vault-relative paths instead. If jsDelivr cannot be reached, this local approach avoids remote loading and MIME-type issues.
 
 | File | Role |
 |:-----|:-----|
@@ -48,9 +46,9 @@ height: 1080
 theme: white
 center: false
 remoteCSS:
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_basic.css
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_red.css
-  - https://raw.githubusercontent.com/xjtusjtu/SyncConfig/main/skills/slides-extended/assets/css/AS_SJTU.css
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_basic.css
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_red.css
+  - https://cdn.jsdelivr.net/gh/xjtusjtu/SyncConfig@main/skills/slides-extended/assets/css/AS_SJTU.css
 ---
 ```
 
@@ -112,13 +110,13 @@ CSS rule (do not duplicate inline):
 }
 ```
 
-Details → `Sources/Equipments/PPT/Advanced Slides/P_obsidian-slides-extended.md`.
+Details → [P_obsidian-slides-extended.md](../references/P_obsidian-slides-extended.md).
 
 ### List grid columns
 
-CSS source: `../assets/css/AS_basic.css` lines ~491–524 (modifiers ~518–524). Vault note: `Sources/Program/代码库/css_AS_Grid Listi网格列表.md`. Demo → [showcase/AS_Basic Showcase.md](../showcase/AS_Basic%20Showcase.md) §列表分列.
+CSS source: [`../assets/css/AS_basic.css`](../assets/css/AS_basic.css) lines ~491–524 (modifiers ~518–524). Reference: [css_AS_Grid Listi网格列表.md](../references/css_AS_Grid%20Listi网格列表.md). Demo → [showcase/AS_Basic Showcase.md](../showcase/AS_Basic%20Showcase.md) §列表分列.
 
-Use slide class **`list-grid`** (+ `list-grid--*` ratio modifiers) to split a list into columns. **Do not** use `<split wrap>` inside ASTp templates — each `::: 槽` becomes one `div.block`; see `AS-Templates.md`.
+Use slide class **`list-grid`** (+ `list-grid--*` ratio modifiers) to split a list into columns. **Do not** use `<split wrap>` inside ASTp templates — each `::: 槽` becomes one `div.block`; see [AS-Templates.md](../references/AS-Templates.md).
 
 > **DOM paths**（`AS_basic.css`）：无模板 `section > div > ul|ol`；模板槽 `> div > .block > ul|ol`；nav-shell 正文 `div.as-body > ul|ol`（模板 `<grid class="as-body">`）。`<% content %>` 为占位符，**不**对应任何 CSS class。
 
@@ -159,13 +157,18 @@ Combine with §13 fancy list classes (`fglass`, `fancy-ol-sq`, `fancy-ol-ci`) fo
 ::: <!-- element class="g-columns" -->
 ```
 
-Vault note: `Sources/Program/代码库/css_AS_任何内容服从两列网格布局.md`.
+Reference: [css_AS_任何内容服从两列网格布局.md](../references/css_AS_任何内容服从两列网格布局.md).
 
 ### List card grid
 
 CSS source: `../assets/css/AS_basic.css` lines ~714–1166. Demo → [showcase/AS_Basic Showcase.md](../showcase/AS_Basic%20Showcase.md) §卡片矩阵.
 
 Use slide class **`list-card-grid`** (+ column modifiers `--3` / `--4` + style modifiers) for R×C card matrices. Each top-level list item is one card; rows auto-wrap by item count. Default is **2 columns** (no `--2` class).
+
+> **列 vs 行（容易混）** — **列数由 class 决定，行数由条目数决定**：
+> - 列数：`list-card-grid` = 2；`--3` = 3；`--4` = 4。
+> - 行数：自动换行 = ⌈条目数 ÷ 列数⌉，**class 不控制行数**；同样的 class，条目数不同则行数不同。
+> - 因此**标题只写列数**（“3 列”），行数是条目数的结果，写在正文里说明。
 
 > **DOM paths** — same as [List grid columns](#list-grid-columns): `section > div > ul|ol`; template slot `> div > .block > ul|ol`; nav-shell `div.as-body > ul|ol`.
 
@@ -178,7 +181,7 @@ Use slide class **`list-card-grid`** (+ column modifiers `--3` / `--4` + style m
 | `list-card-grid--tint` | Pastel background per card (4-color cycle) |
 | `list-card-grid--inline` | Marker and title same line; nested list flush with marker |
 | `list-card-grid--badge` | Top-centered **hollow ring** on card edge; nested title + body centered |
-| `list-card-grid--accent-odd` / `--accent-even` | Top bar color; combine both for row alternation (pair with default 2-col or `--3`) |
+| `list-card-grid--accent-odd` / `--accent-even` | Top bar color; combine both for row alternation (pair with default 2-col or `--3`; cycle = 4n for 2 cols, 6n for `--3`, i.e. **alternation is per row**) |
 
 **Writing conventions**
 
@@ -214,6 +217,9 @@ cover (AsTp-Cover, id="0", class="grid-align-restore cover")
 ```
 
 Assign anchors: `<!-- slide id="c-1" ... -->`. Highlight current chapter: `==[章节名](#c-N)==`.
+
+> [!tip] 轻量替代：原生 `<nav>` 章节栏
+> 不想引入 `AS_basic.css` + `ASTp-nav-*` 模板时，可在正文里直接写一条 HTML 导航栏（当前章节 `<strong>`，其余 `<a href="#id">`），reveal.js 会按 slide id 跳转 → [AS_Section Nav Bar.md](../references/AS_Section%20Nav%20Bar.md)。
 
 ### Header: p + ul
 
@@ -323,11 +329,11 @@ Panel vs template → [Panel layouts](#panel-layouts). Catalog → [references.m
 | Scrollbox in `::: left` via `::: block` | Use写法 A or B from `AS-Scrollbox.md` |
 | Multi-line images inside callout | Truncates after first image — use `gallery` or one-line embeds (`AS_Callouts.md`) |
 | Inline duplicate `.academia` CSS | Styles live in `AS_basic.css` §8 — no `<style>` paste |
-| Theme Directory 404 on Windows | Path separator bug — see `P_obsidian-slides-extended.md` (#301) |
+| Theme Directory 404 on Windows | Path separator bug — see [P_obsidian-slides-extended.md](../references/P_obsidian-slides-extended.md) (#301) |
 | Custom theme/CSS outside vault | Theme Directory files must be **inside** the vault |
-| Block comment syntax in doc slide body | Do not write triple-colon slot markers in explanatory slides (backticks do not escape); use **slot 槽** labels and link [[AS-Templates]] |
+| Block comment syntax in doc slide body | Do not write triple-colon slot markers in explanatory slides (backticks do not escape); use **slot 槽** labels and see [AS-Templates.md](../references/AS-Templates.md) |
 | `fglass` / `on-light-bg` unknown | See §13 / §14 in this file; full CSS in `AS_basic.css` |
-| Mermaid node text vertically off-center after fontSize change | Mermaid line-height measure/render mismatch (same root cause as bold-text clipping) — do NOT pin font-size in CSS; see `AS_Mermaid.md` 使用日志 @2026-10-10 |
+| Mermaid node text vertically off-center after fontSize change | Mermaid line-height measure/render mismatch (same root cause as bold-text clipping) — do NOT pin font-size in CSS; see [AS_Mermaid.md](../references/AS_Mermaid.md) 使用日志 @2026-10-10 |
 
 Per-slide annotations, separators, speaker notes → see [SKILL.md](../SKILL.md).
 
@@ -335,17 +341,17 @@ Per-slide annotations, separators, speaker notes → see [SKILL.md](../SKILL.md)
 
 | Need | File |
 |:-----|:-----|
-| Fork config, Theme Directory, `center: false` grid bug | `Sources/Equipments/PPT/Advanced Slides/P_obsidian-slides-extended.md` |
-| Scrollbox 写法 A/B, export DOM notes | `Sources/Equipments/PPT/Advanced Slides/AS-Scrollbox.md` |
-| Templates 机制、Grid 嵌套 | `Sources/Equipments/PPT/Advanced Slides/AS-Templates.md` |
+| Fork config, Theme Directory, `center: false` grid bug | [P_obsidian-slides-extended.md](../references/P_obsidian-slides-extended.md) |
+| Scrollbox 写法 A/B, export DOM notes | [AS-Scrollbox.md](../references/AS-Scrollbox.md) |
+| Templates 机制、Grid 嵌套 | [AS-Templates.md](../references/AS-Templates.md) |
 | 布局与 nav 用法演示（权威成品 demo） | [showcase/AS_Basic Showcase.md](../showcase/AS_Basic%20Showcase.md) |
-| Tips, export workflow, math escaping, `fglass` combo | `Sources/Equipments/PPT/Advanced Slides/Advanced Slides 技巧汇总（官方文档补充）.md` |
-| List grid columns (`list-grid`, `list-grid--*`) | `Sources/Program/代码库/css_AS_Grid Listi网格列表.md` |
-| Flex step lists (`list-flex-row/col/step`) | `Sources/Program/代码库/css_AS列表横向、纵向逐步显示.md` |
+| Tips, export workflow, math escaping, `fglass` combo | [Advanced Slides 技巧汇总（官方文档补充）.md](../references/Advanced%20Slides%20技巧汇总（官方文档补充）.md) |
+| List grid columns (`list-grid`, `list-grid--*`) | [css_AS_Grid Listi网格列表.md](../references/css_AS_Grid%20Listi网格列表.md) |
+| Flex step lists (`list-flex-row/col/step`) | [css_AS列表横向、纵向逐步显示.md](../references/css_AS列表横向、纵向逐步显示.md) |
 | Card grid lists (`list-card-grid`, modifiers) | [showcase/AS_Basic Showcase.md](../showcase/AS_Basic%20Showcase.md) §卡片矩阵 |
-| Block content 2-col grid (`g-columns`) | `Sources/Program/代码库/css_AS_任何内容服从两列网格布局.md` |
+| Block content 2-col grid (`g-columns`) | [css_AS_任何内容服从两列网格布局.md](../references/css_AS_任何内容服从两列网格布局.md) |
 | ASTp template catalog | [references.md](../references.md) § ASTp Layout Templates |
-| Grid `drag`/`drop`/`align` | `Sources/Equipments/PPT/Johnny学OB/AS_Grid Component.md` |
-| Full CSS source | `../assets/css/AS_basic.css` |
+| Grid `drag`/`drop`/`align` | [AS_Grid Component.md](../references/AS_Grid%20Component.md) |
+| Full CSS source | [`../assets/css/AS_basic.css`](../assets/css/AS_basic.css) |
 
-Read vault notes for documentation; read `AS_Basic Showcase.md` for working slide snippets.
+Read the skill-local references on demand; use [AS_Basic Showcase.md](../showcase/AS_Basic%20Showcase.md) for working slide snippets.
