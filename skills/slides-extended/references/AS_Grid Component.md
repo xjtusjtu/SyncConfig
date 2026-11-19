@@ -4,7 +4,7 @@ aliases:
 tags: 
 description: 
 status: planning
-modified: 2026-07-07T18:17:00
+modified: 2026-11-19
 ---
 
 up:: [[P_Advanced Slides]]
@@ -151,8 +151,8 @@ Bottom
 
 语义 shorthand，**不是**单一 CSS 属性。Slides Extended 在有 `align` 或 `flow` 时把 grid 变成 flex 容器，再按 `getAlignment()` 拆成多条样式：
 
-- **`align-items`** — 子元素在交叉轴上的对齐（主要承载 left / right / center 等横向语义）
-- **`justify-content`** — 子元素在主轴上的分布（主要承载 top / bottom 等纵向语义；可被 grid 上的 `justify-content` 属性覆盖）
+- **`align-items`** — 子元素在交叉轴上的对齐：`flow="col"` 时控制左右，`flow="row"` 时控制上下。
+- **`justify-content`** — 子元素在主轴上的分布：`flow="col"` 时控制上下，`flow="row"` 时控制左右；可被 grid 上的 `justify-content` 属性覆盖。
 - **HTML `align="..."`** — 少数取值额外写入元素属性（`left` / `right` / `justify`），影响块内文字对齐
 - **class `stretch-column` / `stretch-row`** — `align="stretch"` 时追加，子元素 `flex: 1` 撑满
 - **不涉及 `align-content`**
@@ -166,12 +166,21 @@ Bottom
 | 默认 / `col` | `display:flex; flex-direction:column` | — |
 | `row` | `display:flex; flex-direction:row` | `flex-even` |
 
-轴的含义随 `flow` 变化：
+主轴就是子元素的排列方向，交叉轴与主轴垂直。默认横排、从左到右书写时，方向随 `flow` 变化：
 
 | `flow` | 主轴（`justify-content`） | 交叉轴（`align-items`） |
 |--------|---------------------------|-------------------------|
-| `col`（默认） | 垂直 | 水平 |
-| `row` | 水平 | 垂直 |
+| `col`（默认） | 垂直，上 → 下 | 水平，左 → 右 |
+| `row` | 水平，左 → 右 | 垂直，上 → 下 |
+
+例如，使用 `justify-content="center"`：
+
+- `flow="col"`：子元素整体在垂直方向（上下）居中。
+- `flow="row"`：子元素整体在水平方向（左右）居中。
+
+`align-items: center` 控制另一条轴：`col` 时左右居中，`row` 时上下居中。
+
+注意：Slides Extended 的 Grid 属性写 `flow="col|row"`；对应的 CSS 属性是 `flex-direction: column|row`，其中 CSS 写 `column`，不写 `col`。
 
 ### 与 `justify-content` 属性的关系
 

@@ -38,6 +38,144 @@ slideNumber: true
 
 ---
 
+<!-- slide id="heading-styles" -->
+
+## 标题样式
+
+在页面注解中设置 `class="fancyhead_1"`；也可组合 `class="fancyhead_1r fadehead"`。
+
+| 页面 class | 效果 |
+|:--|:--|
+| `fancyhead_1` | 完整层级：标题下划线、井号、竖条、方框与级别标签 |
+| `fancyhead_2` | 极简层级：左对齐下划线、淡细线与圆点 |
+| `fancyhead_1r` | 相对层级：从 `h2` 或 `h3` 起，依次使用短线、竖条、方框 |
+| `fadehead` | 标题逐级渐淡，可与任一装饰方案组合 |
+
+保留 AS 的字体与字号；未设置这些 class 的页面沿用原样式。封面和章节过渡页不启用这些装饰。
+
+---
+
+<!-- slide id="fancyhead-1" class="fancyhead_1" -->
+
+# fancyhead_1
+
+## 二级标题：井号与细线
+
+### 三级标题：左侧竖条
+
+#### 四级标题：强调框
+
+##### 五级标题：级别标签
+
+###### 六级标题：级别标签
+
+启用：`class="fancyhead_1"`。线条与标记复用主题强调色；保留 AS 各级标题字号。
+
+---
+
+<!-- slide id="fancyhead-2" class="fancyhead_2" -->
+
+# fancyhead_2
+
+## 二级标题：整行淡细线
+
+### 三级标题：圆点标记
+
+#### 四级及以下保留原样
+
+启用：`class="fancyhead_2"`。一至三级标题靠左，细线与当前背景自然融合。
+
+---
+
+<!-- slide id="fancyhead-relative-h2" class="fancyhead_1r" -->
+
+## fancyhead_1r：从二级标题起
+
+### 第二档：竖条
+
+#### 第三档：方框
+
+启用：`class="fancyhead_1r"`。本页有 `h2`，因此 `h2` / `h3` / `h4` 依次获得短线、竖条和方框。
+
+短线默认为标题文字宽度的 30%；可用 `--fancyhead-underline-width` 调整比例。
+
+---
+
+<!-- slide id="fancyhead-relative-h3" class="fancyhead_1r" -->
+
+### fancyhead_1r：从三级标题起
+
+#### 第二档：竖条
+
+##### 第三档：方框
+
+本页没有 `h2`，相同的 class 会将三档装饰顺延到 `h3` / `h4` / `h5`。
+
+按连续标题级别书写；不要在页眉或页脚中加入参与判断的标题。
+
+---
+
+<!-- slide id="fadehead" class="fancyhead_1r fadehead" -->
+
+## fadehead：标题逐级渐淡
+
+### 三级标题：保留竖条
+
+#### 四级标题：保留方框
+
+##### 五级标题：颜色继续变淡
+
+###### 六级标题：颜色继续变淡
+
+组合：`class="fancyhead_1r fadehead"`。`fadehead` 只调整文字颜色，可单独使用；深浅背景均沿用主题的标题基准色。
+
+---
+
+<!-- slide id="heading-gap-auto" class="fancyhead_1" -->
+
+## 标题后的弹性留白
+
+加载 `AS_basic.css` 后默认生效，无需额外 class。根据所在纵向 Flex 内容区的剩余高度分配留白，标题字号与装饰保持原样。
+
+| 页面剩余空间 | 标题后留白 |
+|:--|:--|
+| 充足 | 最大 48px |
+| 逐渐紧张 | 随剩余空间连续收缩 |
+| 不足 | 最小 12px，超出的正文仍需精简或滚动 |
+
+通过 `--as-heading-gap-min` / `--as-heading-gap-max` 调整上下限。普通正文、导航正文、模板槽和嵌套子栏中作为首个元素的标题均可参与；Grid 父容器保持轨道间距，内部 Flex 子栏独立调整。
+
+---
+
+<!-- slide id="heading-gap-panels" class="cols-2 fancyhead_1r" -->
+
+## 分栏内部的标题也会自动调整
+
+::: block
+
+### 左栏标题
+
+正文较少时，标题后的留白会增大到设定上限。
+
+每个子栏使用自己的可用高度；无须在页面或内容块上添加开关 class。
+
+::: <!-- element class="ldiv" -->
+
+::: block
+
+### 右栏标题
+
+正文逐渐增多时，这一栏的标题间隔可以独立收缩。
+
+- 下限：12px。
+- 上限：48px。
+- 保留标题字号、颜色与装饰。
+- 不改变正文的书写顺序。
+
+::: <!-- element class="rdiv" -->
+
+---
+
 <!-- slide template="[[ASTp-toc-a]]" -->
 
 ::: title
@@ -90,50 +228,50 @@ CONTENTS
 
 ---
 
-## 渡页
+## 过渡页
 
-`trans_a` / `trans_b`：均在 `[[ASTp-grid-lr]]` 上加 class；`center: false` 时加 `grid-align-restore`。**勿**在 **content** 槽写正文，只用 **left** / **right**（右栏供 `trans_b` 裁图）。
+`trans_a` / `trans_b`：纯 CSS 两栏布局，页面加 class，两个普通分块分别加 `ldiv` / `rdiv`。无需 `template=` 或 `grid-align-restore`；标题与正文放左栏，图片放右栏。
 
-| class | 模板 | 装饰 |
-|:------|:-----|:-----|
-| `trans_a` | `[[ASTp-grid-lr]]` | 页面正中主题色竖线 |
-| `trans_b` | `[[ASTp-grid-lr]]` | 右半区三层平行斜边：图片窗 + 白带 + 底边红梯形 |
+| class | 内容块 | 装饰 |
+|:------|:-------|:-----|
+| `trans_a` | `ldiv` + `rdiv` | 页面正中主题色竖线 |
+| `trans_b` | `ldiv` + `rdiv` | 斜边图片窗 + 透明间隔 + 主题色斜线与右侧三角 |
 
-`trans_b` token：`--as-trans-b-base-span`（斜率）、`--as-trans-b-band-width`（白带宽）、`--as-trans-b-shift`（图片左缘右移）、`--as-trans-b-mask-bg`（白带色）。
+`trans_b` token：`--as-trans-b-base-span`（斜边水平跨度）、`--as-trans-b-band-width`（间隔宽度）、`--as-trans-b-shift`（图片左缘右移）、`--as-trans-b-center-line-width`（中间斜线宽度）。间隔透出页面背景，装饰颜色沿用主题变量。
 
 ---
 
-<!-- slide class="trans_a grid-align-restore" template="[[ASTp-grid-lr]]" -->
+<!-- slide id="trans-a" class="trans_a" -->
 
-::: left
+::: block
 
 # trans_a — 章节过渡
 
 左栏标题
 
-:::
+::: <!-- element class="ldiv" -->
 
-::: right
+::: block
 
 ![](https://dummyimage.com/480x720/f5f5f5/999999&text=image)
 
-:::
+::: <!-- element class="rdiv" -->
 
 ---
 
-<!-- slide class="trans_b grid-align-restore" template="[[ASTp-grid-lr]]" -->
+<!-- slide id="trans-b" class="trans_b" -->
 
-::: left
+::: block
 
 # trans_b — 三层平行斜边
 
-:::
+::: <!-- element class="ldiv" -->
 
-::: right
+::: block
 
-![](https://dummyimage.com/480x720/f5f5f5/999999&text=image) <!-- element height="100%" -->
+![](https://dummyimage.com/480x720/f5f5f5/999999&text=image)
 
-:::
+::: <!-- element class="rdiv" -->
 
 ---
 
@@ -763,6 +901,42 @@ CSS：`cols-*` 分栏行=`auto`（等高=最高内容）；`rows-*` 的 bottom �
 ::: block
 底部全宽（占剩余）
 ::: <!-- element class="bdiv" -->
+
+---
+
+<!-- slide id="focus-box" -->
+
+<grid drag="90 12" drop="5 5" align="topleft">
+
+## focus-box — 透明着重框
+
+</grid>
+
+<grid drag="76 18" drop="12 30" align="topleft">
+
+**原有内容区域**
+
+这里的内容独立于强调框，叠加透明边框后仍然可见。
+
+</grid>
+
+<grid class="focus-box" drag="84 38" drop="8 25" align="bottomleft" pad="16px 24px">
+
+**重点**：粗体保持正文字号；普通说明使用正文的 0.8 倍。
+
+*斜体说明也为正文的 0.8 倍，保留主题斜体色。*
+
+</grid>
+
+<grid drag="90 20" drop="5 73" align="topleft">
+
+写法：`class="focus-box"`、`drag="84 38"`、`drop="8 25"`；无需重复设置边框和背景。
+
+配色：框线 `--r-accent-color`；粗体 `--r-strong-color`；普通文字继承页面正文色，默认来自 `--r-main-color`。
+
+详细用法见 [[Advanced Slides 技巧汇总（官方文档补充）#用 grid 叠加透明着重框]]。
+
+</grid>
 
 ---
 

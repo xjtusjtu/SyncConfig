@@ -43,6 +43,8 @@
     --r-main-font-size: 30px;
     --r-block-margin: 0.35em;
     --r-heading-margin: 0.5em 0 0.5em 0;
+    --as-heading-gap-min: 12px;
+    --as-heading-gap-max: 48px;
     --r-heading-font: "Bookerly", "Times New Roman", "Microsoft YaHei", "PingFang SC", Source Sans Pro, Helvetica,
         sans-serif;
     --r-heading-line-height: 1.2;
@@ -139,13 +141,243 @@
     margin: var(--r-heading-margin);
 }
 
+.reveal .slides section:not(.cover, .trans_a, .trans_b) {
+    & :is(.block, .ldiv, .mdiv, .rdiv, .tdiv, .bdiv):not(
+        .header, .footer, .gallery, .r-stack, .two-columns, .g-columns,
+        .header *, .footer *
+    ):has(> :is(h1, h2, h3, h4, h5, h6):first-child) {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    & :is(
+        div[style*="flex-direction: column"],
+        div[style*="flex-direction:column"],
+        .as-body, .block, .ldiv, .mdiv, .rdiv, .tdiv, .bdiv
+    ):not(
+        .header, .footer, .gallery, .r-stack, .two-columns, .g-columns,
+        .header *, .footer *,
+        [style*="flex-direction: row"], [style*="flex-direction:row"],
+        [style*="display: grid"], [style*="display:grid"],
+        section.ltBlock > div,
+        section.columns .as-body,
+        section:is(
+            .cols-2, .cols-3, .cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46,
+            .rows-2, .rows-1-2, .rows-2-1
+        ) > div,
+        section:is(
+            .cols-2, .cols-3, .cols-2-73, .cols-2-64, .cols-2-37, .cols-2-46,
+            .rows-2, .rows-1-2, .rows-2-1
+        ) .as-body
+    ):has(> :is(h1, h2, h3, h4, h5, h6):first-child):has(> :nth-child(2)) {
+        & > :is(h1, h2, h3, h4, h5, h6):first-child {
+            order: -2;
+            flex-shrink: 0;
+            margin-bottom: 0;
+        }
+
+        & > :is(h1, h2, h3, h4, h5, h6):first-child + * {
+            margin-top: 0;
+        }
+
+        &::before {
+            content: "";
+            order: -1;
+            flex: 1 1 var(--as-heading-gap-max);
+            min-height: var(--as-heading-gap-min);
+            max-height: var(--as-heading-gap-max);
+            pointer-events: none;
+        }
+    }
+}
+
 .reveal .slides h2::after {
     content: "";
     display: block;
     background-color: var(--r-main-color2);
-    width: 100%;
+    width: min(30%, 240px);
     height: 10px;
     border-radius: 10px;
+}
+
+.reveal .slides section:is(.fancyhead_1, .fancyhead_2, .fancyhead_1r):not(.cover, .trans_a, .trans_b) {
+    & h2::after {
+        content: none;
+    }
+
+    & :is(h1, h2, h3, h4, h5, h6) {
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+}
+
+.reveal .slides section.fancyhead_1:not(.cover, .trans_a, .trans_b) {
+    & h1 {
+        width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    & h1::after {
+        content: "";
+        display: block;
+        width: var(--fancyhead-underline-width, 60%);
+        height: 4px;
+        margin: 0.16em auto 0;
+        background: var(--as-fancyhead-accent, var(--r-strong-color));
+        border-radius: 2px;
+    }
+
+    & h2 {
+        width: 100%;
+        border-bottom: 2px solid color-mix(in srgb,
+            var(--as-fancyhead-accent, var(--r-strong-color)) 60%,
+            transparent);
+        padding-bottom: 0.12em;
+    }
+
+    & h2::before {
+        content: "#";
+        color: var(--as-fancyhead-accent, var(--r-strong-color));
+        margin-right: 0.35em;
+    }
+
+    & h3 {
+        border-left: 8px solid var(--as-fancyhead-accent, var(--r-strong-color));
+        padding-left: 0.4em;
+    }
+
+    & h4 {
+        width: fit-content;
+        border: 2px solid var(--as-fancyhead-accent, var(--r-strong-color));
+        border-top-width: 4px;
+        padding: 0.1em 0.4em;
+    }
+
+    & :is(h5, h6)::before {
+        font-size: 0.6em;
+        font-weight: normal;
+        color: var(--as-fancyhead-accent, var(--as-text-faint));
+        margin-right: 0.1em;
+        vertical-align: 0.1em;
+    }
+
+    & h5::before {
+        content: "H5";
+    }
+
+    & h6::before {
+        content: "H6";
+    }
+}
+
+.reveal .slides section.fancyhead_2:not(.cover, .trans_a, .trans_b) {
+    & :is(h1, h2, h3) {
+        margin-left: 0;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    & h1 {
+        width: fit-content;
+    }
+
+    & h1::after {
+        content: "";
+        display: block;
+        width: var(--fancyhead-underline-width, 60%);
+        height: 5px;
+        margin: 0.16em 0 0;
+        background: var(--as-fancyhead-accent, var(--r-strong-color));
+        border-radius: 2px;
+    }
+
+    & h2 {
+        width: 100%;
+        border-bottom: 1px solid color-mix(in srgb,
+            var(--as-fancyhead-accent, var(--r-strong-color)) 25%,
+            transparent);
+        padding-bottom: 0.18em;
+    }
+
+    & h3::before {
+        content: "";
+        display: inline-block;
+        width: 0.3em;
+        height: 0.3em;
+        margin-right: 0.45em;
+        background: var(--as-fancyhead-accent, var(--r-strong-color));
+        border-radius: 50%;
+        vertical-align: middle;
+    }
+}
+
+.reveal .slides section.fancyhead_1r:not(.cover, .trans_a, .trans_b) {
+    &:has(h2) h2,
+    &:not(:has(h2)) h3 {
+        width: fit-content;
+        margin-left: 0;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    &:has(h2) h2::after,
+    &:not(:has(h2)) h3::after {
+        content: "";
+        display: block;
+        width: var(--fancyhead-underline-width, 30%);
+        height: 5px;
+        margin: 0.16em 0 0;
+        background: var(--as-fancyhead-accent, var(--r-strong-color));
+        border-radius: 2px;
+    }
+
+    &:has(h2) h3,
+    &:not(:has(h2)) h4 {
+        border-left: 8px solid var(--as-fancyhead-accent, var(--r-strong-color));
+        padding-left: 0.4em;
+    }
+
+    &:has(h2) h4,
+    &:not(:has(h2)) h5 {
+        width: fit-content;
+        border: 2px solid var(--as-fancyhead-accent, var(--r-strong-color));
+        border-top-width: 4px;
+        padding: 0.1em 0.4em;
+    }
+}
+
+.reveal .slides section.fadehead:not(.cover, .trans_a, .trans_b) {
+    & h1 {
+        color: var(--fadehead-base, var(--r-heading-color));
+    }
+
+    & h2 {
+        color: color-mix(in srgb, var(--fadehead-base, var(--r-heading-color)) 90%,
+            transparent);
+    }
+
+    & h3 {
+        color: color-mix(in srgb, var(--fadehead-base, var(--r-heading-color)) 80%,
+            transparent);
+    }
+
+    & h4 {
+        color: color-mix(in srgb, var(--fadehead-base, var(--r-heading-color)) 70%,
+            transparent);
+    }
+
+    & h5 {
+        color: color-mix(in srgb, var(--fadehead-base, var(--r-heading-color)) 60%,
+            transparent);
+    }
+
+    & h6 {
+        color: color-mix(in srgb, var(--fadehead-base, var(--r-heading-color)) 50%,
+            transparent);
+    }
 }
 
 .reveal .slides section .header a {
@@ -250,6 +482,21 @@ center {
    封面 / TOC 等需 grid 居中的 slide 加 class grid-align-restore；详见 P_obsidian-slides-extended.md */
 .reveal .slides section.grid-align-restore div {
     align-items: unset !important;
+}
+
+.reveal .slides .focus-box {
+    box-sizing: border-box;
+    border: 3px solid var(--r-accent-color);
+    background: transparent;
+    font-size: calc(var(--r-main-font-size) * 0.8);
+
+    & :is(p, em, i) {
+        font-size: inherit;
+    }
+
+    & :is(strong, b) {
+        font-size: var(--r-main-font-size);
+    }
 }
 
 /* ASTp absolute grid 栏（flex column + inline align-items:start）：
@@ -2094,6 +2341,8 @@ center {
     :where(body.has-light-background) .reveal .slides section,
     .reveal .slides section.has-light-background
 ) {
+    --as-fancyhead-accent: var(--as-strong-on-light);
+    --fadehead-base: var(--as-heading-on-light);
     color: var(--as-text-on-light);
 
     :is(h1, h2, h3, h4, h5, h6) {
@@ -2149,6 +2398,8 @@ center {
     :where(body.has-dark-background) .reveal .slides section,
     .reveal .slides section.has-dark-background
 ) {
+    --as-fancyhead-accent: var(--as-strong-on-dark);
+    --fadehead-base: var(--as-heading-on-dark);
     color: var(--as-text-on-dark);
 
     :is(h1, h2, h3, h4, h5, h6) {
@@ -3863,9 +4114,40 @@ center {
 
 /* ==========================================================================
    16. Transition pages — section.trans_a / section.trans_b
-      Both pair with [[ASTp-grid-lr]]; decorations on grid shell div (> div).
-      Grid shell has explicit px height from frontmatter; section collapses.
+      CSS layout: slide class + block.ldiv / block.rdiv; no template required.
+      The absolute slide wrapper supplies the canvas height.
+      Existing ASTp-grid-lr slides retain their template layout.
    ========================================================================== */
+
+.reveal .slides section:is(.trans_a, .trans_b) {
+    & > div:has(> :is(.ldiv, .rdiv)) {
+        display: grid !important;
+        grid-template-columns: 45% 5% 45% 5%;
+        grid-template-rows: minmax(0, 1fr);
+        align-items: stretch !important;
+        justify-content: start !important;
+    }
+
+    & > div > :is(.ldiv, .rdiv) {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+        box-sizing: border-box;
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+        grid-row: 1;
+    }
+
+    & > div > .ldiv {
+        grid-column: 1;
+    }
+
+    & > div > .rdiv {
+        grid-column: 3;
+    }
+}
 
 .reveal .slides section.trans_a img, 
 .reveal .slides section.trans_b img {
@@ -3879,18 +4161,20 @@ center {
 /* --- trans_b: image parallelogram (A→B) / gap (B→C) / accent triangle (C→right) ---
    All slanted edges share slope base-span. Triangle apex at slide top-right (100%, 0).
    shift moves image left edge A only.
-   clip-path on right grid cell (50% slide width); *2 maps slide tokens to cell %.
+    Right column remains 45% wide; *2 preserves the existing clipping proportions.
    B→C gap is transparent (slide background); ::after = accent triangle.
    Center accent line: left column ::after, from slide bottom-center upward (parallel). */
 .reveal .slides section.trans_b > div {
     position: relative;
 }
 
-.reveal .slides section.trans_b > div > div:first-child {
+.reveal .slides section.trans_b > div > .ldiv,
+.reveal .slides section.trans_b > div:not(:has(> .ldiv)) > div:first-child {
     position: relative;
 }
 
-.reveal .slides section.trans_b > div > div:first-child::after {
+.reveal .slides section.trans_b > div > .ldiv::after,
+.reveal .slides section.trans_b > div:not(:has(> .ldiv)) > div:first-child::after {
     content: "";
     position: absolute;
     left: 100%;
@@ -3912,7 +4196,8 @@ center {
     pointer-events: none;
 }
 
-.reveal .slides section.trans_b > div > div:nth-child(2) {
+.reveal .slides section.trans_b > div > .rdiv,
+.reveal .slides section.trans_b > div:not(:has(> .rdiv)) > div:nth-child(2) {
     position: relative;
     overflow: hidden;
     clip-path: polygon(
@@ -3936,6 +4221,23 @@ center {
     object-position: center;
     position: relative;
     z-index: 1;
+}
+
+.reveal .slides section.trans_b > div > .rdiv {
+    & > :is(p, .block):has(> img:only-child) {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        margin: 0;
+    }
+
+    & img {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        margin: 0;
+        object-fit: cover !important;
+    }
 }
 
 /* --- trans_a: center vertical divider --- */
@@ -3981,6 +4283,8 @@ center {
     .reveal .slides section .on-dark-bg
 ) {
     --as-card-context-scheme: dark;
+    --as-fancyhead-accent: var(--as-strong-on-dark);
+    --fadehead-base: var(--as-heading-on-dark);
     color: var(--as-text-on-dark);
 
     :is(h1, h2, h3, h4, h5, h6) {
@@ -4078,6 +4382,8 @@ center {
     .reveal .slides section .on-light-bg
 ) {
     --as-card-context-scheme: light;
+    --as-fancyhead-accent: var(--as-strong-on-light);
+    --fadehead-base: var(--as-heading-on-light);
     color: var(--as-text-on-light);
 
     :is(h1, h2, h3, h4, h5, h6) {

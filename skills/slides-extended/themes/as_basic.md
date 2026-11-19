@@ -76,8 +76,70 @@ Source: `../assets/css/AS_basic.css`. Read the CSS file for selectors; use this 
 | §12 Footnotes | 2420–2544 | `sup` counter badges | `[^1]` footnotes; cross-slide numbering is a known issue |
 | §13 Fancy lists | 2545–2686 | `fglass`, `fancy-ol-sq`, `fancy-ol-ci` | `class="fglass fancy-ol-sq"` (combinable) |
 | §15 Cover | 2687–2811 | `cover` — strip heading pseudo-elements; title/subtitle colors | `class="grid-align-restore cover"` + `AsTp-Cover` |
-| §16 Transition | 2812–2920 | `trans_a` / `trans_b` on `ASTp-grid-lr` | `trans_a` vertical line; `trans_b` image clip + white band + accent triangle |
+| §16 Transition | — | `trans_a` / `trans_b` + `block.ldiv` / `block.rdiv`; no template | `trans_a` vertical line; `trans_b` image clip + transparent gap + accent line/triangle |
 | §14 Local adaptive | 2921–end | `on-light-bg`, `on-dark-bg` nested text | wrap block: `<div class="on-dark-bg">` |
+
+### Heading styles
+
+`AS_basic.css` 提供与 Marp 同名的可选标题方案，通过 Slides Extended 的页面注解启用：
+
+```markdown
+<!-- slide class="fancyhead_1r fadehead" -->
+
+## 页面标题
+
+### 分节标题
+
+#### 细节标题
+```
+
+| 页面 class | 装饰 |
+|:-----------|:-----|
+| `fancyhead_1` | `h1` 居中短下划线；`h2` 井号和细线；`h3` 竖条；`h4` 方框；`h5` / `h6` 级别标签 |
+| `fancyhead_2` | `h1` 左对齐短下划线；`h2` 淡细线；`h3` 圆点；更低级别保持原样 |
+| `fancyhead_1r` | 页面有 `h2` 时，`h2` / `h3` / `h4` 依次为短线、竖条、方框；否则使用 `h3` / `h4` / `h5` |
+| `fadehead` | 标题文字逐级渐淡，可与上述任一方案组合 |
+
+保留 AS 的字体与字号；装饰方案替换当前页默认的 `h2` 粗下划线。未启用的页面保持原样；`cover`、`trans_a`、`trans_b` 页面排除这些标题方案。
+
+配色复用现有的 `--r-strong-color`、`--r-heading-color` 及深浅背景变量；`--as-fancyhead-accent` 和 `--fadehead-base` 随背景作用域切换。细线和渐淡文字通过透明混色与实际背景融合，不新增固定色值。
+
+短下划线比例可通过 `--fancyhead-underline-width` 调整：`fancyhead_1` / `fancyhead_2` 默认 60%，`fancyhead_1r` 默认 30%。相对层级方案假定标题连续，页眉、页脚中的标题也会参与 `h2` 判断。
+
+同一标签的多个 class 必须合并在一个属性中，例如 `class="focus-box fragment"`；重复写两个 `class` 可能导致其中一组样式丢失。
+
+示例 → [[AS_Basic Showcase#标题样式]]。
+
+### Adaptive heading gap
+
+加载 `AS_basic.css` 后，纵向 Flex 内容区的起始标题默认使用弹性留白，**无需额外页面或元素 class**。空间充足时取上限 48px，正文增多时逐渐收缩，到下限 12px 后停止；不改变标题字号或装饰：
+
+```markdown
+<!-- slide class="fancyhead_1" -->
+
+## 页面标题
+
+正文内容。
+```
+
+两个非颜色变量控制上下限，可在自定义 CSS 中统一调整：
+
+```css
+:root {
+  --as-heading-gap-min: 12px;
+  --as-heading-gap-max: 48px;
+}
+```
+
+这里使用有上下限的 Flex 弹性留白，不依赖窗口尺寸推测正文高度。为保证间隔不叠加，会清除参与调整的标题自身下外边距，以及紧随元素的上外边距；标题与正文原有顺序不变。
+
+支持普通页面、导航正文、原生 Grid 生成的纵向 Flex 容器、模板槽 `.block`，以及 `ldiv` / `mdiv` / `rdiv` / `tdiv` / `bdiv` 子区。每个区块以自身可用高度独立计算，覆盖作为其**首个元素的 `h1`–`h6`**；首个标题后必须还有正文元素。原本是普通块的模板槽和文字子区会建立纵向 Flex 布局，使内部标题也能参与分配。
+
+`cols-*` / `rows-*` 的 Grid 父容器继续使用自己的轨道间距，不插入 Flex 留白；内部文字子栏仍会自动调整。横向 Flex、页眉页脚、封面和过渡页保留原布局。一个内容区中途出现的后续小标题不会被重新排序或额外分配弹性留白；需要独立调整时，将该段组织成自己的内容块。
+
+有明确高度或被父布局拉伸的子区可以按剩余高度收缩；仅随内容增高的区块没有固定的空间预算，通常使用留白上限。该规则不能检测绝对定位内容或图片内部的视觉空白；与会主动填满剩余高度的滚动区组合时，也不保证先压缩留白再开始滚动。留白达到下限仍放不下时，需要精简正文、拆页或滚动，不会继续缩小字号。
+
+旧页面上的 `heading-gap-auto` class 已不再需要，保留也不会改变默认行为；示例 → [[AS_Basic Showcase#标题后的弹性留白]]、[[AS_Basic Showcase#分栏内部的标题也会自动调整]]。
 
 ### Panel layouts
 
@@ -93,6 +155,30 @@ Marp-compatible **CSS path** (`AS_basic.css` §3.x): slide class + `::: block` +
 | `rows-2-1` | heading + left/right (`auto`) + bottom (`1fr`) |
 
 Panel classes: `ldiv` `rdiv` `mdiv` `tdiv` `bdiv`. **Do not** use `::: left` without a template. `ASTp-grid-rows-*` / `ASTp-nav-grid-rows-1-2` removed — use these classes (+ `ASTp-nav-shell` for nav). Column templates: `ASTp-grid-cols*` / `ASTp-grid-lr`. Demo → `AS_Basic Showcase.md`.
+
+### Transition pages
+
+过渡页由 `AS_basic.css` §16 直接提供两栏布局，使用 `trans_a`（中线）或 `trans_b`（斜边图片与主题色装饰），无需 `template=` 或 `grid-align-restore`：
+
+```markdown
+<!-- slide class="trans_b" -->
+
+::: block
+
+# 章节标题
+
+::: <!-- element class="ldiv" -->
+
+::: block
+
+![[章节配图.png]]
+
+::: <!-- element class="rdiv" -->
+```
+
+`ldiv` 放标题与正文，`rdiv` 放图片；两栏保持原布局的 45% 宽度、5% 中缝及 5% 右侧留白，左栏内容垂直居中。`trans_b` 的右图自动铺满裁剪区域，使用 `object-fit: cover`，无需手写高度。间隔透出页面背景；装饰颜色沿用 `--as-trans-divider-color` / `--as-trans-accent`。
+
+斜边参数沿用 `--as-trans-b-base-span`、`--as-trans-b-band-width`、`--as-trans-b-shift`、`--as-trans-b-center-line-width`。旧 `ASTp-grid-lr` 写法仍兼容，新页面使用上述普通分块。示例 → [[AS_Basic Showcase#过渡页]]。
 
 ### grid-align-restore
 
@@ -211,7 +297,7 @@ Combine modifiers on one slide (space-separated), e.g. `list-card-grid list-card
 ```
 cover (AsTp-Cover, id="0", class="grid-align-restore cover")
 → TOC (ASTp-toc-a, optional)
-→ chapter break (`trans_a` / `trans_b` on `ASTp-grid-lr`, optional)
+→ chapter break (`trans_a` / `trans_b` + `block.ldiv` / `block.rdiv`, optional)
 → body (ASTp-nav-shell or ASTp-nav-grid-*)
 → closing (ASTp-lastpage)
 ```
@@ -258,8 +344,8 @@ Per-slide: `<!-- slide id="c-2" template="[[ASTp-nav-shell]]" class="academia" -
 | Class | Effect |
 |:------|:-------|
 | `cover` | Cover title style; removes all heading `::before`/`::after` |
-| `trans_a` | Center vertical divider on `ASTp-grid-lr` |
-| `trans_b` | Three parallel strips: image parallelogram clip + white band (`::before`) + bottom red trapezoid (`::after`) |
+| `trans_a` | CSS left/right blocks (`ldiv` / `rdiv`) + center vertical divider; no template |
+| `trans_b` | CSS left/right blocks + full-height image clip, transparent gap, accent line and right triangle; no template |
 | `academia` | Academic table borders/shadows |
 | `fancy-ol-sq` | Square numbered list markers |
 | `fancy-ol-ci` | Circular numbered list markers |
@@ -310,7 +396,7 @@ Do **not** nest `::: block` inside `::: left` — content falls into `<% content
 ## Layout Selection (non-nav)
 
 ```
-AsTp-Cover → ASTp-toc-* → trans_a / trans_b (`ASTp-grid-lr`)
+AsTp-Cover → ASTp-toc-* → trans_a / trans_b (CSS class + block.ldiv / block.rdiv)
 → columns: ASTp-grid-cols* OR slide class cols-* + block
 → rows-*: slide class only (`rows-2` / `rows-1-2` / `rows-2-1`; nav → shell + class)
 → ASTp-lastpage
